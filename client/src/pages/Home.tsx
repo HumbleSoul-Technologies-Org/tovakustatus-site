@@ -1,0 +1,191 @@
+import { Users, Heart, Target, TrendingUp } from "lucide-react";
+import { Link } from "wouter";
+import Hero from "@/components/Hero";
+import StatCard from "@/components/StatCard";
+import TalentCard from "@/components/TalentCard";
+import ProjectCard from "@/components/ProjectCard";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import heroImage from '@assets/generated_images/Hero_image_diverse_talented_kids_8dd4ac07.png';
+import talentImage1 from '@assets/generated_images/Talented_girl_with_violin_portrait_f9f1e1a7.png';
+import talentImage2 from '@assets/generated_images/Talented_boy_playing_soccer_portrait_4a119641.png';
+import talentImage3 from '@assets/generated_images/Talented_girl_painting_art_portrait_9df2082c.png';
+import projectImage from '@assets/generated_images/Community_workshop_outreach_event_photo_3fb17f3c.png';
+
+export default function Home() {
+  // TODO: remove mock data functionality
+  const featuredTalents = [
+    {
+      id: "1",
+      name: "Amani Grace",
+      age: 12,
+      talentType: "Music",
+      description: "Amani has been playing violin for 3 years and dreams of performing in international orchestras. Her dedication and natural talent shine through every performance.",
+      imageUrl: talentImage1,
+    },
+    {
+      id: "2",
+      name: "David Kwame",
+      age: 14,
+      talentType: "Sports",
+      description: "An exceptional football player with incredible speed and technique. David aspires to play professionally and represent his country on the world stage.",
+      imageUrl: talentImage2,
+    },
+    {
+      id: "3",
+      name: "Sarah Nkunda",
+      age: 11,
+      talentType: "Art",
+      description: "Sarah's vibrant paintings capture the beauty of her community. She uses art as a powerful medium to tell stories and inspire others.",
+      imageUrl: talentImage3,
+    },
+  ];
+
+  const recentProjects = [
+    {
+      id: "1",
+      title: "Music Workshop Series",
+      description: "A comprehensive music education program providing instruments, training, and performance opportunities to talented young musicians from underprivileged communities.",
+      date: "March 15, 2024",
+      participants: 45,
+      imageUrl: projectImage,
+    },
+  ];
+
+  return (
+    <div>
+      <Hero
+        subtitle="Welcome to Tova ku Status"
+        title="Rise Above Your Status"
+        description="Identifying and empowering talented kids from underprivileged schools and slums across Uganda."
+        primaryCTA={{ label: "Donate Now", href: "/get-involved" }}
+        secondaryCTA={{ label: "Discover Talents", href: "/talents" }}
+        backgroundImage={heroImage}
+        trustIndicator="Empowering 500+ talented youth since 2020"
+      />
+
+      <section className="py-16 md:py-24 bg-background">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <StatCard icon={Users} value="500+" label="Talents Discovered" />
+            <StatCard icon={Heart} value="45" label="Active Projects" />
+            <StatCard icon={Target} value="120" label="Volunteers" />
+            <StatCard icon={TrendingUp} value="15" label="Partner Organizations" />
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-24 bg-card">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Featured Talents</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Meet some of the extraordinary young people we're proud to support
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+            {featuredTalents.map((talent) => (
+              <TalentCard key={talent.id} {...talent} />
+            ))}
+          </div>
+          <div className="text-center">
+            <Link href="/talents">
+              <Button size="lg" data-testid="button-view-all-talents">
+                View All Talents
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-24 bg-background">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">How It Works</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Our three-step process to discover and nurture talent
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="p-8 text-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl font-bold text-primary">1</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Discover</h3>
+              <p className="text-muted-foreground">
+                We visit schools and communities to identify children with exceptional talents in music, sports, and arts.
+              </p>
+            </Card>
+            <Card className="p-8 text-center">
+              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl font-bold text-accent-foreground">2</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Nurture</h3>
+              <p className="text-muted-foreground">
+                We provide training, mentorship, equipment, and opportunities to help these talents grow and flourish.
+              </p>
+            </Card>
+            <Card className="p-8 text-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl font-bold text-primary">3</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Empower</h3>
+              <p className="text-muted-foreground">
+                We connect talented youth with sponsors, opportunities, and platforms to showcase their abilities.
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-24 bg-card">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Recent Projects</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Explore our latest initiatives making a difference
+            </p>
+          </div>
+          <div className="space-y-8">
+            {recentProjects.map((project) => (
+              <ProjectCard key={project.id} {...project} />
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link href="/projects">
+              <Button size="lg" variant="outline" data-testid="button-view-all-projects">
+                View All Projects
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-24 bg-primary text-primary-foreground">
+        <div className="max-w-4xl mx-auto px-4 md:px-8 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">Join Us in Making a Difference</h2>
+          <p className="text-lg md:text-xl mb-8 opacity-90">
+            Your support can transform lives and unlock extraordinary potential. Every contribution helps us discover and nurture the next generation of talent.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link href="/get-involved">
+              <Button size="lg" variant="secondary" className="text-lg px-8 py-6" data-testid="button-donate-cta">
+                Donate Now
+              </Button>
+            </Link>
+            <Link href="/get-involved">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="text-lg px-8 py-6 bg-white/10 backdrop-blur-md border-white/30 text-white hover:bg-white/20" 
+                data-testid="button-volunteer-cta"
+              >
+                Become a Volunteer
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

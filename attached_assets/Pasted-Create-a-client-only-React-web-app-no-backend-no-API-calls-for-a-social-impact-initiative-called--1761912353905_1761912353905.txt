@@ -1,0 +1,103 @@
+Create a client-only React web app (no backend, no API calls) for a social impact initiative called **Tova ku Status**.
+
+🧾 Description:
+Tova ku Status is a community-driven project that identifies and empowers talented kids from underprivileged schools and slums. The site should inspire, inform, and engage potential sponsors, volunteers, and the public.
+
+🎯 Requirements:
+- Use **React (Vite or CRA)**.
+- Use **React Router** for navigation.
+- Create all pages client-side (mock data in JSON).
+- Include a **dashboard section** (admin only, client-side mock).
+
+---
+
+### 🌐 Public Pages:
+1. **Home**
+   - Hero section with tagline “Rise Above Your Status”
+   - Mission statement
+   - Featured Talents (mock data)
+   - CTA buttons: “Donate”, “Volunteer”, “Discover Talents”
+
+2. **About**
+   - Founder bio (TV Presenter / MC)
+   - Mission, vision, objectives
+   - Team section
+   - Impact stats (mock)
+
+3. **Projects**
+   - Grid/list of outreach events with photos (mock)
+   - Each item opens a detail page
+
+4. **Talents**
+   - Cards of kids with talents (name, age, talent type, short story)
+   - Search or filter by talent type (e.g., Music, Sports, Art)
+   - Each opens a story/profile page
+
+5. **Get Involved**
+   - 3 CTAs: Donate, Volunteer, Partner
+   - Simple static forms (no backend, just UI)
+
+6. **Events**
+   - Timeline or calendar style view of events (mock)
+   - Each event card links to its detail view
+
+7. **Media Gallery**
+   - Grid of photos/videos
+   - Embed mock YouTube/Instagram posts
+
+8. **Blog / News**
+   - List of blog posts (mock)
+   - Post detail view
+
+9. **Contact**
+   - Contact form (UI only)
+   - Social media links and contact info
+
+---
+
+### 📊 Embedded Admin Dashboard (Client-Side)
+Accessible via `/dashboard` route — mock login not required.
+
+**Dashboard Sidebar Sections:**
+1. Overview (total talents, projects, sponsors, events)
+2. Manage Talents (CRUD mock UI)
+3. Manage Projects
+4. Manage Events
+5. Manage Blog Posts
+6. Media Uploads (UI only)
+7. Newsletter Subscribers (mock list)
+8. Settings (basic site info)
+
+**Dashboard Features:**
+- Left sidebar with icons
+- Top navbar with user avatar
+- Tables and modals for adding/editing items
+- Use localStorage or mock JSON to simulate data
+
+---
+
+### 🎨 Styling:
+- Use **Tailwind CSS** for styling.
+- Consistent color palette: bright yellow + blue + black accents.
+- Use cards, grids, and simple responsive layout.
+
+---
+
+### 🧩 Bonus:
+- Include a global navigation bar + footer
+- Responsive and mobile-friendly
+- Include smooth page transitions (Framer Motion optional)
+- Mock data in a `data/` folder (JSON)
+- Keep everything client-side (no database, no API)
+
+---
+
+Generate the full folder structure, including:
+- `/src/pages/` for each route
+- `/src/components/` for reusable UI
+- `/src/dashboard/` for dashboard sections
+- `/src/data/` for JSON mock data
+- Tailwind setup and config
+
+The app should run fully client-side with `npm run dev`.
+
