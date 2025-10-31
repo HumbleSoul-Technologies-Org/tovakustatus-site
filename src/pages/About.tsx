@@ -3,7 +3,7 @@ import StatCard from "@/components/StatCard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Users, Heart, Target } from "lucide-react";
-import founderImage from '@assets/generated_images/Founder_professional_portrait_photo_15a7b392.png';
+// import founderImage from '@assets/generated_images/Founder_professional_portrait_photo_15a7b392.png';
 
 export default function About() {
   // TODO: remove mock data functionality
@@ -22,14 +22,16 @@ export default function About() {
         minHeight="min-h-[400px] md:min-h-[500px]"
       />
 
-      <section className="py-16 md:py-24 bg-background">
+      <section className="py-16 md:py-24 bg-white">
         <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
-            <div>
-              <Avatar className="w-full h-auto aspect-square rounded-2xl">
-                <AvatarImage src={founderImage} alt="Founder" />
-                <AvatarFallback className="text-6xl rounded-2xl">TK</AvatarFallback>
-              </Avatar>
+            <div className="relative w-full aspect-square">
+              <div className="absolute inset-0 bg-gradient-to-l from-white/100 to-transparent z-10 border-0 rounded-2xl" />
+              <img
+                src="https://plus.unsplash.com/premium_photo-1661627681947-4431c8c97659?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y29vbCUyMGd1eXxlbnwwfHwwfHx8MA%3D%3D&fm=jpg&q=60&w=3000"
+                alt="Founder"
+                className="w-full aspect-square border-0 rounded-2xl object-cover"
+              />
             </div>
             <div>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Meet Our Founder</h2>
@@ -51,7 +53,7 @@ export default function About() {
       <section className="py-16 md:py-24 bg-card">
         <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <Card className="p-8">
+            <Card className="p-8 bg-white">
               <div className="w-12 h-12 bg-primary/10 rounded-md flex items-center justify-center mb-4">
                 <Target className="h-6 w-6 text-primary" />
               </div>
@@ -60,7 +62,7 @@ export default function About() {
                 To identify, nurture, and empower talented children from underprivileged schools and slums, providing them with the resources, training, and opportunities they need to excel in their chosen fields.
               </p>
             </Card>
-            <Card className="p-8">
+            <Card className="p-8 bg-white">
               <div className="w-12 h-12 bg-accent/10 rounded-md flex items-center justify-center mb-4">
                 <Heart className="h-6 w-6 text-accent-foreground" />
               </div>
@@ -72,7 +74,7 @@ export default function About() {
           </div>
 
           <div className="mt-12">
-            <Card className="p-8">
+            <Card className="p-8 bg-white">
               <h3 className="text-2xl font-bold mb-6">Our Core Values</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
