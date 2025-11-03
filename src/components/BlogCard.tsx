@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, User } from "lucide-react";
+import { Calendar, Eye, User } from "lucide-react";
 import { Link } from "wouter";
 
 interface BlogCardProps {
@@ -13,13 +13,14 @@ interface BlogCardProps {
   category: string;
   imageUrl?: string;
   readTime?: string;
+  views?:number
 }
 
-export default function BlogCard({ id, title, excerpt, author, date, category, imageUrl, readTime }: BlogCardProps) {
+export default function BlogCard({ id, title, excerpt, author, date, category, imageUrl, readTime,views }: BlogCardProps) {
   return (
     <Card className="overflow-hidden hover-elevate">
       {imageUrl && (
-        <div className="h-48 overflow-hidden">
+        <div className=" overflow-hidden">
           <img 
             src={imageUrl} 
             alt={title} 
@@ -31,7 +32,18 @@ export default function BlogCard({ id, title, excerpt, author, date, category, i
       <CardContent className="p-6">
         <div className="flex items-center gap-2 mb-3">
           <Badge variant="secondary" data-testid={`blog-category-${id}`}>{category}</Badge>
-          {readTime && <span className="text-xs text-muted-foreground">{readTime}</span>}
+          {readTime && <span className="text-xs flex-1 text-muted-foreground">{readTime}</span>}
+          {views && <span className="text-xs text-muted-foreground">
+            
+             <span
+                        className="flex-row cursor-pointer flex items-center gap-1 transition-colors"
+                         
+                      >
+                       
+              <Eye className=" hover:text-primary" size={16} />
+               {views}
+                      </span>
+          </span>}
         </div>
         
         <h3 className="text-xl font-bold text-foreground mb-2 line-clamp-2" data-testid={`blog-title-${id}`}>

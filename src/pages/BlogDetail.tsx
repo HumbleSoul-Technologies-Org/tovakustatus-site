@@ -4,9 +4,10 @@ import { getBlogPostById, BlogPost } from "@/lib/localStorage";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Calendar, User, Clock } from "lucide-react";
-
+import { ArrowLeft, Calendar, User, Clock, ThumbsUpIcon, Bookmark, Share2, Eye } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 export default function BlogDetail() {
+  const {toast} = useToast() 
   const [, params] = useRoute("/blog/:id");
   const [post, setPost] = useState<BlogPost | null>(null);
 
@@ -73,7 +74,7 @@ export default function BlogDetail() {
                 <img 
                   src={post.imageUrl} 
                   alt={post.title} 
-                  className="w-full h-96 object-cover rounded-2xl"
+                  className="w-full max-h-[500px] object-fill rounded-2xl"
                   data-testid="blog-detail-image"
                 />
               </div>
@@ -90,6 +91,61 @@ export default function BlogDetail() {
                 </div>
               )}
             </div>
+             
+             {/* Likes and Share Section */}
+                    <span className="flex-row mt-10 flex items-center gap-4 p-3 text-xs text-muted-foreground">
+
+                      {/* Liking Btn */}
+                      <span
+                        className="flex-row cursor-pointer flex   items-center gap-2   transition-colors"
+                         
+                      >
+                        0 Views
+                        <Eye className=" hover:text-primary" size={16} />
+                      </span>
+                      <span
+                        className="flex-row cursor-pointer flex   items-center gap-2   transition-colors"
+                         
+                      >
+                        0 Likes
+                        <ThumbsUpIcon className="mb-1 hover:text-primary" size={16} />
+                      </span>
+
+                      {/* Saving Btn */}
+                      <span
+                        className="flex-row cursor-pointer flex items-center gap-2   transition-colors"
+                         
+                      >
+                         Save
+                       <Bookmark size={16} className="hover:text-primary" />
+                      </span>
+
+                      {/* Sharing Btn */}
+                      <span
+                        className="flex-row cursor-pointer flex-1 flex items-center gap-2   transition-colors"
+                        onClick={() => {
+                          try {
+                            const url = `${window.location.origin}/sermons/${
+                            params?.id
+                            }`;
+                            navigator.clipboard?.writeText(url);
+                            toast({ title: "Sermon link copied" });
+                          } catch (e) {
+                            toast({
+                              title: "Could not copy sermon link",
+                              variant: "destructive",
+                            });
+                          }
+                        }}
+                      >
+                        <span>Share</span>
+                        <Share2 size={16} className="hover:text-primary" />
+                      </span>
+                      <span className="text-xs text-muted">
+                         {post.date}
+                      </span>
+                      
+                    </span>
 
             <Card className="p-6 bg-card">
               <div className="flex items-center gap-4">

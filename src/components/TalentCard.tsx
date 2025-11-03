@@ -10,6 +10,7 @@ interface TalentCardProps {
   talentType: string;
   description: string;
   imageUrl: string;
+  views?:number
 }
 
 export default function TalentCard({ id, name, age, talentType, description, imageUrl }: TalentCardProps) {

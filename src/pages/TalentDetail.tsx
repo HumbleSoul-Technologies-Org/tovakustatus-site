@@ -4,9 +4,11 @@ import { getTalentById, Talent } from "@/lib/localStorage";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Bookmark, Eye, Share, Share2, ThumbsUpIcon } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function TalentDetail() {
+  const {toast} = useToast()
   const [, params] = useRoute("/talents/:id");
   const [talent, setTalent] = useState<Talent | null>(null);
 
@@ -85,6 +87,52 @@ export default function TalentDetail() {
                     {talent.fullStory}
                   </p>
                 </div>
+                   <span className="flex-row mt-10 flex items-center gap-4 p-3 text-xs text-muted-foreground">
+
+                      {/* Liking Btn */}
+                      <span
+                        className="flex-row cursor-pointer flex   items-center gap-2   transition-colors"
+                         
+                      >
+                        {talent.views} Views
+                        <Eye className=" hover:text-primary" size={16} />
+                      </span>
+                      <span
+                        className="flex-row cursor-pointer flex   items-center gap-2   transition-colors"
+                         
+                      >
+                        0 Likes
+                        <ThumbsUpIcon className="mb-1 hover:text-primary" size={16} />
+                      </span>
+
+                      
+
+                      {/* Sharing Btn */}
+                      <span
+                        className="flex-row cursor-pointer flex-1 flex items-center gap-2   transition-colors"
+                        onClick={() => {
+                          try {
+                            const url = `${window.location.origin}/talents/${
+                            params?.id
+                            }`;
+                            navigator.clipboard?.writeText(url);
+                            toast({ title: "link copied" });
+                          } catch (e) {
+                            toast({
+                              title: "Could not copy link",
+                              variant: "destructive",
+                            });
+                          }
+                        }}
+                      >
+                        <span>Share</span>
+                        <Share2 size={16} className="hover:text-primary" />
+                      </span>
+                      {/* <span className="text-xs text-muted">
+                         {post.date}
+                      </span> */}
+                      
+                    </span>
               </CardContent>
             </Card>
           )}

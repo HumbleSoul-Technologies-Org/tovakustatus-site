@@ -2,12 +2,12 @@ import { useState } from "react";
 import Hero from "@/components/Hero";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import mediaImage1 from '@assets/generated_images/Community_workshop_outreach_event_photo_3fb17f3c.png';
-import mediaImage2 from '@assets/generated_images/Sports_day_community_event_photo_a4d50b69.png';
-import mediaImage3 from '@assets/generated_images/Talent_showcase_performance_event_photo_037e6d5f.png';
-import talentImage1 from '@assets/generated_images/Talented_girl_with_violin_portrait_f9f1e1a7.png';
-import talentImage2 from '@assets/generated_images/Talented_boy_playing_soccer_portrait_4a119641.png';
-import talentImage3 from '@assets/generated_images/Talented_girl_painting_art_portrait_9df2082c.png';
+import mediaImage1 from '../../public/Community_workshop_outreach_event_photo_3fb17f3c.png';
+import mediaImage2 from '../../public/Sports_day_community_event_photo_a4d50b69.png';
+import mediaImage3 from '../../public/Talent_showcase_performance_event_photo_037e6d5f.png';
+import talentImage1 from '../../public/Talented_girl_with_violin_portrait_f9f1e1a7.png';
+import talentImage2 from '../../public/Talented_boy_playing_soccer_portrait_4a119641.png';
+import talentImage3 from '../../public/Talented_girl_painting_art_portrait_9df2082c.png';
 
 export default function Media() {
   // TODO: remove mock data functionality
@@ -59,7 +59,7 @@ export default function Media() {
             {filteredMedia.map((item) => (
               <div
                 key={item.id}
-                className="aspect-square overflow-hidden rounded-lg cursor-pointer hover-elevate"
+                className="aspect-square overflow-hidden  rounded-lg hover:opacity-60 cursor-pointer hover-elevate"
                 onClick={() => setSelectedImage(item.imageUrl)}
                 data-testid={`media-item-${item.id}`}
               >
@@ -68,6 +68,7 @@ export default function Media() {
                   alt={item.title}
                   className="w-full h-full object-cover"
                 />
+                <p className="absolute bottom-0 left-1 text-white text-xs">{item.title}</p>
               </div>
             ))}
           </div>

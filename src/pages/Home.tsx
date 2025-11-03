@@ -6,11 +6,11 @@ import TalentCard from "@/components/TalentCard";
 import ProjectCard from "@/components/ProjectCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import heroImage from '@assets/generated_images/Hero_image_diverse_talented_kids_8dd4ac07.png';
-import talentImage1 from '@assets/generated_images/Talented_girl_with_violin_portrait_f9f1e1a7.png';
-import talentImage2 from '@assets/generated_images/Talented_boy_playing_soccer_portrait_4a119641.png';
-import talentImage3 from '@assets/generated_images/Talented_girl_painting_art_portrait_9df2082c.png';
-import projectImage from '@assets/generated_images/Community_workshop_outreach_event_photo_3fb17f3c.png';
+import heroImage from '../../public/Hero_image_diverse_talented_kids_8dd4ac07.png';
+import talentImage1 from '../../public/Talented_girl_with_violin_portrait_f9f1e1a7.png';
+import talentImage2 from '../../public/Talented_boy_playing_soccer_portrait_4a119641.png';
+import talentImage3 from '../../public/Talented_girl_painting_art_portrait_9df2082c.png';
+import projectImage from '../../public/Community_workshop_outreach_event_photo_3fb17f3c.png';
 
 export default function Home() {
   // TODO: remove mock data functionality

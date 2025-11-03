@@ -4,7 +4,7 @@ import TalentCard from "@/components/TalentCard";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
-import { getTalents, Talent } from "@/lib/localStorage";
+import { getTalents, Talent,defaultData } from "@/lib/localStorage";
 
 export default function Talents() {
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
@@ -12,8 +12,8 @@ export default function Talents() {
   const [allTalents, setAllTalents] = useState<Talent[]>([]);
 
   useEffect(() => {
-    const talents = getTalents();
-    setAllTalents(talents);
+    // const talents = getTalents();
+    setAllTalents(defaultData.talents);
   }, []);
 
   const talentTypes = ["All", ...Array.from(new Set(allTalents.map(t => t.talentType)))];
