@@ -26,10 +26,11 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex items-center justify-between h-16 md:h-20 gap-4">
           <Link href="/" className="flex items-center gap-2 hover-elevate rounded-md px-2 -ml-2 py-1" data-testid="link-home">
-            <div className="w-10 h-10 bg-accent rounded-md flex items-center justify-center">
-              <span className="text-accent-foreground font-bold text-xl">T</span>
+            <div className="w-10 h-10 bg-accent rounded-md flex mr-[-5px] items-center justify-center">
+              <span className="text-white font-bold text-2xl">T</span>
             </div>
-            <span className="font-bold text-lg md:text-xl hidden sm:inline">Tova ku Status</span>
+            <span className="font-bold text-lg md:text-xl ">ova ku</span>
+            <img className="size-28 sm:size-20" src="/public/logo2.png"/>
           </Link>
 
           <div className="hidden lg:flex items-center gap-1">

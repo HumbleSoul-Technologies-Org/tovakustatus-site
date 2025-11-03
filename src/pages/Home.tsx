@@ -6,11 +6,11 @@ import TalentCard from "@/components/TalentCard";
 import ProjectCard from "@/components/ProjectCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import heroImage from '../../public/Hero_image_diverse_talented_kids_8dd4ac07.png';
-import talentImage1 from '../../public/Talented_girl_with_violin_portrait_f9f1e1a7.png';
-import talentImage2 from '../../public/Talented_boy_playing_soccer_portrait_4a119641.png';
-import talentImage3 from '../../public/Talented_girl_painting_art_portrait_9df2082c.png';
-import projectImage from '../../public/Community_workshop_outreach_event_photo_3fb17f3c.png';
+import heroImage from '/Hero_image_diverse_talented_kids_8dd4ac07.png';
+
+
+
+
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 
@@ -23,7 +23,7 @@ export default function Home() {
       age: 12,
       talentType: "Music",
       description: "Amani has been playing violin for 3 years and dreams of performing in international orchestras. Her dedication and natural talent shine through every performance.",
-      imageUrl: talentImage1,
+      imageUrl: "/Talented_girl_with_violin_portrait_f9f1e1a7.png",
     },
     {
       id: "2",
@@ -31,7 +31,7 @@ export default function Home() {
       age: 14,
       talentType: "Sports",
       description: "An exceptional football player with incredible speed and technique. David aspires to play professionally and represent his country on the world stage.",
-      imageUrl: talentImage2,
+      imageUrl: "/Talented_boy_playing_soccer_portrait_4a119641.png",
     },
     {
       id: "3",
@@ -39,7 +39,7 @@ export default function Home() {
       age: 11,
       talentType: "Art",
       description: "Sarah's vibrant paintings capture the beauty of her community. She uses art as a powerful medium to tell stories and inspire others.",
-      imageUrl: talentImage3,
+      imageUrl: "/Talented_girl_painting_art_portrait_9df2082c.png",
     },
   ];
 
@@ -50,7 +50,7 @@ export default function Home() {
       description: "A comprehensive music education program providing instruments, training, and performance opportunities to talented young musicians from underprivileged communities.",
       date: "March 15, 2024",
       participants: 45,
-      imageUrl: projectImage,
+      imageUrl: "/Community_workshop_outreach_event_photo_3fb17f3c.png",
     },
   ];
 
@@ -69,8 +69,8 @@ export default function Home() {
     <div>
       <Hero
         subtitle="Welcome to Tova ku Status"
-        title="Rise Above Your Status"
-        description="Identifying and empowering talented kids from underprivileged schools and slums across Uganda."
+        title="Looking Beyond For Greater talents"
+        description="Identifying and empowering talented & underprivileged youths in schools and ghetos across Uganda."
         primaryCTA={{ label: "Donate Now", href: "/get-involved" }}
         secondaryCTA={{ label: "Discover Talents", href: "/talents" }}
         backgroundImage={heroImage}
@@ -189,6 +189,7 @@ export default function Home() {
               arrows: true,
               pagination: false,
               autoplay: true,
+              loop:true,
               interval: 3000,
               breakpoints: {
                 768: {
@@ -202,11 +203,11 @@ export default function Home() {
           >
             {partners.map((partner) => (
               <SplideSlide key={partner.id}>
-                <div className="bg-card hover:bg-accent/10 transition-colors duration-300 p-6 rounded-lg flex items-center justify-center h-32">
+                <div className="bg-card hover:bg-accent/10  transition-colors duration-300 p-6 rounded-lg flex items-center justify-center h-32">
                   <img
                     src={partner.logo}
                     alt={partner.name}
-                    className="max-w-[150px] h-auto opacity-80 hover:opacity-100 transition-opacity duration-300"
+                    className="max-w-[150px]   h-auto opacity-80 hover:opacity-100 transition-opacity duration-300"
                   />
                 </div>
               </SplideSlide>
