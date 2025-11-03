@@ -10,6 +10,8 @@ export interface Talent {
   imageUrl: string;
   fullStory?: string;
   status: string;
+  views: number;
+
 }
 
 export interface Project {
@@ -329,8 +331,8 @@ export function deleteTalent(id: string) {
 
 // Projects
 export function getProjects(): Project[] {
-  const data = localStorage.getItem(STORAGE_KEYS.PROJECTS);
-  return data ? JSON.parse(data) : [];
+  const data = defaultData.projects
+  return data  
 }
 
 export function getProjectById(id: string): Project | undefined {

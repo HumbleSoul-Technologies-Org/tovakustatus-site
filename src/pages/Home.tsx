@@ -1,4 +1,4 @@
-import { Users, Heart, Target, TrendingUp } from "lucide-react";
+import { Users, Heart, Target, TrendingUp, LightbulbIcon } from "lucide-react";
 import { Link } from "wouter";
 import Hero from "@/components/Hero";
 import StatCard from "@/components/StatCard";
@@ -67,10 +67,10 @@ export default function Home() {
       <section className="py-16 md:py-24 bg-background">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <StatCard icon={Users} value="500+" label="Talents Discovered" />
-            <StatCard icon={Heart} value="45" label="Active Projects" />
-            <StatCard icon={Target} value="120" label="Volunteers" />
-            <StatCard icon={TrendingUp} value="15" label="Partner Organizations" />
+            <StatCard icon={LightbulbIcon} value="500+" label="Talents Discovered" />
+            <StatCard icon={Target} value="45" label="Active Projects" />
+            <StatCard icon={Users} value="120" label="Volunteers" />
+            {/* <StatCard icon={TrendingUp} value="15" label="Partner Organizations" /> */}
           </div>
         </div>
       </section>
@@ -138,7 +138,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-card">
+      <section className="py-16 md:py-24 bg-card hidden">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">Recent Projects</h2>
@@ -146,7 +146,7 @@ export default function Home() {
               Explore our latest initiatives making a difference
             </p>
           </div>
-          <div className="space-y-8">
+          <div className="space-y-8 ">
             {recentProjects.map((project) => (
               <ProjectCard key={project.id} {...project} />
             ))}
@@ -158,6 +158,26 @@ export default function Home() {
               </Button>
             </Link>
           </div>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-24 bg-card">
+        <div className="max-w-3xl mx-auto px-4 md:px-8 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">Stay Updated</h2>
+          <p className="text-lg text-muted-foreground mb-8">
+            Subscribe to our newsletter to receive updates about our talents and upcoming events
+          </p>
+          <form className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              required
+            />
+            <Button type="submit" size="lg" className="whitespace-nowrap">
+              Subscribe
+            </Button>
+          </form>
         </div>
       </section>
 

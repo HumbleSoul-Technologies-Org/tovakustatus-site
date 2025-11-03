@@ -2,7 +2,7 @@ import Hero from "@/components/Hero";
 import StatCard from "@/components/StatCard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Users, Heart, Target,CheckCircle2 } from "lucide-react";
+import { Users, Heart, Target,CheckCircle2,LightbulbIcon, BookOpen,Users2 } from "lucide-react";
 // import founderImage from '@assets/generated_images/Founder_professional_portrait_photo_15a7b392.png';
 
 export default function About() {
@@ -110,9 +110,9 @@ export default function About() {
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <StatCard icon={Users} value="500+" label="Talents Discovered" />
-            <StatCard icon={Heart} value="45" label="Active Programs" />
-            <StatCard icon={Target} value="120" label="Volunteers" />
+            <StatCard icon={LightbulbIcon} value="500+" label="Talents Discovered" />
+            <StatCard icon={Target} value="45" label="Active Programs" />
+            <StatCard icon={Users2} value="120" label="Volunteers" />
             <StatCard icon={CheckCircle2} value="98%" label="Success Rate" />
           </div>
         </div>
