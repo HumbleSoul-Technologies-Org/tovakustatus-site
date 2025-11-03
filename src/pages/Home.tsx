@@ -1,4 +1,4 @@
-import { Users, Heart, Target, TrendingUp, LightbulbIcon } from "lucide-react";
+import { Users, Heart, Target, TrendingUp, LightbulbIcon, Building2Icon, Building } from "lucide-react";
 import { Link } from "wouter";
 import Hero from "@/components/Hero";
 import StatCard from "@/components/StatCard";
@@ -11,6 +11,8 @@ import talentImage1 from '../../public/Talented_girl_with_violin_portrait_f9f1e1
 import talentImage2 from '../../public/Talented_boy_playing_soccer_portrait_4a119641.png';
 import talentImage3 from '../../public/Talented_girl_painting_art_portrait_9df2082c.png';
 import projectImage from '../../public/Community_workshop_outreach_event_photo_3fb17f3c.png';
+import { Splide, SplideSlide } from '@splidejs/react-splide';
+import '@splidejs/react-splide/css';
 
 export default function Home() {
   // TODO: remove mock data functionality
@@ -52,6 +54,17 @@ export default function Home() {
     },
   ];
 
+  const partners = [
+    { id: 1, name: 'MTN Uganda', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvjprybczXjAGqMKIQCWB17enuKvo4OvyRfg&s' },
+    { id: 2, name: 'Airtel', logo: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Airtel_logo-01.png' },
+    { id: 3, name: 'BTM TV', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBx04aDoMCi7M5pfnDPsGZNZ9GCZzQYQSLJA&s' },
+    { id: 4, name: 'Centenary Bank', logo: 'https://pbs.twimg.com/ext_tw_video_thumb/1376488116601643017/pu/img/R4fZDLnvwDgg9btt.jpg' },
+    { id: 5, name: 'Uganda Airlines', logo: 'https://airhex.com/images/airline-logos/alt/uganda-airlines.png' },
+    { id: 6, name: 'Stanbic Bank', logo: 'https://yt3.googleusercontent.com/ytc/AIdro_lf3Xdg6kJK0OpUubd-c5mBH6tgC65RWLmKLGKlVJBgKg=s900-c-k-c0x00ffffff-no-rj' },
+    { id: 7, name: 'New Vision', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOcNFubc_clAAx23JDlUyA2-aFLfLViCvkrQ&s' },
+    { id: 8, name: 'KFM', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQjNZnzECFC0PbGq2K-Eh433w3z6xeXXEUAA&s' },
+  ];
+
   return (
     <div>
       <Hero
@@ -70,7 +83,7 @@ export default function Home() {
             <StatCard icon={LightbulbIcon} value="500+" label="Talents Discovered" />
             <StatCard icon={Target} value="45" label="Active Projects" />
             <StatCard icon={Users} value="120" label="Volunteers" />
-            {/* <StatCard icon={TrendingUp} value="15" label="Partner Organizations" /> */}
+            <StatCard icon={Building2Icon} value="15" label="Partner Organizations" />
           </div>
         </div>
       </section>
@@ -158,6 +171,47 @@ export default function Home() {
               </Button>
             </Link>
           </div>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-24 bg-background">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Our Partners</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Working together to make a difference
+            </p>
+          </div>
+          <Splide
+            options={{
+              perPage: 3,
+              gap: '2rem',
+              arrows: true,
+              pagination: false,
+              autoplay: true,
+              interval: 3000,
+              breakpoints: {
+                768: {
+                  perPage: 2,
+                },
+                480: {
+                  perPage: 1,
+                },
+              },
+            }}
+          >
+            {partners.map((partner) => (
+              <SplideSlide key={partner.id}>
+                <div className="bg-card hover:bg-accent/10 transition-colors duration-300 p-6 rounded-lg flex items-center justify-center h-32">
+                  <img
+                    src={partner.logo}
+                    alt={partner.name}
+                    className="max-w-[150px] h-auto opacity-80 hover:opacity-100 transition-opacity duration-300"
+                  />
+                </div>
+              </SplideSlide>
+            ))}
+          </Splide>
         </div>
       </section>
 
