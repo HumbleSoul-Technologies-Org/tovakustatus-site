@@ -81,8 +81,8 @@ export default function Contact() {
                     <div>
                       <p className="font-semibold mb-1">Address</p>
                       <p className="text-sm text-muted-foreground">
-                        KG 123 St, Kigali<br />
-                        Rwanda
+                        KG 123 St, kampala<br />
+                        Uganda
                       </p>
                     </div>
                   </div>
