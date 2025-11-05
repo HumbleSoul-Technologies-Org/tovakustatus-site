@@ -4,9 +4,11 @@ import { getEventById, Event } from "@/lib/localStorage";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Calendar, Clock, MapPin } from "lucide-react";
+import { ArrowLeft, Bookmark, Calendar, Clock, Eye, MapPin, Share2, ThumbsUpIcon } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function EventDetail() {
+  const {toast} = useToast()
   const [, params] = useRoute("/events/:id");
   const [event, setEvent] = useState<Event | null>(null);
 
@@ -109,6 +111,59 @@ export default function EventDetail() {
                   <p className="text-muted-foreground leading-relaxed whitespace-pre-line" data-testid="event-detail-full-description">
                     {event.fullDescription}
                   </p>
+                   <span className="flex-row mt-10 flex items-center gap-4 p-3 text-xs text-muted-foreground">
+
+                      {/* Liking Btn */}
+                      <span
+                        className="flex-row cursor-pointer flex   items-center gap-2   transition-colors"
+                         
+                      >
+                        0 Views
+                        <Eye className=" hover:text-primary" size={16} />
+                      </span>
+                      <span
+                        className="flex-row cursor-pointer flex   items-center gap-2   transition-colors"
+                         
+                      >
+                        0 Likes
+                        <ThumbsUpIcon className="mb-1 hover:text-primary" size={16} />
+                      </span>
+
+                      {/* Saving Btn */}
+                      <span
+                        className="flex-row cursor-pointer flex items-center gap-2   transition-colors"
+                         
+                      >
+                         Save
+                       <Bookmark size={16} className="hover:text-primary" />
+                      </span>
+
+                      {/* Sharing Btn */}
+                      <span
+                        className="flex-row cursor-pointer flex-1 flex items-center gap-2   transition-colors"
+                        onClick={() => {
+                          try {
+                            const url = `${window.location.origin}/events/${
+                            params?.id
+                            }`;
+                            navigator.clipboard?.writeText(url);
+                            toast({ title: "link copied" });
+                          } catch (e) {
+                            toast({
+                              title: "Could not copy link",
+                              variant: "destructive",
+                            });
+                          }
+                        }}
+                      >
+                        <span>Share</span>
+                        <Share2 size={16} className="hover:text-primary" />
+                      </span>
+                      <span className="text-xs text-muted">
+                         {event.date}
+                      </span>
+                      
+                    </span>
                 </div>
               )}
             </CardContent>

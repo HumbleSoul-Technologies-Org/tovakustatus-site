@@ -7,12 +7,13 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-accent rounded-md flex items-center justify-center">
-                <span className="text-accent-foreground font-bold text-xl">T</span>
-              </div>
-              <span className="font-bold text-lg">Tova ku Status</span>
+            <Link href="/" className="flex items-center gap-2 hover-elevate rounded-md px-2 -ml-2 py-1" data-testid="link-home">
+            <div className="w-10 h-10 bg-accent rounded-md flex mr-[-5px] items-center justify-center">
+              <span className="text-white font-bold text-2xl">T</span>
             </div>
+            <span className="font-bold text-lg md:text-xl ">ova ku</span>
+            <img className="size-24" src="/public/logo2.png"/>
+          </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Identifying and empowering talented kids from underprivileged schools and slums.
             </p>

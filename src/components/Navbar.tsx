@@ -30,7 +30,7 @@ export default function Navbar() {
               <span className="text-white font-bold text-2xl">T</span>
             </div>
             <span className="font-bold text-lg md:text-xl ">ova ku</span>
-            <img className="size-28 sm:size-20" src="/public/logo2.png"/>
+            <img className="size-24" src="/public/logo2.png"/>
           </Link>
 
           <div className="hidden lg:flex items-center gap-1">

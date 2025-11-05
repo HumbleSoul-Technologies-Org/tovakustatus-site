@@ -9,7 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
-import { getTalents, addTalent, updateTalent, deleteTalent, Talent } from "@/lib/localStorage";
+import { getTalents, updateTalent, deleteTalent, Talent } from "@/lib/localStorage";
+
 
 export default function ManageTalents() {
   const { toast } = useToast();
@@ -64,7 +65,9 @@ export default function ManageTalents() {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  // Creating talent
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (editingTalent) {
@@ -76,16 +79,21 @@ export default function ManageTalents() {
         title: "Talent Updated",
         description: "Talent profile has been successfully updated.",
       });
-    } else {
-      addTalent({
-        name: formData.name,
-        age: parseInt(formData.age),
-        talentType: formData.talentType,
-        description: formData.description,
-        fullStory: formData.fullStory,
-        imageUrl: formData.imageUrl || '/assets/generated_images/Talented_girl_with_violin_portrait_f9f1e1a7.png',
-        status: formData.status
-      });
+    }
+    else {
+      
+// try {
+//   const res =  await axios.post(`${process.env.VITE_API_URL}/talents/new`,formData,token)
+// } catch (error) {
+//   console.log(error);
+//    toast({
+//         title: "Error",
+//      description: "Failed to add talent, please try again!",
+//         variant:'destructive'
+//       });
+  
+// }
+
       toast({
         title: "Talent Added",
         description: "New talent has been successfully added.",
@@ -185,7 +193,7 @@ export default function ManageTalents() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="talent-story">Full Story (Optional)</Label>
+                <Label htmlFor="talent-story">Full Story</Label>
                 <Textarea 
                   id="talent-story" 
                   placeholder="Detailed story about the talent..." 

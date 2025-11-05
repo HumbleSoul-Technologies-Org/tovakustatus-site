@@ -11,6 +11,8 @@ export interface Talent {
   fullStory?: string;
   status: string;
   views: number;
+  likes: [string],
+  shares:[string]
 
 }
 
@@ -66,7 +68,7 @@ export const defaultData = {
       talentType: "Music",
       description: "Amani has been playing violin for 3 years and dreams of performing in international orchestras.",
       fullStory: "Amani Grace discovered her love for music at age 9 when she heard a violin performance at a community event. Despite coming from a family with limited resources, her natural talent was undeniable. Through Tova ku Status, she received her first violin and has been training with professional instructors ever since. Her dedication and natural talent shine through every performance. Amani practices 2 hours daily and has already performed at several local events. Her dream is to attend a prestigious music conservatory and eventually perform in international orchestras.",
-      imageUrl: "/public/Talented_girl_with_violin_portrait_f9f1e1a7.png",
+      imageUrl: "/Talented_girl_with_violin_portrait_f9f1e1a7.png",
       status: "Active",
       views:2
     },
@@ -77,7 +79,7 @@ export const defaultData = {
       talentType: "Sports",
       description: "An exceptional football player with incredible speed and technique.",
       fullStory: "David Kwame grew up playing football with makeshift balls in the streets of his neighborhood. His exceptional speed and natural ball control caught the attention of our talent scouts during a community outreach program. Since joining Tova ku Status, David has received professional coaching and proper equipment. He has become a team captain and leads by example both on and off the field. David aspires to play professionally and represent his country on the world stage, and with his determination and skill, that dream is within reach.",
-      imageUrl: "/public/Talented_boy_playing_soccer_portrait_4a119641.png",
+      imageUrl: "/Talented_boy_playing_soccer_portrait_4a119641.png",
       status: "Active",
       views:19
     },
@@ -88,7 +90,7 @@ export const defaultData = {
       talentType: "Art",
       description: "Sarah's vibrant paintings capture the beauty of her community.",
       fullStory: "Sarah Nkunda has always seen the world differently. Even with limited art supplies, she would create stunning drawings using whatever materials she could find. Her vibrant paintings capture the beauty, struggles, and hopes of her community in ways that words cannot express. Through Tova ku Status, Sarah now has access to quality art supplies and mentorship from professional artists. She uses art as a powerful medium to tell stories and inspire others. Her work has been exhibited in local galleries, and she dreams of becoming a renowned artist who brings African stories to the world.",
-      imageUrl: "/public/Talented_girl_painting_art_portrait_9df2082c.png",
+      imageUrl: "/Talented_girl_painting_art_portrait_9df2082c.png",
       status: "Active",
       views:79
     },
@@ -99,7 +101,7 @@ export const defaultData = {
       talentType: "Music",
       description: "A gifted pianist with an incredible ear for music.",
       fullStory: "Emmanuel's journey with music began when he taught himself to play simple melodies on a borrowed keyboard. His incredible ear for music and natural understanding of musical theory amazed everyone who heard him play. Emmanuel composes his own pieces, blending traditional Rwandan melodies with classical piano compositions. Since joining our program, he has studied under accomplished pianists and has performed at several high-profile events. Emmanuel hopes to study music at a prestigious conservatory and become a composer who bridges cultures through music.",
-      imageUrl: "/public/Talent_showcase_performance_event_photo_037e6d5f.png",
+      imageUrl: "/Talent_showcase_performance_event_photo_037e6d5f.png",
       status: "Active",
       views:43
     }
@@ -112,7 +114,7 @@ export const defaultData = {
       fullDescription: "The Music Workshop Series is our flagship program for nurturing musical talent. This comprehensive initiative provides talented young musicians from underprivileged communities with access to professional-grade instruments, weekly training sessions with accomplished instructors, and regular performance opportunities. Students learn music theory, technique, and ensemble playing. The program includes individual lessons, group sessions, and monthly concerts where students showcase their progress. Over 45 students have participated this year, with many going on to perform at prestigious venues across Rwanda.",
       date: "March 15, 2024",
       participants: 45,
-      imageUrl: "/public/Talented_girl_with_violin_portrait_f9f1e1a7.png",
+      imageUrl: "/Talented_girl_with_violin_portrait_f9f1e1a7.png",
       status: "Active"
     },
     {
@@ -122,7 +124,7 @@ export const defaultData = {
       fullDescription: "The Sports Excellence Camp is an intensive program designed to develop athletic talent while building character and leadership skills. Young athletes receive professional coaching in football, basketball, and athletics. The camp includes daily training sessions, nutrition education, mental conditioning, and exposure to professional sports standards. Participants learn the importance of discipline, teamwork, and perseverance. This year's camp brought together 60 talented young athletes who trained alongside professional coaches and former national team players.",
       date: "April 2, 2024",
       participants: 60,
-      imageUrl: "/public/Sports_day_community_event_photo_a4d50b69.png",
+      imageUrl: "/Sports_day_community_event_photo_a4d50b69.png",
       status: "Active"
     },
     {
@@ -132,7 +134,7 @@ export const defaultData = {
       fullDescription: "The Annual Talent Showcase is our most anticipated event of the year, celebrating the incredible achievements of the talented young people we support. This spectacular event features live musical performances, art exhibitions, sports demonstrations, and dance showcases. It's an opportunity for our talents to demonstrate their skills to a wider audience including potential sponsors, partners, and supporters. The event is open to the public, with all proceeds supporting our future programs. Last year's showcase attracted over 500 attendees and featured performances from 120 talented youth.",
       date: "May 10, 2024",
       participants: 120,
-      imageUrl: "/public/Hero_image_diverse_talented_kids_8dd4ac07.png",
+      imageUrl: "/Hero_image_diverse_talented_kids_8dd4ac07.png",
       status: "Active"
     }
   ],
@@ -146,7 +148,7 @@ export const defaultData = {
       time: "2:00 PM - 6:00 PM",
       location: "Kigali Convention Centre",
       status: "upcoming" as const,
-      imageUrl: "/public/Hero_image_diverse_talented_kids_8dd4ac07.png"
+      imageUrl: "/Hero_image_diverse_talented_kids_8dd4ac07.png"
     },
     {
       id: "2",
@@ -157,7 +159,7 @@ export const defaultData = {
       time: "9:00 AM - 4:00 PM",
       location: "Nyarugenge District",
       status: "ongoing" as const,
-      imageUrl: "/public/Community_workshop_outreach_event_photo_3fb17f3c.png"
+      imageUrl: "/Community_workshop_outreach_event_photo_3fb17f3c.png"
     },
     {
       id: "3",
@@ -168,7 +170,7 @@ export const defaultData = {
       time: "3:00 PM - 6:00 PM",
       location: "Tova ku Status Music Centre",
       status: "upcoming" as const,
-      imageUrl: "/public/Talent_showcase_performance_event_photo_037e6d5f.png"
+      imageUrl: "/Talent_showcase_performance_event_photo_037e6d5f.png"
 
     },
     {
@@ -180,7 +182,7 @@ export const defaultData = {
       time: "8:00 AM - 5:00 PM",
       location: "Amahoro Stadium",
       status: "past" as const,
-      imageUrl: "/public/Sports_day_community_event_photo_a4d50b69.png"
+      imageUrl: "/Sports_day_community_event_photo_a4d50b69.png"
     }
   ],
   blogPosts: [
@@ -198,7 +200,7 @@ This success wouldn't be possible without our incredible instructors, volunteers
       author: "Maria Johnson",
       date: "March 10, 2024",
       category: "Success Stories",
-      imageUrl: "/public/Talented_girl_with_violin_portrait_f9f1e1a7.png",
+      imageUrl: "/Talented_girl_with_violin_portrait_f9f1e1a7.png",
       readTime: "5 min read",
       views: 16
     },
@@ -219,7 +221,7 @@ We're committed to continuing this important work, providing more young people w
       date: "March 5, 2024",
       category: "Impact",
       readTime: "4 min read",
-      imageUrl: "/public/Talented_girl_painting_art_portrait_9df2082c.png",
+      imageUrl: "/Talented_girl_painting_art_portrait_9df2082c.png",
       views: 34
        
     },
@@ -239,7 +241,7 @@ Together, these coaches are transforming young lives, proving that with proper g
       author: "Sarah Williams",
       date: "February 28, 2024",
       category: "Team",
-      imageUrl: "/public/Talented_boy_playing_soccer_portrait_4a119641.png",
+      imageUrl: "/Talented_boy_playing_soccer_portrait_4a119641.png",
       readTime: "3 min read",
       views: 2
 

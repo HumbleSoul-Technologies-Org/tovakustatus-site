@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Lock } from "lucide-react";
+import { Loader, Lock } from "lucide-react";
+// import axios from axios
 
 export default function Login() {
   const [, setLocation] = useLocation();
@@ -15,9 +16,30 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit =async  (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+// try {
+//   const res = await axios.post(`${process.env.VITE_API_URL}/login/`, { username, password })
+//   if (res.status === 200 && token) {
+    //     localStorage.setItem('token', res.status.token)
+    // toast({
+    //       title: "Login Successful",
+    //       description: "Welcome to the dashboard!",
+    //     });
+//     setLocation("/dashboard");
+//   }
+// } catch (error:any) {
+//   console.log(error);
+//    toast({
+//           title: "Login Failed",
+//           description: `${error.data.response.message}`,
+//           variant: "destructive",
+//         });
+  
+// }finally {
+//     setIsLoading(false)
+//   }
 
     setTimeout(() => {
       const success = login(username, password);
@@ -36,8 +58,8 @@ export default function Login() {
         });
       }
       setIsLoading(false);
-    }, 500);
-  };
+    }, 3000);
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
@@ -85,7 +107,9 @@ export default function Login() {
               disabled={isLoading}
               data-testid="button-login"
             >
-              {isLoading ? "Logging in..." : "Login"}
+              {isLoading ? (<span className="flex gap-2">
+                Processing...<Loader className="animate-spin size-9"/>
+              </span>) : "Login"}
             </Button>
           </form>
           

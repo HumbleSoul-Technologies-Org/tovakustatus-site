@@ -125,14 +125,14 @@ export default function BlogDetail() {
                         className="flex-row cursor-pointer flex-1 flex items-center gap-2   transition-colors"
                         onClick={() => {
                           try {
-                            const url = `${window.location.origin}/sermons/${
+                            const url = `${window.location.origin}/blog/${
                             params?.id
                             }`;
                             navigator.clipboard?.writeText(url);
-                            toast({ title: "Sermon link copied" });
+                            toast({ title: "link copied" });
                           } catch (e) {
                             toast({
-                              title: "Could not copy sermon link",
+                              title: "Could not copy link",
                               variant: "destructive",
                             });
                           }
