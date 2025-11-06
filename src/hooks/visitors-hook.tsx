@@ -65,9 +65,6 @@ export const useVisitorHook = (): VisitorAuth => {
           setVisitorId(visitorUuid);
           setVisitor(data.visitor);
 
-          console.log(
-            isNewVisitor ? "🆕 New visitor created" : "✅ Visitor loaded"
-          );
           return data.visitor;
         }
 

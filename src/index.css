@@ -244,6 +244,41 @@
   }
 }
 
+/* Toast Styles */
+[data-sonner-toaster][data-theme="light"] {
+  --success: hsl(142.1 76.2% 36.3%);
+  --success-foreground: hsl(0 0% 100%);
+  --success-border: hsl(142.1 76.2% 30.3%);
+}
+
+[data-sonner-toaster][data-theme="dark"] {
+  --success: hsl(142.1 70.6% 45.3%);
+  --success-foreground: hsl(144.9 80.4% 10%);
+  --success-border: hsl(142.1 76.2% 40.3%);
+}
+
+.toast-default {
+  background: white !important;
+  color: hsl(240 10% 4%) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.toast-success {
+  background: white !important;
+  color: hsl(240 10% 4%) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.toast-destructive {
+  background: hsl(var(--destructive)) !important;
+  color: white !important;
+  border: 1px solid hsl(var(--destructive)) !important;
+}
+
+.toast-destructive * {
+  color: white !important;
+}
+
 /**
  * Using the elevate system.
  * Automatic contrast adjustment.

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Switch, Route, Redirect, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { initializeStorage, isAuthenticated } from "@/lib/localStorage";
 import Layout from "@/components/Layout";
@@ -32,7 +32,6 @@ import ManageNotifications from "@/pages/dashboard/ManageNotifications";
 import Analysis from "@/pages/dashboard/Analysis";
 import Settings from "@/pages/dashboard/Settings";
 import NotFound from "@/pages/not-found";
-import { AuthProvider } from "./components/auth-provider";
 import { VisitorProvider } from "./hooks/visitorContext";
 
 function Router() {
