@@ -124,9 +124,6 @@ export default function Home() {
         { email, uuid }
       );
 
-      console.log("====================================");
-      console.log(response);
-      console.log("====================================");
       if (response.status === 201) {
         toast({
           title: "Subscription Successful",
