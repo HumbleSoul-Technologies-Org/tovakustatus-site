@@ -29,6 +29,7 @@ import ManageBlog from "@/pages/dashboard/ManageBlog";
 import ManageMedia from "@/pages/dashboard/ManageMedia";
 import ManageNewsletter from "@/pages/dashboard/ManageNewsletter";
 import ManageNotifications from "@/pages/dashboard/ManageNotifications";
+import ManageMessages from "@/pages/dashboard/ManageMessages";
 import Analysis from "@/pages/dashboard/Analysis";
 import Settings from "@/pages/dashboard/Settings";
 import NotFound from "@/pages/not-found";
@@ -112,6 +113,7 @@ function DashboardRouter() {
       <Route path="/dashboard/blog" component={ManageBlog} />
       <Route path="/dashboard/media" component={ManageMedia} />
       <Route path="/dashboard/newsletter" component={ManageNewsletter} />
+      <Route path="/dashboard/messages" component={ManageMessages} />
       <Route path="/dashboard/notifications" component={ManageNotifications} />
       <Route path="/dashboard/analysis" component={Analysis} />
       <Route path="/dashboard/settings" component={Settings} />

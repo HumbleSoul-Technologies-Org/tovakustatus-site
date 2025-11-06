@@ -1,6 +1,8 @@
 // Local storage data management for Tova ku Status
 // This provides a simple client-side database using localStorage
 
+import { useEffect } from "react";
+
 export interface Talent {
   id: string;
   name: string;
@@ -8,12 +10,12 @@ export interface Talent {
   talentType: string;
   description: string;
   imageUrl: string;
+  videoUrl?: string;
   fullStory?: string;
   status: string;
   views: number;
   likes: [string],
   shares:[string]
-
 }
 
 export interface Project {
@@ -49,6 +51,7 @@ export interface BlogPost {
   imageUrl?: string;
   readTime?: string;
   content?: string;
+  videoUrl?: string;
 }
 
 export interface NewsletterSubscriber {

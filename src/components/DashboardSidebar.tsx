@@ -1,16 +1,17 @@
 import { Link, useLocation } from "wouter";
-import { 
-  LayoutDashboard, 
-  Users, 
-  FolderOpen, 
-  Calendar, 
-  BookOpen, 
-  Image, 
-  Mail, 
+import {
+  LayoutDashboard,
+  Users,
+  FolderOpen,
+  Calendar,
+  BookOpen,
+  Image,
+  Mail,
   Settings,
   Home,
   BellDot,
-  LineChart
+  LineChart,
+  MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -25,6 +26,7 @@ export default function DashboardSidebar() {
     { icon: BookOpen, label: "Manage Blog", path: "/dashboard/blog" },
     { icon: Image, label: "Media Uploads", path: "/dashboard/media" },
     { icon: Mail, label: "Newsletter", path: "/dashboard/newsletter" },
+    { icon: MessageCircle, label: "Messages", path: "/dashboard/messages" },
     { icon: BellDot, label: "Notifications", path: "/dashboard/notifications" },
     { icon: LineChart, label: "Analytics", path: "/dashboard/analysis" },
     { icon: Settings, label: "Settings", path: "/dashboard/settings" },
@@ -38,7 +40,9 @@ export default function DashboardSidebar() {
         <Link href="/">
           <div className="flex items-center gap-2 hover-elevate rounded-md px-2 -ml-2 py-1">
             <div className="w-10 h-10 bg-accent rounded-md flex items-center justify-center">
-              <span className="text-accent-foreground font-bold text-xl">T</span>
+              <span className="text-accent-foreground font-bold text-xl">
+                T
+              </span>
             </div>
             <span className="font-bold text-lg">Dashboard</span>
           </div>
@@ -52,8 +56,14 @@ export default function DashboardSidebar() {
             <Link key={item.path} href={item.path}>
               <Button
                 variant="ghost"
-                className={`w-full justify-start gap-3 ${isActive(item.path) ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}
-                data-testid={`sidebar-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+                className={`w-full justify-start gap-3 ${
+                  isActive(item.path)
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                    : ""
+                }`}
+                data-testid={`sidebar-${item.label
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")}`}
               >
                 <Icon className="h-5 w-5" />
                 {item.label}
@@ -65,7 +75,11 @@ export default function DashboardSidebar() {
 
       <div className="p-4 border-t border-sidebar-border">
         <Link href="/">
-          <Button variant="outline" className="w-full justify-start gap-3" data-testid="sidebar-back-to-site">
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-3"
+            data-testid="sidebar-back-to-site"
+          >
             <Home className="h-5 w-5" />
             Back to Site
           </Button>

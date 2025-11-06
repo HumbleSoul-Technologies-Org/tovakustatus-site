@@ -20,54 +20,66 @@ import {
 export default function Analysis() {
   // Mock statistics
   const stats = [
-    { id: 's1', icon: Users, value: '1,234', label: 'Total Users' },
-    { id: 's2', icon: FolderOpen, value: '48', label: 'Active Projects' },
-    { id: 's3', icon: Calendar, value: '15', label: 'Upcoming Events' },
-    { id: 's4', icon: BookOpen, value: '42', label: 'Blog Posts' },
+    { id: "s1", icon: Users, value: "1,234", label: "Total Users" },
+    { id: "s2", icon: FolderOpen, value: "48", label: "Active Projects" },
+    { id: "s3", icon: Calendar, value: "15", label: "Upcoming Events" },
+    { id: "s4", icon: BookOpen, value: "42", label: "Blog Posts" },
   ];
 
   const visitsData = [
-    { month: 'Jan', visits: 4000, engagement: 2400 },
-    { month: 'Feb', visits: 3000, engagement: 1398 },
-    { month: 'Mar', visits: 2000, engagement: 9800 },
-    { month: 'Apr', visits: 2780, engagement: 3908 },
-    { month: 'May', visits: 1890, engagement: 4800 },
-    { month: 'Jun', visits: 2390, engagement: 3800 },
-    { month: 'Jul', visits: 3490, engagement: 4300 },
+    { month: "Jan", visits: 4000, engagement: 2400 },
+    { month: "Feb", visits: 3000, engagement: 1398 },
+    { month: "Mar", visits: 2000, engagement: 9800 },
+    { month: "Apr", visits: 2780, engagement: 3908 },
+    { month: "May", visits: 1890, engagement: 4800 },
+    { month: "Jun", visits: 2390, engagement: 3800 },
+    { month: "Jul", visits: 3490, engagement: 4300 },
   ];
 
-  const projectStatusData = [
-    { name: 'Active', value: 18, color: '#0088FE' },
-    { name: 'Planned', value: 7, color: '#00C49F' },
-    { name: 'Completed', value: 23, color: '#FFBB28' },
+  // New mock data
+  const monthlyPostsData = [
+    { month: "Jan", talents: 15, events: 8, blogs: 12 },
+    { month: "Feb", talents: 20, events: 12, blogs: 15 },
+    { month: "Mar", talents: 18, events: 10, blogs: 18 },
+    { month: "Apr", talents: 25, events: 15, blogs: 20 },
+    { month: "May", talents: 22, events: 18, blogs: 16 },
+    { month: "Jun", talents: 30, events: 20, blogs: 22 },
   ];
 
-  const eventsBreakdown = [
-    { type: 'Workshops', count: 20 },
-    { type: 'Seminars', count: 15 },
-    { type: 'Conferences', count: 10 },
-    { type: 'Meetups', count: 25 },
-    { type: 'Other', count: 8 },
-  ];
+  const topPerformers = {
+    blogs: [
+      { title: "Youth Music Workshop", views: 5230, likes: 423, shares: 125 },
+      { title: "Art Exhibition Review", views: 4120, likes: 389, shares: 98 },
+      { title: "Dance Workshop Recap", views: 3890, likes: 345, shares: 87 },
+    ],
+    events: [
+      { title: "Summer Music Festival", views: 8450, likes: 756, shares: 234 },
+      { title: "Art Workshop Series", views: 6230, likes: 534, shares: 178 },
+      { title: "Theater Performance", views: 5890, likes: 467, shares: 156 },
+    ],
+    talents: [
+      { title: "John Doe - Musician", views: 7230, likes: 645, shares: 198 },
+      { title: "Jane Smith - Artist", views: 6120, likes: 534, shares: 167 },
+      { title: "Mike Johnson - Actor", views: 5670, likes: 478, shares: 145 },
+    ],
+  };
 
-  const trends = [
-    { id: 't1', label: 'User Visits', value: 12345 },
-    { id: 't2', label: 'Project Engagement', value: 842 },
-    { id: 't3', label: 'Event RSVPs', value: 234 },
-    { id: 't4', label: 'Blog Reads', value: 5023 },
-  ];
-
-  const recentActivity = [
-    { id: 'a1', title: 'New talent added', meta: 'Amani Grace • 2 hours ago' },
-    { id: 'a2', title: 'Project updated', meta: 'Music Workshop • 5 hours ago' },
-    { id: 'a3', title: 'Event created', meta: 'Annual Showcase • 1 day ago' },
+  const donationsData = [
+    { month: "Jan", amount: 2500 },
+    { month: "Feb", amount: 3200 },
+    { month: "Mar", amount: 4100 },
+    { month: "Apr", amount: 3800 },
+    { month: "May", amount: 5200 },
+    { month: "Jun", amount: 4800 },
   ];
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Analytics</h1>
-        <p className="text-muted-foreground">Overview of platform metrics and trends (mock data).</p>
+        <p className="text-muted-foreground">
+          Overview of platform metrics and trends (mock data).
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -87,13 +99,41 @@ export default function Analysis() {
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={visitsData}>
                     <defs>
-                      <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#0088FE" stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor="#0088FE" stopOpacity={0}/>
+                      <linearGradient
+                        id="colorVisits"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor="#0088FE"
+                          stopOpacity={0.8}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="#0088FE"
+                          stopOpacity={0}
+                        />
                       </linearGradient>
-                      <linearGradient id="colorEngagement" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#00C49F" stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor="#00C49F" stopOpacity={0}/>
+                      <linearGradient
+                        id="colorEngagement"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor="#00C49F"
+                          stopOpacity={0.8}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="#00C49F"
+                          stopOpacity={0}
+                        />
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="month" />
@@ -118,31 +158,6 @@ export default function Analysis() {
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                {trends.map((t) => (
-                  <div key={t.id} className="p-4 bg-muted rounded-md">
-                    <div className="text-sm text-muted-foreground">{t.label}</div>
-                    <div className="font-semibold text-xl">{t.value.toLocaleString()}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {recentActivity.map((r) => (
-                <div key={r.id} className="p-3 bg-muted rounded-md">
-                  <div className="font-semibold">{r.title}</div>
-                  <div className="text-sm text-muted-foreground">{r.meta}</div>
-                </div>
-              ))}
             </div>
           </CardContent>
         </Card>
@@ -151,22 +166,20 @@ export default function Analysis() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Events Breakdown</CardTitle>
+            <CardTitle>Monthly Content Posted</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={eventsBreakdown}>
+                <BarChart data={monthlyPostsData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="type" />
+                  <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="count" fill="#8884d8">
-                    {eventsBreakdown.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={`hsl(${index * 45}, 70%, 60%)`} />
-                    ))}
-                  </Bar>
+                  <Bar dataKey="talents" fill="#8884d8" />
+                  <Bar dataKey="events" fill="#82ca9d" />
+                  <Bar dataKey="blogs" fill="#ffc658" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -175,33 +188,56 @@ export default function Analysis() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Projects Breakdown</CardTitle>
+            <CardTitle>Monthly Donations</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={projectStatusData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {projectStatusData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
+                <AreaChart data={donationsData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
                   <Tooltip />
-                  <Legend />
-                </PieChart>
+                  <Area
+                    type="monotone"
+                    dataKey="amount"
+                    fill="#8884d8"
+                    stroke="#8884d8"
+                  />
+                </AreaChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {["blogs", "events", "talents"].map((category) => (
+          <Card key={category}>
+            <CardHeader>
+              <CardTitle>
+                Top {category.charAt(0).toUpperCase() + category.slice(1)}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {topPerformers[category].map((item, index) => (
+                  <div key={index} className="p-4 bg-muted rounded-lg">
+                    <h4 className="font-semibold mb-2">{item.title}</h4>
+                    <div className="grid grid-cols-3 gap-2 text-sm">
+                      <div>
+                        <Eye className="h-4 w-4 inline mr-1" />
+                        {item.views}
+                      </div>
+                      <div>👍 {item.likes}</div>
+                      <div>🔄 {item.shares}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );
