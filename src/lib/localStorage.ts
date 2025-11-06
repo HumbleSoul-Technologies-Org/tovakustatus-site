@@ -39,6 +39,7 @@ export interface Event {
   status: "upcoming" | "ongoing" | "past";
   imageUrl?: string;
   fullDescription?: string;
+  videoUrl?: string;
 }
 
 export interface BlogPost {

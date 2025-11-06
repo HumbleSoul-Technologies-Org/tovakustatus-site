@@ -32,17 +32,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <div>
             <h2 className="font-semibold text-lg">Tova ku Status Dashboard</h2>
           </div>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" data-testid="button-notifications">
+          <div className="flex items-center gap-14 justify-between">
+            {/* <Button
+              variant="ghost"
+              size="icon"
+              data-testid="button-notifications"
+            >
               <Bell className="h-5 w-5" />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            </Button> */}
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={handleLogout}
               data-testid="button-logout"
+              className="w-20"
             >
               <LogOut className="h-5 w-5" />
+              Logout
             </Button>
             <Avatar className="h-9 w-9">
               <AvatarFallback>AD</AvatarFallback>
