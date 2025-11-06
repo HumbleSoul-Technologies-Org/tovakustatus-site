@@ -13,17 +13,27 @@ interface BlogCardProps {
   category: string;
   imageUrl?: string;
   readTime?: string;
-  views?:number
+  views?: number;
 }
 
-export default function BlogCard({ id, title, excerpt, author, date, category, imageUrl, readTime,views }: BlogCardProps) {
+export default function BlogCard({
+  id,
+  title,
+  excerpt,
+  author,
+  date,
+  category,
+  imageUrl,
+  readTime,
+  views,
+}: BlogCardProps) {
   return (
     <Card className="overflow-hidden hover-elevate">
       {imageUrl && (
         <div className=" overflow-hidden">
-          <img 
-            src={imageUrl} 
-            alt={title} 
+          <img
+            src={imageUrl}
+            alt={title}
             className="w-full h-full object-cover"
             data-testid={`blog-image-${id}`}
           />
@@ -31,29 +41,38 @@ export default function BlogCard({ id, title, excerpt, author, date, category, i
       )}
       <CardContent className="p-6">
         <div className="flex items-center gap-2 mb-3">
-          <Badge variant="secondary" data-testid={`blog-category-${id}`}>{category}</Badge>
-          {readTime && <span className="text-xs flex-1 text-muted-foreground">{readTime}</span>}
-          {views && <span className="text-xs text-muted-foreground">
-            
-             <span
-                        className="flex-row cursor-pointer flex items-center gap-1 transition-colors"
-                         
-                      >
-                       
-              <Eye className=" hover:text-primary" size={16} />
-               {views}
-                      </span>
-          </span>}
+          <Badge variant="secondary" data-testid={`blog-category-${id}`}>
+            {category}
+          </Badge>
+          {readTime && (
+            <span className="text-xs flex-1 text-muted-foreground">
+              {readTime}
+            </span>
+          )}
+          {views && (
+            <span className="text-xs text-muted-foreground">
+              <span className="flex-row cursor-pointer flex items-center gap-1 transition-colors">
+                <Eye className=" hover:text-primary" size={16} />
+                {views}
+              </span>
+            </span>
+          )}
         </div>
-        
-        <h3 className="text-xl font-bold text-foreground mb-2 line-clamp-2" data-testid={`blog-title-${id}`}>
+
+        <h3
+          className="text-xl font-bold text-foreground mb-2 line-clamp-2"
+          data-testid={`blog-title-${id}`}
+        >
           {title}
         </h3>
-        
-        <p className="text-sm text-muted-foreground mb-4 line-clamp-3 leading-relaxed" data-testid={`blog-excerpt-${id}`}>
+
+        <p
+          className="text-sm text-muted-foreground mb-4 line-clamp-3 leading-relaxed"
+          data-testid={`blog-excerpt-${id}`}
+        >
           {excerpt}
         </p>
-        
+
         <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
           <div className="flex items-center gap-1">
             <User className="h-3 w-3" />
@@ -64,9 +83,13 @@ export default function BlogCard({ id, title, excerpt, author, date, category, i
             <span data-testid={`blog-date-${id}`}>{date}</span>
           </div>
         </div>
-        
+
         <Link href={`/blog/${id}`}>
-          <Button variant="outline" className="w-full" data-testid={`button-read-more-${id}`}>
+          <Button
+            variant="outline"
+            className="w-full"
+            data-testid={`button-read-more-${id}`}
+          >
             Read More
           </Button>
         </Link>

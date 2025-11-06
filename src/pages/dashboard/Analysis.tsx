@@ -221,7 +221,7 @@ export default function Analysis() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {topPerformers[category].map((item, index) => (
+                {topPerformers[category].map((item: any, index: number) => (
                   <div key={index} className="p-4 bg-muted rounded-lg">
                     <h4 className="font-semibold mb-2">{item.title}</h4>
                     <div className="grid grid-cols-3 gap-2 text-sm">
