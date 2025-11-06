@@ -25,12 +25,19 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex items-center justify-between h-16 md:h-20 gap-4">
-          <Link href="/" className="flex items-center gap-2 hover-elevate rounded-md px-2 -ml-2 py-1" data-testid="link-home">
+          <Link
+            href="/"
+            className="flex items-center gap-2 hover-elevate rounded-md px-2 -ml-2 py-1"
+            data-testid="link-home"
+          >
             <div className="w-10 h-10 bg-accent rounded-md flex mr-[-5px] items-center justify-center">
               <span className="text-white font-bold text-2xl">T</span>
             </div>
             <span className="font-bold text-lg md:text-xl ">ova ku</span>
-            <img className="size-24" src="/public/logo2.png"/>
+            <img
+              className="size-24"
+              src="https://res.cloudinary.com/ghost150/image/upload/v1762428659/logo2_v9vcrt.png"
+            />
           </Link>
 
           <div className="hidden lg:flex items-center gap-1">
@@ -38,7 +45,11 @@ export default function Navbar() {
               <Link key={item.path} href={item.path}>
                 <Button
                   variant="ghost"
-                  className={isActive(item.path) ? "bg-accent/10 text-accent-foreground" : ""}
+                  className={
+                    isActive(item.path)
+                      ? "bg-accent/10 text-accent-foreground"
+                      : ""
+                  }
                   data-testid={`link-${item.label.toLowerCase()}`}
                 >
                   {item.label}
@@ -69,7 +80,11 @@ export default function Navbar() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             data-testid="button-mobile-menu"
           >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {mobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </Button>
         </div>
       </div>
@@ -81,7 +96,9 @@ export default function Navbar() {
               <Link key={item.path} href={item.path}>
                 <Button
                   variant="ghost"
-                  className={`w-full justify-start ${isActive(item.path) ? "bg-accent/10" : ""}`}
+                  className={`w-full justify-start ${
+                    isActive(item.path) ? "bg-accent/10" : ""
+                  }`}
                   onClick={() => setMobileMenuOpen(false)}
                   data-testid={`mobile-link-${item.label.toLowerCase()}`}
                 >
@@ -91,13 +108,23 @@ export default function Navbar() {
             ))}
             <div className="pt-2 border-t border-border space-y-2">
               <Link href="/get-involved">
-                <Button variant="default" className="w-full" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-button-get-involved">
+                <Button
+                  variant="default"
+                  className="w-full"
+                  onClick={() => setMobileMenuOpen(false)}
+                  data-testid="mobile-button-get-involved"
+                >
                   Get Involved
                 </Button>
               </Link>
               {isAuthenticated() && (
                 <Link href="/dashboard">
-                  <Button variant="outline" className="w-full" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-button-dashboard">
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setMobileMenuOpen(false)}
+                    data-testid="mobile-button-dashboard"
+                  >
                     Dashboard
                   </Button>
                 </Link>
