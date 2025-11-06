@@ -1,65 +1,61 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { login } from "@/lib/localStorage";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Loader, Lock } from "lucide-react";
-// import axios from axios
+import axios from "axios";
+import { set } from "date-fns";
+import { navigate } from "wouter/use-browser-location";
 
 export default function Login() {
-  const [, setLocation] = useLocation();
+  const [setLocation] = useLocation();
   const { toast } = useToast();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit =async  (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-// try {
-//   const res = await axios.post(`${process.env.VITE_API_URL}/login/`, { username, password })
-//   if (res.status === 200 && token) {
-    //     localStorage.setItem('token', res.status.token)
-    // toast({
-    //       title: "Login Successful",
-    //       description: "Welcome to the dashboard!",
-    //     });
-//     setLocation("/dashboard");
-//   }
-// } catch (error:any) {
-//   console.log(error);
-//    toast({
-//           title: "Login Failed",
-//           description: `${error.data.response.message}`,
-//           variant: "destructive",
-//         });
-  
-// }finally {
-//     setIsLoading(false)
-//   }
 
-    setTimeout(() => {
-      const success = login(username, password);
-      
-      if (success) {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/admin/login/`,
+        {
+          username,
+          password,
+        }
+      );
+
+      if (res.status === 200 && res.data.token) {
+        login(res.data.token);
         toast({
           title: "Login Successful",
           description: "Welcome to the dashboard!",
         });
-        setLocation("/dashboard");
-      } else {
-        toast({
-          title: "Login Failed",
-          description: "Invalid username or password. Try: admin / admin123",
-          variant: "destructive",
-        });
+        navigate("/dashboard");
+        console.log("Response Data:", res.data);
       }
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: "Login Failed",
+        description: error.response?.data?.message,
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 3000);
-  }
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
@@ -101,22 +97,29 @@ export default function Login() {
                 data-testid="input-password"
               />
             </div>
-            <Button 
-              type="submit" 
-              className="w-full" 
+            <Button
+              type="submit"
+              className="w-full"
               disabled={isLoading}
               data-testid="button-login"
             >
-              {isLoading ? (<span className="flex gap-2">
-                Processing...<Loader className="animate-spin size-9"/>
-              </span>) : "Login"}
+              {isLoading ? (
+                <span className="flex gap-2">
+                  Processing...
+                  <Loader className="animate-spin size-9" />
+                </span>
+              ) : (
+                "Login"
+              )}
             </Button>
           </form>
-          
+
           <div className="mt-6 p-4 bg-muted rounded-md">
             <p className="text-xs text-muted-foreground text-center">
-              <strong>Demo Credentials:</strong><br />
-              Username: admin<br />
+              <strong>Demo Credentials:</strong>
+              <br />
+              Username: admin
+              <br />
               Password: admin123
             </p>
           </div>

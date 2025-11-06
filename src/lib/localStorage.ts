@@ -473,15 +473,15 @@ export function deleteNewsletterSubscriber(id: string) {
 
 // Authentication
 export interface AuthUser {
-  username: string;
+  token: string;
   isAuthenticated: boolean;
 }
 
-export function login(username: string, password: string): boolean {
+export function login(token:string): boolean {
   // Simple client-side auth - in production this would be server-side
   // Default credentials: admin / admin123
-  if (username === 'admin' && password === 'admin123') {
-    const user: AuthUser = { username, isAuthenticated: true };
+  if (token) {
+    const user: AuthUser = { token, isAuthenticated: true };
     localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(user));
     return true;
   }

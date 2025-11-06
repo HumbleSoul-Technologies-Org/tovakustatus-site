@@ -32,11 +32,13 @@ import ManageNotifications from "@/pages/dashboard/ManageNotifications";
 import Analysis from "@/pages/dashboard/Analysis";
 import Settings from "@/pages/dashboard/Settings";
 import NotFound from "@/pages/not-found";
+import { AuthProvider } from "./components/auth-provider";
+import { VisitorProvider } from "./hooks/visitorContext";
 
 function Router() {
   const [location] = useLocation();
-  const isDashboard = location.startsWith('/dashboard');
-  const isLoginPage = location === '/login';
+  const isDashboard = location.startsWith("/dashboard");
+  const isLoginPage = location === "/login";
 
   // For dashboard routes
   if (isDashboard) {
@@ -78,7 +80,7 @@ function Router() {
 
 function ProtectedDashboard() {
   const [, setLocation] = useLocation();
-  
+
   useEffect(() => {
     if (!isAuthenticated()) {
       setLocation("/login");
@@ -88,7 +90,7 @@ function ProtectedDashboard() {
   if (!isAuthenticated()) {
     return null;
   }
-  
+
   return (
     <DashboardLayout>
       <DashboardRouter />
@@ -98,8 +100,8 @@ function ProtectedDashboard() {
 
 function DashboardRouter() {
   const [location] = useLocation();
-  
-  if (location === '/dashboard') {
+
+  if (location === "/dashboard") {
     return <DashboardOverview />;
   }
 
@@ -111,8 +113,8 @@ function DashboardRouter() {
       <Route path="/dashboard/blog" component={ManageBlog} />
       <Route path="/dashboard/media" component={ManageMedia} />
       <Route path="/dashboard/newsletter" component={ManageNewsletter} />
-  <Route path="/dashboard/notifications" component={ManageNotifications} />
-  <Route path="/dashboard/analysis" component={Analysis} />
+      <Route path="/dashboard/notifications" component={ManageNotifications} />
+      <Route path="/dashboard/analysis" component={Analysis} />
       <Route path="/dashboard/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>
@@ -126,10 +128,12 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Router />
-        <Toaster />
-      </TooltipProvider>
+      <VisitorProvider>
+        <TooltipProvider>
+          <Router />
+          <Toaster />
+        </TooltipProvider>
+      </VisitorProvider>
     </QueryClientProvider>
   );
 }
