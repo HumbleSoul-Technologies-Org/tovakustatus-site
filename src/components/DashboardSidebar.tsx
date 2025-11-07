@@ -12,11 +12,18 @@ import {
   BellDot,
   LineChart,
   MessageCircle,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-export default function DashboardSidebar() {
+interface DashboardSidebarProps {
+  onClose?: () => void;
+}
+
+export default function DashboardSidebar({ onClose }: DashboardSidebarProps) {
   const [location] = useLocation();
+  const isMobile = useIsMobile();
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
@@ -35,28 +42,44 @@ export default function DashboardSidebar() {
   const isActive = (path: string) => location === path;
 
   return (
-    <aside className="w-64 bg-sidebar border-r border-sidebar-border h-screen sticky top-0 flex flex-col">
-      <div className="p-6 border-b border-sidebar-border">
-        <Link href="/">
-          <div className="flex items-center gap-2 hover-elevate rounded-md px-2 -ml-2 py-1">
-            <div className="w-10 h-10 bg-accent rounded-md flex items-center justify-center">
-              <span className="text-accent-foreground font-bold text-xl">
-                T
-              </span>
+    <aside className="w-[280px] lg:w-64 bg-sidebar border-r border-sidebar-border h-screen flex flex-col">
+      <div className="p-4 lg:p-6 border-b border-sidebar-border">
+        <div className="flex items-center justify-between">
+          <Link href="/" onClick={isMobile ? onClose : undefined}>
+            <div className="flex items-center gap-2 hover-elevate rounded-md px-2 -ml-2 py-1">
+              <div className="w-10 h-10 bg-accent rounded-md flex items-center justify-center">
+                <span className="text-accent-foreground font-bold text-xl">
+                  T
+                </span>
+              </div>
+              <span className="font-bold text-lg">Dashboard</span>
             </div>
-            <span className="font-bold text-lg">Dashboard</span>
-          </div>
-        </Link>
+          </Link>
+          {isMobile && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden"
+              onClick={onClose}
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          )}
+        </div>
       </div>
 
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {menuItems.map((item) => {
           const Icon = item.icon;
           return (
-            <Link key={item.path} href={item.path}>
+            <Link
+              key={item.path}
+              href={item.path}
+              onClick={isMobile ? onClose : undefined}
+            >
               <Button
                 variant="ghost"
-                className={`w-full justify-start gap-3 ${
+                className={`w-full justify-start gap-3 text-sm lg:text-base ${
                   isActive(item.path)
                     ? "bg-sidebar-accent text-sidebar-accent-foreground"
                     : ""
@@ -65,8 +88,8 @@ export default function DashboardSidebar() {
                   .toLowerCase()
                   .replace(/\s+/g, "-")}`}
               >
-                <Icon className="h-5 w-5" />
-                {item.label}
+                <Icon className="h-5 w-5 flex-shrink-0" />
+                <span className="truncate">{item.label}</span>
               </Button>
             </Link>
           );
@@ -74,14 +97,14 @@ export default function DashboardSidebar() {
       </nav>
 
       <div className="p-4 border-t border-sidebar-border">
-        <Link href="/">
+        <Link href="/" onClick={isMobile ? onClose : undefined}>
           <Button
             variant="outline"
-            className="w-full justify-start gap-3"
+            className="w-full justify-start gap-3 text-sm lg:text-base"
             data-testid="sidebar-back-to-site"
           >
-            <Home className="h-5 w-5" />
-            Back to Site
+            <Home className="h-5 w-5 flex-shrink-0" />
+            <span className="truncate">Back to Site</span>
           </Button>
         </Link>
       </div>
