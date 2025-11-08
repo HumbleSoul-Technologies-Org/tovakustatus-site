@@ -63,6 +63,7 @@ export default function ManageEvents() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [deleteLoading, setDeleteLoading] = useState<string>("");
 
   useEffect(() => {
     loadEvents();
@@ -247,11 +248,23 @@ export default function ManageEvents() {
     }
   };
 
-  const handleDelete = (id: string, title: string) => {
-    if (confirm(`Are you sure you want to delete "${title}"?`)) {
-      deleteEvent(id);
-      loadEvents();
-      toast.success(`"${title}" has been removed.`);
+  const handleDelete = async (id: string, title: string) => {
+    setDeleteLoading(id);
+    try {
+      const res = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/events/delete/${id}`,
+        { timeout: 10000 }
+      );
+      if (res.status === 200) {
+        saveEvents(res.data.events);
+        fetchEvents();
+        toast.success(`"${title}" has been removed.`);
+        deleteEvent(id);
+      }
+    } catch (error) {
+      toast.error("Failed to delete event. Please try again.");
+    } finally {
+      setDeleteLoading("");
     }
   };
 
@@ -558,7 +571,9 @@ export default function ManageEvents() {
                     data-testid={`event-row-${event.id}`}
                   >
                     <td className="py-3 px-4 font-medium">{event.title}</td>
-                    <td className="py-3 px-4">{event.date}</td>
+                    <td className="py-3 px-4">
+                      {format(new Date(event.date), "MMMM dd, yyyy")}
+                    </td>
                     <td className="py-3 px-4 text-sm text-muted-foreground">
                       {event.location}
                     </td>
@@ -580,10 +595,14 @@ export default function ManageEvents() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleDelete(event.id, event.title)}
-                          data-testid={`button-delete-${event.id}`}
+                          onClick={() => handleDelete(event._id, event.title)}
+                          data-testid={`button-delete-${event._id}`}
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          {deleteLoading === event._id ? (
+                            <Loader className="h-4 w-4 animate-spin text-destructive" />
+                          ) : (
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          )}
                         </Button>
                       </div>
                     </td>
