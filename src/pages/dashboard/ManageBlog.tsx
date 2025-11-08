@@ -13,14 +13,38 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Search,
+  Calendar as CalendarIcon,
+  Loader,
+} from "lucide-react";
 import {
   getBlogPosts,
   addBlogPost,
   updateBlogPost,
   deleteBlogPost,
   BlogPost,
+  STORAGE_KEYS,
+  saveBlogPosts,
 } from "@/lib/localStorage";
+import axios from "axios";
+import { format, set } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ManageBlog() {
   // toast is imported directly from sonner
@@ -43,13 +67,16 @@ export default function ManageBlog() {
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean | null>(false);
+  const [isUploading, setIsUploading] = useState<boolean | null>(false);
+  const [deleteLoading, setDeleteLoading] = useState<string | null>("");
   const [imageInputType, setImageInputType] = useState<"url" | "file">("url");
   const [fileInputRef, setFileInputRef] = useState<HTMLInputElement | null>(
     null
   );
 
   useEffect(() => {
-    loadBlogPosts();
+    fetchBlogPosts();
   }, []);
 
   const loadBlogPosts = () => {
@@ -63,16 +90,17 @@ export default function ManageBlog() {
       setFormData({
         title: post.title,
         excerpt: post.excerpt,
-        content: post.content || "",
+        content: post.content,
         author: post.author,
         date: post.date,
         category: post.category,
         imageUrl: post.imageUrl || "",
-        readTime: post.readTime || "",
-        videoUrl: post.videoUrl || "", // Include videoUrl
+        readTime: post.readTime,
+        videoUrl: post.videoUrl, // Include videoUrl
       });
-      setImagePreview(post.imageUrl || null);
+      setImagePreview(post.imageUrl || post?.image?.url || null);
       setImageInputType("url");
+      setSelectedImage(null);
     } else {
       setEditingPost(null);
       setImageInputType("url");
@@ -97,38 +125,219 @@ export default function ManageBlog() {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (editingPost) {
-      updateBlogPost(editingPost.id, formData);
-      toast.success("Blog post has been successfully updated.");
-    } else {
-      addBlogPost(formData);
-      toast.success("New blog post has been successfully added.");
+  const fetchBlogPosts = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/blogs/all`
+      );
+      if (response.status === 200) {
+        saveBlogPosts(response.data.blogs);
+        loadBlogPosts();
+      }
+    } catch (error) {
+      toast.error("Failed to retrieve blog posts data!");
     }
-
-    loadBlogPosts();
-    setIsDialogOpen(false);
   };
 
-  const handleDelete = (id: string, title: string) => {
-    if (confirm(`Are you sure you want to delete "${title}"?`)) {
-      deleteBlogPost(id);
-      loadBlogPosts();
-      toast.success(`"${title}" has been removed.`);
+  // upload the selected image to the server
+  const uploadFileToServer = async (file: File) => {
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/blogs/upload/image`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return data;
+    } catch (error) {
+      toast.error("Image upload failed, please try again!");
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleUpdate = async (payload: any) => {
+    setLoading(true);
+    try {
+      const id = editingPost?._id;
+
+      const res = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/blogs/update/${id}`,
+        payload,
+        { timeout: 10000 }
+      );
+
+      if (res.status === 200) {
+        console.log("====================================");
+        console.log("updates", res.data);
+        console.log("====================================");
+        // saveBlogPosts(res.data.blogs);
+        // fetchBlogPosts();
+        // toast.success("Blog post has been successfully updated.");
+
+        // Reset form
+        // setFormData({
+        //   title: "",
+        //   description: "",
+        //   date: "",
+        //   time: "",
+        //   location: "",
+        //   status: "upcoming",
+        //   imageUrl: "",
+        //   videoUrl: "",
+        // });
+        // setSelectedImage(null);
+        // setPreviewUrl(null);
+        // setIsDialogOpen(false);
+        return true;
+      } else {
+        console.warn("Unexpected response on update:", res.status, res.data);
+        return false;
+      }
+    } catch (error: any) {
+      console.error("❌ Update error:", error.response || error);
+      toast.error(error.response?.data?.err || "Failed to update post!");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreate = async (payload: any) => {
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/blogs/new`,
+        payload,
+        { timeout: 10000 }
+      );
+
+      if (res.status === 201) {
+        toast.success("New blog post has been successfully added.");
+
+        saveBlogPosts(res.data.blogs);
+        fetchBlogPosts();
+        toast.success("Blog post has been successfully created.");
+
+        setFormData({
+          title: "",
+          excerpt: "",
+          content: "",
+          author: "",
+          date: new Date().toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          }),
+          category: "",
+          imageUrl: "",
+          readTime: "",
+          videoUrl: "", // Reset videoUrl
+        });
+        setIsDialogOpen(false);
+        setSelectedImage(null);
+        setImagePreview(null);
+        return true;
+      } else {
+        console.warn("Unexpected response on create:", res.status, res.data);
+        return false;
+      }
+    } catch (error: any) {
+      console.error("❌ Create error:", error.response || error);
+      toast.error(error.response?.data?.err || "Failed to create talent!");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const storedUser = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
+      const user = storedUser ? JSON.parse(storedUser) : null;
+      const token = user?.token;
+      let imageData = null;
+
+      if (selectedImage) {
+        imageData = await uploadFileToServer(selectedImage);
+        if (!imageData) {
+          setLoading(false);
+          return;
+        }
+      }
+
+      const payload = {
+        ...formData,
+        token,
+        imageData: imageData || formData.imageUrl,
+      };
+
+      if (editingPost) {
+        await handleUpdate(payload);
+      } else {
+        await handleCreate(payload);
+      }
+
+      // Cleanup
+      if (imagePreview && selectedImage) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    } catch (error) {
+      toast.error("Failed to save blog post. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string, title: string) => {
+    const storedUser = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
+    const user = storedUser ? JSON.parse(storedUser) : null;
+    const token = user?.token;
+    setDeleteLoading(id);
+    try {
+      const res = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/blogs/delete/${id}`,
+        { headers: { Authorization: `Bearer ${token}` }, timeout: 10000 }
+      );
+      if (res.status === 200) {
+        toast.success(`"${title}" has been successfully deleted.`);
+        fetchBlogPosts();
+        deleteBlogPost(id);
+      }
+    } catch (error) {
+      toast.error("Failed to delete the blog post. Please try again.");
+    } finally {
+      setDeleteLoading("");
     }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.type === "file" && e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      const fileUrl = URL.createObjectURL(file);
       setSelectedImage(file);
-      setImagePreview(URL.createObjectURL(file));
-      setFormData({ ...formData, imageUrl: URL.createObjectURL(file) });
+      setImagePreview(fileUrl);
+      setFormData((prev) => ({ ...prev, imageUrl: "" }));
     } else if (e.target.type === "text") {
-      setImagePreview(e.target.value);
-      setFormData({ ...formData, imageUrl: e.target.value });
+      const url = e.target.value;
+      setSelectedImage(null);
+      setFormData((prev) => ({ ...prev, imageUrl: url }));
+      if (url) {
+        // Only set preview if URL is not empty
+        setImagePreview(url);
+      } else {
+        setImagePreview(null);
+      }
     }
   };
 
@@ -221,32 +430,66 @@ export default function ManageBlog() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="post-category">Category</Label>
-                  <Input
-                    id="post-category"
-                    placeholder="e.g., Success Stories, Impact, Team"
+                  <Select
                     required
                     value={formData.category}
-                    onChange={(e) =>
-                      setFormData({ ...formData, category: e.target.value })
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, category: value })
                     }
-                    data-testid="input-post-category"
-                  />
+                  >
+                    <SelectTrigger
+                      id="post-category"
+                      data-testid="select-post-category"
+                    >
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="success stories">
+                        Success Stories
+                      </SelectItem>
+                      <SelectItem value="impact">Impact</SelectItem>
+                      <SelectItem value="team stories">Team Stories</SelectItem>
+                      <SelectItem value="events">Events</SelectItem>
+                      <SelectItem value="others">Others</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="post-date">Date</Label>
-                  <Input
-                    id="post-date"
-                    placeholder="e.g., March 10, 2024"
-                    required
-                    value={formData.date}
-                    onChange={(e) =>
-                      setFormData({ ...formData, date: e.target.value })
-                    }
-                    data-testid="input-post-date"
-                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left font-normal"
+                        data-testid="input-post-date"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {formData.date ? (
+                          format(new Date(formData.date), "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={
+                          formData.date ? new Date(formData.date) : undefined
+                        }
+                        onSelect={(date) =>
+                          setFormData({
+                            ...formData,
+                            date: date ? format(date, "MMMM dd, yyyy") : "",
+                          })
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="post-read-time">Read Time (Optional)</Label>
@@ -291,17 +534,36 @@ export default function ManageBlog() {
                   </div>
 
                   <div className="flex flex-col gap-4">
-                    {imageInputType === "url" ? (
-                      <Input
-                        id="post-image-url"
-                        type="text"
-                        placeholder="Enter image URL"
-                        value={formData.imageUrl}
-                        onChange={handleImageChange}
-                        data-testid="input-post-image-url"
-                      />
-                    ) : (
-                      <div>
+                    {imageInputType === "url" && (
+                      <div className="space-y-2">
+                        <Input
+                          id="post-image-url"
+                          type="text"
+                          placeholder="Enter image URL"
+                          value={formData.imageUrl}
+                          onChange={(e) => handleImageChange(e)}
+                          data-testid="input-post-image-url"
+                        />
+                        {formData.imageUrl && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setFormData((prev) => ({
+                                ...prev,
+                                imageUrl: "",
+                              }));
+                              setImagePreview(null);
+                            }}
+                          >
+                            Clear URL
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                    {imageInputType === "file" && (
+                      <div className="space-y-2">
                         <input
                           id="post-image-upload"
                           type="file"
@@ -309,7 +571,6 @@ export default function ManageBlog() {
                           onChange={handleImageChange}
                           className="hidden"
                           ref={setFileInputRef}
-                          data-testid="input-post-image-upload"
                         />
                         <Button
                           type="button"
@@ -317,8 +578,13 @@ export default function ManageBlog() {
                           variant="outline"
                           className="w-full"
                         >
-                          Choose Image File
+                          {selectedImage ? "Change Image" : "Choose Image File"}
                         </Button>
+                        {selectedImage && (
+                          <p className="text-sm text-muted-foreground">
+                            Selected: {selectedImage.name}
+                          </p>
+                        )}
                       </div>
                     )}
                     {imagePreview && (
@@ -326,8 +592,33 @@ export default function ManageBlog() {
                         <img
                           src={imagePreview}
                           alt="Preview"
-                          className="object-cover w-full h-full"
+                          className="object-contain w-full h-full"
+                          onError={() => {
+                            setImagePreview(null);
+                            if (imageInputType === "url") {
+                              // Only clear URL if in URL mode
+                              setFormData((prev) => ({
+                                ...prev,
+                                imageUrl: "",
+                              }));
+                              toast.error("Failed to load image from URL");
+                            }
+                          }}
                         />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="absolute top-2 right-2"
+                          onClick={() => {
+                            setImagePreview(null);
+                            setSelectedImage(null);
+                            setFormData((prev) => ({ ...prev, imageUrl: "" }));
+                            if (fileInputRef) fileInputRef.value = "";
+                          }}
+                        >
+                          Remove
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -351,7 +642,22 @@ export default function ManageBlog() {
                 className="w-full"
                 data-testid="button-submit-post"
               >
-                {editingPost ? "Update" : "Add"} Post
+                {editingPost ? (
+                  isUploading || loading ? (
+                    <span className="flex justify-center items-center gap-2">
+                      Processing...
+                      <Loader className="animate-spin text-white" />
+                    </span>
+                  ) : (
+                    "Update Post"
+                  )
+                ) : isUploading || loading ? (
+                  <span className="flex justify-center items-center gap-2">
+                    Processing... <Loader className="animate-spin text-white" />
+                  </span>
+                ) : (
+                  "Add Post"
+                )}
               </Button>
             </form>
           </DialogContent>
@@ -410,17 +716,21 @@ export default function ManageBlog() {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleOpenDialog(post)}
-                          data-testid={`button-edit-${post.id}`}
+                          data-testid={`button-edit-${post._id}`}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleDelete(post.id, post.title)}
-                          data-testid={`button-delete-${post.id}`}
+                          onClick={() => handleDelete(post._id, post.title)}
+                          data-testid={`button-delete-${post._id}`}
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          {deleteLoading === post._id ? (
+                            <Loader className="animate-spin text-muted-foreground h-4 w-4" />
+                          ) : (
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          )}
                         </Button>
                       </div>
                     </td>

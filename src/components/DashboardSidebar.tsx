@@ -35,7 +35,7 @@ export default function DashboardSidebar({ onClose }: DashboardSidebarProps) {
     { icon: Mail, label: "Newsletter", path: "/dashboard/newsletter" },
     { icon: MessageCircle, label: "Messages", path: "/dashboard/messages" },
     { icon: BellDot, label: "Notifications", path: "/dashboard/notifications" },
-    { icon: LineChart, label: "Analytics", path: "/dashboard/analysis" },
+    // { icon: LineChart, label: "Analytics", path: "/dashboard/analysis" },
     { icon: Settings, label: "Settings", path: "/dashboard/settings" },
   ];
 

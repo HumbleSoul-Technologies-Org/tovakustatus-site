@@ -1,16 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Bell, Trash2, Check } from "lucide-react";
+import { Bell, Trash2, Check, Loader } from "lucide-react";
 import { toast } from "sonner";
+import axios from "axios";
+import { set } from "date-fns";
+import { format, isValid } from "date-fns";
 
 interface NotificationItem {
   id: string;
   title: string;
-  body: string;
-  date: string;
+  description: string;
+  createdAt: string;
   read: boolean;
 }
 
@@ -42,27 +45,118 @@ export default function ManageNotifications() {
   const [notifications, setNotifications] =
     useState<NotificationItem[]>(initialNotifications);
   const [filter, setFilter] = useState<"all" | "unread">("all");
+  const [deleteLoading, setDeleteLoading] = useState<string | null>("");
+  const [loading, setLoading] = useState<string | null>("");
   // toast is imported directly from sonner
 
   const visible = notifications.filter((n) =>
     filter === "all" ? true : !n.read
   );
 
-  const markRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
-    toast.success("Marked as read");
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/notifications/all`,
+        {
+          timeout: 10000,
+        }
+      );
+      if (response.status === 200) {
+        setNotifications(response.data.notifications);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
   };
 
-  const remove = (id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-    toast.success("Notification removed");
+  const markRead = async (id: string) => {
+    setLoading(id);
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/notifications/read/${id}`,
+        {},
+        {
+          timeout: 10000,
+        }
+      );
+      if (response.status === 200) {
+        toast.success("Marked as read");
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+        );
+        fetchNotifications();
+      }
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    } finally {
+      setLoading(null);
+    }
   };
 
-  const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-    toast.success("All notifications marked as read");
+  const deleteNotification = async (id: string) => {
+    setDeleteLoading(id);
+    try {
+      const response = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/notifications/delete/${id}`,
+        {
+          timeout: 10000,
+        }
+      );
+      if (response.status === 200) {
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+        toast.success("Notification removed");
+      }
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+    } finally {
+      setDeleteLoading(null);
+    }
+  };
+
+  const clearNotifications = async () => {
+    setDeleteLoading("all");
+    try {
+      const response = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/notifications/clear/all`,
+        {
+          timeout: 10000,
+        }
+      );
+      if (response.status === 200) {
+        setNotifications([]);
+        toast.success("All notifications cleared");
+      }
+    } catch (error) {
+      console.error("Error clearing notifications:", error);
+    } finally {
+      setDeleteLoading(null);
+    }
+  };
+
+  const markAllRead = async () => {
+    setLoading("all");
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/notifications/read/all`,
+        {},
+        {
+          timeout: 10000,
+        }
+      );
+      if (response.status === 200) {
+        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+        toast.success("All notifications marked as read");
+        fetchNotifications();
+      }
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+    } finally {
+      setLoading(null);
+    }
   };
 
   return (
@@ -101,10 +195,7 @@ export default function ManageNotifications() {
                   >
                     Mark all read
                   </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={() => setNotifications([])}
-                  >
+                  <Button variant="destructive" onClick={clearNotifications}>
                     Clear
                   </Button>
                 </div>
@@ -125,31 +216,46 @@ export default function ManageNotifications() {
                     >
                       <div>
                         <div className="flex items-center gap-2">
-                          <Bell className="h-5 w-5 text-accent-foreground" />
+                          <Bell
+                            className={`h-5 w-5 ${
+                              n.read ? "text-muted-foreground" : "text-primary"
+                            }`}
+                          />
                           <div className="font-semibold">{n.title}</div>
                         </div>
-                        <div className="text-sm text-muted-foreground mt-1">
-                          {n.body}
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {n.description}
                         </div>
-                        <div className="text-xs text-muted-foreground mt-2">
-                          {new Date(n.date).toLocaleString()}
+                        <div className="text-xs text-muted-border mt-2">
+                          {n.createdAt && isValid(new Date(n.createdAt))
+                            ? format(new Date(n.createdAt), "PPP 'at' p")
+                            : "Date not available"}
                         </div>
+                        {(loading === n._id ||
+                          deleteLoading === n._id ||
+                          deleteLoading === "all") && (
+                          <span className="text-xs text-teal-500 mt-4 items-center flex gap-2">
+                            processing...{" "}
+                            <Loader className="text-xs size-3 animate-spin" />
+                          </span>
+                        )}
                       </div>
                       <div className="flex flex-col items-end gap-2">
                         {!n.read && (
                           <Button
                             size="icon"
                             variant="ghost"
-                            onClick={() => markRead(n.id)}
+                            onClick={() => markRead(n._id)}
                             title="Mark read"
                           >
                             <Check className="h-4 w-4" />
                           </Button>
                         )}
+
                         <Button
                           size="icon"
                           variant="ghost"
-                          onClick={() => remove(n.id)}
+                          onClick={() => deleteNotification(n.id)}
                           title="Delete"
                         >
                           <Trash2 className="h-4 w-4" />

@@ -429,8 +429,12 @@ export function deleteEvent(id: string) {
 
 // Blog Posts
 export function getBlogPosts(): BlogPost[] {
-  const data = defaultData.blogPosts
-  return data  
+  const data = localStorage.getItem(STORAGE_KEYS.BLOG_POSTS);
+  if (!data) {
+    localStorage.setItem(STORAGE_KEYS.BLOG_POSTS, JSON.stringify(defaultData.blogPosts));
+    return defaultData.blogPosts;
+  }
+  return JSON.parse(data);
 }
 
 export function getBlogPostById(id: string): BlogPost | undefined {
