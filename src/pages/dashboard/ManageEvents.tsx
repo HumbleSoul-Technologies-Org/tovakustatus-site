@@ -566,9 +566,9 @@ export default function ManageEvents() {
               <tbody>
                 {filteredEvents.map((event) => (
                   <tr
-                    key={event.id}
+                    key={event._id}
                     className="border-b border-border hover:bg-muted/50"
-                    data-testid={`event-row-${event.id}`}
+                    data-testid={`event-row-${event._id}`}
                   >
                     <td className="py-3 px-4 font-medium">{event.title}</td>
                     <td className="py-3 px-4">
@@ -588,7 +588,7 @@ export default function ManageEvents() {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleOpenDialog(event)}
-                          data-testid={`button-edit-${event.id}`}
+                          data-testid={`button-edit-${event._id}`}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>

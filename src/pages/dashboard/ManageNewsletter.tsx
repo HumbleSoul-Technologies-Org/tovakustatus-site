@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,11 +19,10 @@ import {
   deleteNewsletterSubscriber,
   type NewsletterSubscriber,
 } from "@/lib/localStorage";
+import axios from "axios";
 
 export default function ManageNewsletter() {
-  const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>(
-    getNewsletterSubscribers()
-  );
+  const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([]);
   const [selectedSubscribers, setSelectedSubscribers] = useState<string[]>([]);
   const [showBroadcastForm, setShowBroadcastForm] = useState(false);
   const [broadcastSubject, setBroadcastSubject] = useState("");
@@ -32,7 +31,7 @@ export default function ManageNewsletter() {
   const handleDeleteSubscriber = (id: string) => {
     try {
       deleteNewsletterSubscriber(id);
-      setSubscribers((prev) => prev.filter((s) => s.id !== id));
+      setSubscribers((prev) => prev.filter((s) => s._id !== id));
       setSelectedSubscribers((prev) => prev.filter((s) => s !== id));
     } catch (error) {
       console.error("Failed to delete subscriber");
@@ -50,6 +49,25 @@ export default function ManageNewsletter() {
     setBroadcastMessage("");
   };
 
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/news-letter/all`,
+        {
+          timeout: 10000,
+        }
+      );
+
+      if (response.status === 200) {
+        setSubscribers(response.data.users);
+      }
+    } catch (error) {
+      console.error("Failed to fetch subscribers:", error);
+    }
+  };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -130,7 +148,7 @@ export default function ManageNewsletter() {
                       }
                       onCheckedChange={(checked) => {
                         if (checked) {
-                          setSelectedSubscribers(subscribers.map((s) => s.id));
+                          setSelectedSubscribers(subscribers.map((s) => s._id));
                         } else {
                           setSelectedSubscribers([]);
                         }
@@ -144,35 +162,37 @@ export default function ManageNewsletter() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {subscribers.map((subscriber) => (
-                  <TableRow key={subscriber.id}>
+                {subscribers.map((subscriber, index) => (
+                  <TableRow key={subscriber._id}>
                     <TableCell>
                       <Checkbox
-                        checked={selectedSubscribers.includes(subscriber.id)}
+                        checked={selectedSubscribers.includes(subscriber._id)}
                         onCheckedChange={(checked) => {
                           if (checked) {
                             setSelectedSubscribers((prev) => [
                               ...prev,
-                              subscriber.id,
+                              subscriber._id,
                             ]);
                           } else {
                             setSelectedSubscribers((prev) =>
-                              prev.filter((id) => id !== subscriber.id)
+                              prev.filter((id) => id !== subscriber._id)
                             );
                           }
                         }}
                       />
                     </TableCell>
-                    <TableCell>{subscriber.name}</TableCell>
+                    <TableCell>
+                      {subscriber.name || `User ${index + 1}`}
+                    </TableCell>
                     <TableCell>{subscriber.email}</TableCell>
                     <TableCell>
-                      {new Date(subscriber.subscribedDate).toLocaleDateString()}
+                      {new Date(subscriber.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleDeleteSubscriber(subscriber.id)}
+                        onClick={() => handleDeleteSubscriber(subscriber._id)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

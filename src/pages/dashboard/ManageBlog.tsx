@@ -53,7 +53,7 @@ export default function ManageBlog() {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<any>({
     title: "",
     excerpt: "",
     content: "",
@@ -327,11 +327,11 @@ export default function ManageBlog() {
       const fileUrl = URL.createObjectURL(file);
       setSelectedImage(file);
       setImagePreview(fileUrl);
-      setFormData((prev) => ({ ...prev, imageUrl: "" }));
+      setFormData((prev: any) => ({ ...prev, imageUrl: "" }));
     } else if (e.target.type === "text") {
       const url = e.target.value;
       setSelectedImage(null);
-      setFormData((prev) => ({ ...prev, imageUrl: url }));
+      setFormData((prev: any) => ({ ...prev, imageUrl: url }));
       if (url) {
         // Only set preview if URL is not empty
         setImagePreview(url);
@@ -550,7 +550,7 @@ export default function ManageBlog() {
                             size="sm"
                             variant="outline"
                             onClick={() => {
-                              setFormData((prev) => ({
+                              setFormData((prev: any) => ({
                                 ...prev,
                                 imageUrl: "",
                               }));
@@ -597,7 +597,7 @@ export default function ManageBlog() {
                             setImagePreview(null);
                             if (imageInputType === "url") {
                               // Only clear URL if in URL mode
-                              setFormData((prev) => ({
+                              setFormData((prev: any) => ({
                                 ...prev,
                                 imageUrl: "",
                               }));
@@ -613,7 +613,10 @@ export default function ManageBlog() {
                           onClick={() => {
                             setImagePreview(null);
                             setSelectedImage(null);
-                            setFormData((prev) => ({ ...prev, imageUrl: "" }));
+                            setFormData((prev: any) => ({
+                              ...prev,
+                              imageUrl: "",
+                            }));
                             if (fileInputRef) fileInputRef.value = "";
                           }}
                         >
@@ -698,9 +701,9 @@ export default function ManageBlog() {
               <tbody>
                 {filteredPosts.map((post) => (
                   <tr
-                    key={post.id}
+                    key={post._id}
                     className="border-b border-border hover:bg-muted/50"
-                    data-testid={`post-row-${post.id}`}
+                    data-testid={`post-row-${post._id}`}
                   >
                     <td className="py-3 px-4 font-medium">{post.title}</td>
                     <td className="py-3 px-4">{post.author}</td>

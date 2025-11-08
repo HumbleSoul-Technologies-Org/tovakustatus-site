@@ -21,14 +21,15 @@ import "@splidejs/react-splide/css";
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
 import { useState } from "react";
-
+import { Calendar } from "lucide-react";
+import { getTalents, getEvents, getBlogPosts } from "@/lib/localStorage";
 export default function Home() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   // TODO: remove mock data functionality
-  const featuredTalents = [
+  const featuredTalents: any = [
     {
-      id: "1",
+      _id: "1",
       name: "Amani Grace",
       age: 12,
       talentType: "Music",
@@ -37,7 +38,7 @@ export default function Home() {
       imageUrl: "/Talented_girl_with_violin_portrait_f9f1e1a7.png",
     },
     {
-      id: "2",
+      _id: "2",
       name: "David Kwame",
       age: 14,
       talentType: "Sports",
@@ -46,7 +47,7 @@ export default function Home() {
       imageUrl: "/Talented_boy_playing_soccer_portrait_4a119641.png",
     },
     {
-      id: "3",
+      _id: "3",
       name: "Sarah Nkunda",
       age: 11,
       talentType: "Art",
@@ -56,9 +57,9 @@ export default function Home() {
     },
   ];
 
-  const recentProjects = [
+  const recentProjects: any = [
     {
-      id: "1",
+      _id: "1",
       title: "Music Workshop Series",
       description:
         "A comprehensive music education program providing instruments, training, and performance opportunities to talented young musicians from underprivileged communities.",
@@ -68,46 +69,76 @@ export default function Home() {
     },
   ];
 
-  const partners = [
+  const partners: any = [
     {
-      id: 1,
+      _id: 1,
       name: "MTN Uganda",
       logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvjprybczXjAGqMKIQCWB17enuKvo4OvyRfg&s",
     },
     {
-      id: 2,
+      _id: 2,
       name: "Airtel",
       logo: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Airtel_logo-01.png",
     },
     {
-      id: 3,
+      _id: 3,
       name: "BTM TV",
       logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBx04aDoMCi7M5pfnDPsGZNZ9GCZzQYQSLJA&s",
     },
     {
-      id: 4,
+      _id: 4,
       name: "Centenary Bank",
       logo: "https://pbs.twimg.com/ext_tw_video_thumb/1376488116601643017/pu/img/R4fZDLnvwDgg9btt.jpg",
     },
     {
-      id: 5,
+      _id: 5,
       name: "Uganda Airlines",
       logo: "https://airhex.com/images/airline-logos/alt/uganda-airlines.png",
     },
     {
-      id: 6,
+      _id: 6,
       name: "Stanbic Bank",
       logo: "https://yt3.googleusercontent.com/ytc/AIdro_lf3Xdg6kJK0OpUubd-c5mBH6tgC65RWLmKLGKlVJBgKg=s900-c-k-c0x00ffffff-no-rj",
     },
     {
-      id: 7,
+      _id: 7,
       name: "New Vision",
       logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOcNFubc_clAAx23JDlUyA2-aFLfLViCvkrQ&s",
     },
     {
-      id: 8,
+      _id: 8,
       name: "KFM",
       logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQjNZnzECFC0PbGq2K-Eh433w3z6xeXXEUAA&s",
+    },
+  ];
+
+  const latestBlogs: any = [
+    {
+      _id: "1",
+      title: "Empowering Young Musicians in Uganda",
+      excerpt: "How music education is transforming lives in local communities",
+      date: "March 20, 2024",
+      author: "Jane Doe",
+      readTime: "5 min read",
+      imageUrl: "/Community_workshop_outreach_event_photo_3fb17f3c.png",
+    },
+    {
+      _id: "2",
+      title: "Success Story: From Street Art to Gallery",
+      excerpt: "The inspiring journey of young artists finding their voice",
+      date: "March 18, 2024",
+      author: "John Smith",
+      readTime: "4 min read",
+      imageUrl: "/Talented_girl_painting_art_portrait_9df2082c.png",
+    },
+    {
+      _id: "3",
+      title: "Sports Development in Rural Schools",
+      excerpt: "Building future champions through grassroots programs",
+      date: "March 15, 2024",
+      author: "Michael Brown",
+      readTime: "6 min read",
+      imageUrl: "/Talented_boy_playing_soccer_portrait_4a119641.png",
     },
   ];
 
@@ -188,8 +219,8 @@ export default function Home() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            {featuredTalents.map((talent) => (
-              <TalentCard key={talent.id} {...talent} />
+            {featuredTalents.map((talent: any) => (
+              <TalentCard key={talent._id} {...talent} />
             ))}
           </div>
           <div className="text-center">
@@ -197,6 +228,49 @@ export default function Home() {
               <Button size="lg" data-testid="button-view-all-talents">
                 View All Talents
               </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Add this section for Latest Blog Posts */}
+      <section className="py-16 md:py-24 bg-background">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Latest Blog Posts
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Stay informed about our activities and impact stories
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+            {latestBlogs.map((blog: any) => (
+              <Card key={blog._id} className="overflow-hidden">
+                <div className="aspect-video relative">
+                  <img
+                    src={blog.imageUrl}
+                    alt={blog.title}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <CardContent className="p-6">
+                  <div className="flex items-center text-sm text-muted-foreground mb-3">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    {blog.date} • {blog.readTime}
+                  </div>
+                  <h3 className="font-semibold text-xl mb-2">{blog.title}</h3>
+                  <p className="text-muted-foreground mb-4">{blog.excerpt}</p>
+                  <Link href={`/blog/${blog._id}`}>
+                    <Button className="px-0">Read More →</Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="text-center">
+            <Link href="/blog">
+              <Button size="lg">View All Posts</Button>
             </Link>
           </div>
         </div>
@@ -260,8 +334,8 @@ export default function Home() {
             </p>
           </div>
           <div className="space-y-8 ">
-            {recentProjects.map((project) => (
-              <ProjectCard key={project.id} {...project} />
+            {recentProjects.map((project: any) => (
+              <ProjectCard key={project._id} {...project} />
             ))}
           </div>
           <div className="text-center mt-8">
@@ -307,8 +381,8 @@ export default function Home() {
               },
             }}
           >
-            {partners.map((partner) => (
-              <SplideSlide key={partner.id}>
+            {partners.map((partner: any) => (
+              <SplideSlide key={partner._id}>
                 <div className="bg-card hover:bg-accent/10  transition-colors duration-300 p-6 rounded-lg flex items-center justify-center h-32">
                   <img
                     src={partner.logo}

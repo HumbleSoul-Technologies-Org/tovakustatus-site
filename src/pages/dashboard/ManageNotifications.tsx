@@ -10,40 +10,15 @@ import { set } from "date-fns";
 import { format, isValid } from "date-fns";
 
 interface NotificationItem {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   createdAt: string;
   read: boolean;
 }
 
-const initialNotifications: NotificationItem[] = [
-  {
-    id: "n1",
-    title: "New talent application received",
-    body: "A new talent application has been submitted by Amani Grace.",
-    date: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-    read: false,
-  },
-  {
-    id: "n2",
-    title: "Project updated",
-    body: "Music Workshop Series was updated with new schedule.",
-    date: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    read: true,
-  },
-  {
-    id: "n3",
-    title: "Event reminder",
-    body: "Annual Talent Showcase is happening in 3 days.",
-    date: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-    read: false,
-  },
-];
-
 export default function ManageNotifications() {
-  const [notifications, setNotifications] =
-    useState<NotificationItem[]>(initialNotifications);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [filter, setFilter] = useState<"all" | "unread">("all");
   const [deleteLoading, setDeleteLoading] = useState<string | null>("");
   const [loading, setLoading] = useState<string | null>("");
@@ -86,7 +61,7 @@ export default function ManageNotifications() {
       if (response.status === 200) {
         toast.success("Marked as read");
         setNotifications((prev) =>
-          prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+          prev.map((n) => (n._id === id ? { ...n, read: true } : n))
         );
         fetchNotifications();
       }
@@ -107,7 +82,7 @@ export default function ManageNotifications() {
         }
       );
       if (response.status === 200) {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
+        setNotifications((prev) => prev.filter((n) => n._id !== id));
         toast.success("Notification removed");
       }
     } catch (error) {
@@ -209,7 +184,7 @@ export default function ManageNotifications() {
                 <div className="space-y-2">
                   {visible.map((n) => (
                     <div
-                      key={n.id}
+                      key={n._id}
                       className={`flex items-start justify-between gap-4 py-3 ${
                         n.read ? "opacity-60" : ""
                       } border-b border-border`}
@@ -255,7 +230,7 @@ export default function ManageNotifications() {
                         <Button
                           size="icon"
                           variant="ghost"
-                          onClick={() => deleteNotification(n.id)}
+                          onClick={() => deleteNotification(n._id)}
                           title="Delete"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -265,39 +240,6 @@ export default function ManageNotifications() {
                   ))}
                 </div>
               )}
-            </CardContent>
-          </Card>
-        </div>
-
-        <div>
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <Button onClick={() => toast.success("Test notification sent")}>
-                  Send test notification
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setNotifications(initialNotifications)}
-                >
-                  Reset sample
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="mt-4">
-            <CardHeader>
-              <CardTitle>Notification Settings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-sm text-muted-foreground">
-                Configure when and how notifications are shown (client-side demo
-                only).
-              </div>
             </CardContent>
           </Card>
         </div>

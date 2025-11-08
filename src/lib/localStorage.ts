@@ -2,14 +2,16 @@
 // This provides a simple client-side database using localStorage
 
 import { useEffect } from "react";
+import { any } from "zod";
 
 export interface Talent {
-  id: string;
+  _id: string;
   name: string;
   age: number;
   talentType: string;
   description: string;
   imageUrl: string;
+  image?:{url:string, public_id:string};
   videoUrl?: string;
   fullStory?: string;
   status: string;
@@ -19,7 +21,7 @@ export interface Talent {
 }
 
 export interface Project {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   date: string;
@@ -30,7 +32,7 @@ export interface Project {
 }
 
 export interface Event {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   date: string;
@@ -38,17 +40,20 @@ export interface Event {
   location: string;
   status: "upcoming" | "ongoing" | "past";
   imageUrl?: string;
+  image?:{url:string, public_id:string};
   fullDescription?: string;
   videoUrl?: string;
 }
 
 export interface BlogPost {
-  id: string;
+  _id: string;
   title: string;
   excerpt: string;
   author: string;
   date: string;
   category: string;
+  image?:{url:string, public_id:string};
+
   imageUrl?: string;
   readTime?: string;
   content?: string;
@@ -56,10 +61,10 @@ export interface BlogPost {
 }
 
 export interface NewsletterSubscriber {
-  id: string;
+  _id: string;
   email: string;
   name: string;
-  subscribedDate: string;
+  createdAt: string;
 }
 
 // Initialize default data
@@ -301,7 +306,7 @@ export function getTalents(): Talent[] {
   const data = localStorage.getItem(STORAGE_KEYS.TALENTS);
   if (!data) {
     // Initialize with default data including required likes and shares arrays
-    const talentsWithArrays = defaultData.talents.map(talent => ({
+    const talentsWithArrays:any = defaultData.talents.map(talent => ({
       ...talent,
       likes: [''] as [string],
       shares: [''] as [string]
@@ -314,7 +319,7 @@ export function getTalents(): Talent[] {
 
 export function getTalentById(id: string): Talent | undefined {
   const talents = getTalents();
-  return talents.find(t => t.id === id);
+  return talents.find(t => t._id === id);
 }
 
 export function saveTalents(talents: Talent[]) {
@@ -331,7 +336,7 @@ export function addTalent(talent: Omit<Talent, 'id'>) {
 
 export function updateTalent(id: string, updates: Partial<Talent>) {
   const talents = getTalents();
-  const index = talents.findIndex(t => t.id === id);
+  const index = talents.findIndex(t => t._id === id);
   if (index !== -1) {
     talents[index] = { ...talents[index], ...updates };
     saveTalents(talents);
@@ -341,19 +346,19 @@ export function updateTalent(id: string, updates: Partial<Talent>) {
 }
 
 export function deleteTalent(id: string) {
-  const talents = getTalents().filter(t => t.id !== id);
+  const talents = getTalents().filter(t => t._id !== id);
   saveTalents(talents);
 }
 
 // Projects
 export function getProjects(): Project[] {
-  const data = defaultData.projects
+  const data:any = defaultData.projects
   return data  
 }
 
 export function getProjectById(id: string): Project | undefined {
   const projects = getProjects();
-  return projects.find(p => p.id === id);
+  return projects.find(p => p._id === id);
 }
 
 export function saveProjects(projects: Project[]) {
@@ -370,7 +375,7 @@ export function addProject(project: Omit<Project, 'id'>) {
 
 export function updateProject(id: string, updates: Partial<Project>) {
   const projects = getProjects();
-  const index = projects.findIndex(p => p.id === id);
+  const index = projects.findIndex(p => p._id === id);
   if (index !== -1) {
     projects[index] = { ...projects[index], ...updates };
     saveProjects(projects);
@@ -380,23 +385,20 @@ export function updateProject(id: string, updates: Partial<Project>) {
 }
 
 export function deleteProject(id: string) {
-  const projects = getProjects().filter(p => p.id !== id);
+  const projects = getProjects().filter(p => p._id !== id);
   saveProjects(projects);
 }
 
 // Events
 export function getEvents(): Event[] {
-  const data =  localStorage.getItem(STORAGE_KEYS.EVENTS);
-  if (!data) {
-    localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(defaultData.events));
-    return defaultData.events;
-  }
+  const data:any =  localStorage.getItem(STORAGE_KEYS.EVENTS);
+  
   return JSON.parse(data);
 }
 
 export function getEventById(id: string): Event | undefined {
   const events = getEvents();
-  return events.find(e => e.id === id);
+  return events.find(e => e._id === id);
 }
 
 export function saveEvents(events: Event[]) {
@@ -413,7 +415,7 @@ export function addEvent(event: Omit<Event, 'id'>) {
 
 export function updateEvent(id: string, updates: Partial<Event>) {
   const events = getEvents();
-  const index = events.findIndex(e => e.id === id);
+  const index = events.findIndex(e => e._id === id);
   if (index !== -1) {
     events[index] = { ...events[index], ...updates };
     saveEvents(events);
@@ -423,23 +425,20 @@ export function updateEvent(id: string, updates: Partial<Event>) {
 }
 
 export function deleteEvent(id: string) {
-  const events = getEvents().filter(e => e.id !== id);
+  const events = getEvents().filter(e => e._id !== id);
   saveEvents(events);
 }
 
 // Blog Posts
 export function getBlogPosts(): BlogPost[] {
-  const data = localStorage.getItem(STORAGE_KEYS.BLOG_POSTS);
-  if (!data) {
-    localStorage.setItem(STORAGE_KEYS.BLOG_POSTS, JSON.stringify(defaultData.blogPosts));
-    return defaultData.blogPosts;
-  }
+  const data:any = localStorage.getItem(STORAGE_KEYS.BLOG_POSTS);
+  
   return JSON.parse(data);
 }
 
 export function getBlogPostById(id: string): BlogPost | undefined {
   const posts = getBlogPosts();
-  return posts.find(p => p.id === id);
+  return posts.find(p => p._id === id);
 }
 
 export function saveBlogPosts(posts: BlogPost[]) {
@@ -456,7 +455,7 @@ export function addBlogPost(post: Omit<BlogPost, 'id'>) {
 
 export function updateBlogPost(id: string, updates: Partial<BlogPost>) {
   const posts = getBlogPosts();
-  const index = posts.findIndex(p => p.id === id);
+  const index = posts.findIndex(p => p._id === id);
   if (index !== -1) {
     posts[index] = { ...posts[index], ...updates };
     saveBlogPosts(posts);
@@ -466,7 +465,7 @@ export function updateBlogPost(id: string, updates: Partial<BlogPost>) {
 }
 
 export function deleteBlogPost(id: string) {
-  const posts = getBlogPosts().filter(p => p.id !== id);
+  const posts = getBlogPosts().filter(p => p._id !== id);
   saveBlogPosts(posts);
 }
 
@@ -489,7 +488,7 @@ export function addNewsletterSubscriber(subscriber: Omit<NewsletterSubscriber, '
 }
 
 export function deleteNewsletterSubscriber(id: string) {
-  const subscribers = getNewsletterSubscribers().filter(s => s.id !== id);
+  const subscribers = getNewsletterSubscribers().filter(s => s._id !== id);
   saveNewsletterSubscribers(subscribers);
 }
 

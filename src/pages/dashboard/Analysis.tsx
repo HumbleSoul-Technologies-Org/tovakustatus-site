@@ -46,7 +46,7 @@ export default function Analysis() {
     { month: "Jun", talents: 30, events: 20, blogs: 22 },
   ];
 
-  const topPerformers = {
+  const topPerformers: any = {
     blogs: [
       { title: "Youth Music Workshop", views: 5230, likes: 423, shares: 125 },
       { title: "Art Exhibition Review", views: 4120, likes: 389, shares: 98 },
@@ -221,7 +221,7 @@ export default function Analysis() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {topPerformers[category].map((item: any, index: number) => (
+                {topPerformers[category]?.map((item: any, index: number) => (
                   <div key={index} className="p-4 bg-muted rounded-lg">
                     <h4 className="font-semibold mb-2">{item.title}</h4>
                     <div className="grid grid-cols-3 gap-2 text-sm">

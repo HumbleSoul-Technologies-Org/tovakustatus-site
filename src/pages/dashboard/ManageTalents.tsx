@@ -538,9 +538,9 @@ export default function ManageTalents() {
               <tbody>
                 {filteredTalents.map((talent) => (
                   <tr
-                    key={talent.id}
+                    key={talent._id}
                     className="border-b border-border hover:bg-muted/50"
-                    data-testid={`talent-row-${talent.id}`}
+                    data-testid={`talent-row-${talent._id}`}
                   >
                     <td className="py-3 px-4 font-medium">{talent.name}</td>
                     <td className="py-3 px-4">{talent.age}</td>
