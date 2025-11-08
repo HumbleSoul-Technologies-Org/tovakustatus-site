@@ -33,7 +33,8 @@ export default function Login() {
         {
           username,
           password,
-        }
+        },
+        { timeout: 10000 }
       );
 
       if (res.status === 200 && res.data.token) {

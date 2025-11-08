@@ -19,21 +19,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import { toast } from "sonner";
+import { Plus, Pencil, Trash2, Search, Loader } from "lucide-react";
 import {
   getTalents,
   updateTalent,
   deleteTalent,
   Talent,
 } from "@/lib/localStorage";
+import axios from "axios";
+import { saveTalents, STORAGE_KEYS } from "@/lib/localStorage";
 
 export default function ManageTalents() {
-  const { toast } = useToast();
+  // toast is imported directly from sonner
   const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [talents, setTalents] = useState<Talent[]>([]);
   const [editingTalent, setEditingTalent] = useState<Talent | null>(null);
+  const [talentId, setTalentId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -48,9 +51,13 @@ export default function ManageTalents() {
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState("");
 
   useEffect(() => {
-    loadTalents();
+    fetchTalents();
+    // loadTalents();
   }, []);
 
   const loadTalents = () => {
@@ -76,10 +83,11 @@ export default function ManageTalents() {
         talentType: talent.talentType,
         description: talent.description,
         fullStory: talent.fullStory || "",
-        imageUrl: talent.imageUrl,
+        imageUrl: talent?.image?.url ? talent.imageUrl : "",
         videoUrl: talent.videoUrl || "",
         status: talent.status,
       });
+      setPreviewUrl(talent?.imageUrl || talent?.image?.url);
     } else {
       setEditingTalent(null);
       setFormData({
@@ -96,6 +104,19 @@ export default function ManageTalents() {
     setIsDialogOpen(true);
   };
 
+  const fetchTalents = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/talents/all`
+      );
+      if (response.status === 200) {
+        saveTalents(response.data.talents);
+        loadTalents();
+      }
+    } catch (error) {
+      toast.error("Failed to retrieve talents data!");
+    }
+  };
   // Creating talent
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -104,53 +125,173 @@ export default function ManageTalents() {
       setPreviewUrl(URL.createObjectURL(file));
       // You would typically upload this file to your server/storage and get back a URL
       // For now, we'll just store the local preview URL
-      setFormData((prev) => ({ ...prev, imageUrl: URL.createObjectURL(file) }));
+      // setFormData((prev) => ({ ...prev, imageUrl: URL.createObjectURL(file) }));
+    }
+  };
+
+  const uploadFileToServer = async (file: File) => {
+    setIsUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("image", file);
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/talents/upload/image`,
+        fd,
+        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+      );
+
+      return data;
+    } catch (error) {
+      toast.error("Image upload failed, please try again!");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleUpdate = async (payload: any) => {
+    try {
+      const id = editingTalent?._id;
+
+      const res = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/talents/update/${id}`,
+        payload,
+        { timeout: 10000 }
+      );
+
+      if (res.status === 200) {
+        toast.success("Talent profile has been successfully updated.");
+        saveTalents(res.data.talents);
+        fetchTalents();
+        setIsDialogOpen(false);
+        // Reset form
+        setFormData({
+          name: "",
+          age: "",
+          talentType: "",
+          description: "",
+          fullStory: "",
+          imageUrl: "",
+          videoUrl: "",
+          status: "Active",
+        });
+        setSelectedImage(null);
+        setPreviewUrl(null);
+        return true;
+      } else {
+        console.warn("Unexpected response on update:", res.status, res.data);
+        return false;
+      }
+    } catch (error: any) {
+      console.error("❌ Update error:", error.response || error);
+      toast.error(error.response?.data?.err || "Failed to update talent!");
+      return false;
+    }
+  };
+
+  const handleCreate = async (payload: any) => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/talents/new`,
+        payload,
+        { timeout: 10000 }
+      );
+
+      if (res.status === 201) {
+        toast.success("New talent has been successfully added.");
+        saveTalents(res.data.talents);
+        fetchTalents();
+
+        setIsDialogOpen(false);
+
+        // Reset form
+        setFormData({
+          name: "",
+          age: "",
+          talentType: "",
+          description: "",
+          fullStory: "",
+          imageUrl: "",
+          videoUrl: "",
+          status: "Active",
+        });
+        setSelectedImage(null);
+        setPreviewUrl(null);
+        return true;
+      } else {
+        console.warn("Unexpected response on create:", res.status, res.data);
+        return false;
+      }
+    } catch (error: any) {
+      console.error("❌ Create error:", error.response || error);
+      toast.error(error.response?.data?.err || "Failed to create talent!");
+      return false;
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    if (editingTalent) {
-      updateTalent(editingTalent.id, {
-        ...formData,
+    try {
+      const storedUser = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
+      const user = storedUser ? JSON.parse(storedUser) : null;
+      const token = user?.token;
+
+      let imageData = null;
+      if (selectedImage) {
+        imageData = await uploadFileToServer(selectedImage);
+      }
+
+      const payload = {
+        name: formData.name,
         age: parseInt(formData.age),
-      });
-      toast({
-        title: "Talent Updated",
-        description: "Talent profile has been successfully updated.",
-      });
-    } else {
-      // try {
-      //   const res =  await axios.post(`${process.env.VITE_API_URL}/talents/new`,formData,token)
-      // } catch (error) {
-      //   console.log(error);
-      //    toast({
-      //         title: "Error",
-      //      description: "Failed to add talent, please try again!",
-      //         variant:'destructive'
-      //       });
+        talentType: formData.talentType,
+        description: formData.description,
+        fullStory: formData.fullStory,
+        videoUrl: formData.videoUrl,
+        imageUrl: !imageData ? formData.imageUrl : "",
+        imageData: !formData.imageUrl ? imageData : "",
+        token: token || "",
+      };
 
-      // }
-
-      toast({
-        title: "Talent Added",
-        description: "New talent has been successfully added.",
-      });
+      if (editingTalent) {
+        await handleUpdate(payload);
+      } else {
+        await handleCreate(payload);
+      }
+    } catch (error: any) {
+      console.error("❌ Submit error:", error.response || error);
+      toast.error(error.response?.data?.err || "Failed to process request!");
+    } finally {
+      setLoading(false);
     }
-
-    loadTalents();
-    setIsDialogOpen(false);
   };
 
-  const handleDelete = (id: string, name: string) => {
+  const handleDelete = async (id: string, name: string) => {
+    const storedUser = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
+    const user = storedUser ? JSON.parse(storedUser) : null;
+    const token = user?.token;
     if (confirm(`Are you sure you want to delete ${name}?`)) {
-      deleteTalent(id);
-      loadTalents();
-      toast({
-        title: "Talent Removed",
-        description: `${name} has been removed.`,
-      });
+      try {
+        setDeleteLoading(id);
+
+        const res = await axios.delete(
+          `${import.meta.env.VITE_API_URL}/talents/${id}`,
+          { headers: { Authorization: `Bearer ${token}` }, timeout: 10000 }
+        );
+
+        if (res.status === 200) {
+          fetchTalents();
+          toast.success(`${name} has been removed.`);
+          deleteTalent(id);
+        }
+      } catch (error) {
+        console.log("====================================");
+        console.log(error);
+        console.log("====================================");
+      } finally {
+        setDeleteLoading("");
+      }
     }
   };
 
@@ -231,11 +372,16 @@ export default function ManageTalents() {
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Music">Music</SelectItem>
-                    <SelectItem value="Sports">Sports</SelectItem>
-                    <SelectItem value="Art">Art</SelectItem>
-                    <SelectItem value="Dance">Dance</SelectItem>
-                    <SelectItem value="Drama">Drama</SelectItem>
+                    <SelectItem value="music">Music</SelectItem>
+                    <SelectItem value="sports">Sports</SelectItem>
+                    <SelectItem value="art">Art</SelectItem>
+                    <SelectItem value="fashion">Dance</SelectItem>
+                    <SelectItem value="cooking">Cooking</SelectItem>
+                    <SelectItem value="business">Business</SelectItem>
+                    <SelectItem value="agriculture">Agriculture</SelectItem>
+                    <SelectItem value="technology">Technology</SelectItem>
+                    <SelectItem value="drama">Drama</SelectItem>
+                    <SelectItem value="others">Others</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -331,8 +477,24 @@ export default function ManageTalents() {
                 type="submit"
                 className="w-full"
                 data-testid="button-submit-talent"
+                disabled={isUploading}
               >
-                {editingTalent ? "Update" : "Add"} Talent
+                {editingTalent ? (
+                  isUploading || loading ? (
+                    <span className="flex justify-center items-center gap-2">
+                      Processing...{" "}
+                      <Loader className="animate-spin text-white" />
+                    </span>
+                  ) : (
+                    "Update Talent"
+                  )
+                ) : isUploading || loading ? (
+                  <span className="flex justify-center items-center gap-2">
+                    Processing... <Loader className="animate-spin text-white" />
+                  </span>
+                ) : (
+                  "Add Talent"
+                )}
               </Button>
             </form>
           </DialogContent>
@@ -399,17 +561,21 @@ export default function ManageTalents() {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleOpenDialog(talent)}
-                          data-testid={`button-edit-${talent.id}`}
+                          data-testid={`button-edit-${talent._id}`}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleDelete(talent.id, talent.name)}
-                          data-testid={`button-delete-${talent.id}`}
+                          onClick={() => handleDelete(talent._id, talent.name)}
+                          data-testid={`button-delete-${talent._id}`}
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          {deleteLoading === talent._id ? (
+                            <Loader className="h-4 w-4 animate-spin text-destructive" />
+                          ) : (
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          )}
                         </Button>
                       </div>
                     </td>

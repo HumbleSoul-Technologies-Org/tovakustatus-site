@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Menu, LogOut } from "lucide-react";
 import { logout } from "@/lib/localStorage";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DashboardLayoutProps {
@@ -14,16 +14,13 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [, setLocation] = useLocation();
-  const { toast } = useToast();
+  // toast is imported directly from sonner
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
 
   const handleLogout = () => {
     logout();
-    toast({
-      title: "Logged Out",
-      description: "You have been successfully logged out.",
-    });
+    toast.success("You have been successfully logged out.");
     setLocation("/");
   };
 

@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { Image, Video, Link, Upload } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 
@@ -101,7 +101,7 @@ export default function ManageMedia() {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false,
-    accept: mediaType === "image" ? {"image/*": []} : {"video/*": []},
+    accept: mediaType === "image" ? { "image/*": [] } : { "video/*": [] },
     maxFiles: 1,
   });
 
@@ -109,26 +109,24 @@ export default function ManageMedia() {
     setIsUploading(true);
     try {
       // In a real app, you would upload the file to a server/storage here
-      const mediaUrl = data.source === "url" ? data.url : "mock-uploaded-file-url";
-      
+      const mediaUrl =
+        data.source === "url" ? data.url : "mock-uploaded-file-url";
+
       const newMediaItem: MediaItem = {
         id: Date.now().toString(),
         title: data.title,
         description: data.description,
         type: data.type,
         url: mediaUrl || "",
-        tags: data.tags.split(",").map(tag => tag.trim()),
+        tags: data.tags.split(",").map((tag) => tag.trim()),
         altText: data.altText,
         createdAt: new Date().toISOString(),
       };
 
-      setMediaItems(prev => [newMediaItem, ...prev]);
-      
-      toast({
-        title: "Media Added",
-        description: "The media item has been successfully added.",
-      });
-      
+      setMediaItems((prev) => [newMediaItem, ...prev]);
+
+      toast.success("New media has been successfully added.");
+
       reset();
       setSelectedFile(null);
     } catch (error) {
@@ -145,7 +143,9 @@ export default function ManageMedia() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold mb-2">Media Management</h1>
-        <p className="text-muted-foreground">Upload and manage media assets for your website.</p>
+        <p className="text-muted-foreground">
+          Upload and manage media assets for your website.
+        </p>
       </div>
 
       <Tabs defaultValue="upload" className="space-y-6">
@@ -171,7 +171,9 @@ export default function ManageMedia() {
                         placeholder="Enter media title"
                       />
                       {errors.title && (
-                        <p className="text-sm text-destructive mt-1">{errors.title.message}</p>
+                        <p className="text-sm text-destructive mt-1">
+                          {errors.title.message}
+                        </p>
                       )}
                     </div>
 
@@ -180,7 +182,10 @@ export default function ManageMedia() {
                       <Select
                         {...register("type")}
                         onValueChange={(value) => {
-                          reset({ ...watch(), type: value as "image" | "video" });
+                          reset({
+                            ...watch(),
+                            type: value as "image" | "video",
+                          });
                         }}
                       >
                         <SelectTrigger>
@@ -198,7 +203,10 @@ export default function ManageMedia() {
                       <Select
                         {...register("source")}
                         onValueChange={(value) => {
-                          reset({ ...watch(), source: value as "url" | "upload" });
+                          reset({
+                            ...watch(),
+                            source: value as "url" | "upload",
+                          });
                         }}
                       >
                         <SelectTrigger>
@@ -221,7 +229,9 @@ export default function ManageMedia() {
                           type="url"
                         />
                         {errors.url && (
-                          <p className="text-sm text-destructive mt-1">{errors.url.message}</p>
+                          <p className="text-sm text-destructive mt-1">
+                            {errors.url.message}
+                          </p>
                         )}
                       </div>
                     ) : (
@@ -229,7 +239,11 @@ export default function ManageMedia() {
                         <Label>File Upload</Label>
                         <div
                           {...getRootProps()}
-                          className={`mt-2 border-2 border-dashed rounded-md p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-colors ${isDragActive ? 'border-accent bg-accent/5' : 'border-border bg-transparent'}`}
+                          className={`mt-2 border-2 border-dashed rounded-md p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-colors ${
+                            isDragActive
+                              ? "border-accent bg-accent/5"
+                              : "border-border bg-transparent"
+                          }`}
                         >
                           <input {...getInputProps()} />
                           <Upload className="h-8 w-8 text-muted-foreground mb-2" />
@@ -237,7 +251,10 @@ export default function ManageMedia() {
                             {isDragActive ? (
                               <span>Drop the file here...</span>
                             ) : (
-                              <span>Drag & drop a {mediaType} file here, or click to select</span>
+                              <span>
+                                Drag & drop a {mediaType} file here, or click to
+                                select
+                              </span>
                             )}
                           </div>
                         </div>
@@ -258,17 +275,29 @@ export default function ManageMedia() {
                           {mediaType === "image" ? (
                             // Image preview
                             // eslint-disable-next-line @next/next/no-img-element
-                            <img src={previewUrl} alt={watch("altText") || "preview"} className="w-full h-64 object-contain bg-black" />
+                            <img
+                              src={previewUrl}
+                              alt={watch("altText") || "preview"}
+                              className="w-full h-64 object-contain bg-black"
+                            />
                           ) : (
                             // Video preview
-                            <video src={previewUrl} controls className="w-full h-64 bg-black" />
+                            <video
+                              src={previewUrl}
+                              controls
+                              className="w-full h-64 bg-black"
+                            />
                           )}
                         </div>
                         <div className="text-xs text-muted-foreground mt-2">
                           {selectedFile ? (
                             <>
                               <div>File: {selectedFile.name}</div>
-                              <div>Size: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</div>
+                              <div>
+                                Size:{" "}
+                                {(selectedFile.size / 1024 / 1024).toFixed(2)}{" "}
+                                MB
+                              </div>
                               <div>Type: {selectedFile.type || mediaType}</div>
                             </>
                           ) : (
@@ -317,7 +346,9 @@ export default function ManageMedia() {
                         placeholder="Enter tags (comma separated)"
                       />
                       {errors.tags && (
-                        <p className="text-sm text-destructive mt-1">{errors.tags.message}</p>
+                        <p className="text-sm text-destructive mt-1">
+                          {errors.tags.message}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -344,7 +375,9 @@ export default function ManageMedia() {
                     <Video className="h-12 w-12 text-muted-foreground" />
                   )}
                 </div>
-                <p className="text-muted-foreground">No media items yet. Start by uploading some!</p>
+                <p className="text-muted-foreground">
+                  No media items yet. Start by uploading some!
+                </p>
               </CardContent>
             </Card>
           ) : (

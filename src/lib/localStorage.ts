@@ -268,7 +268,7 @@ Together, these coaches are transforming young lives, proving that with proper g
 };
 
 // Storage keys
-const STORAGE_KEYS = {
+export const STORAGE_KEYS = {
   TALENTS: 'tova_talents',
   PROJECTS: 'tova_projects',
   EVENTS: 'tova_events',
@@ -298,8 +298,18 @@ export function initializeStorage() {
 
 // Talents
 export function getTalents(): Talent[] {
-  const data = defaultData.talents
-  return data  
+  const data = localStorage.getItem(STORAGE_KEYS.TALENTS);
+  if (!data) {
+    // Initialize with default data including required likes and shares arrays
+    const talentsWithArrays = defaultData.talents.map(talent => ({
+      ...talent,
+      likes: [''] as [string],
+      shares: [''] as [string]
+    }));
+    localStorage.setItem(STORAGE_KEYS.TALENTS, JSON.stringify(talentsWithArrays));
+    return talentsWithArrays;
+  }
+  return JSON.parse(data);
 }
 
 export function getTalentById(id: string): Talent | undefined {
@@ -376,8 +386,12 @@ export function deleteProject(id: string) {
 
 // Events
 export function getEvents(): Event[] {
-  const data =  defaultData.events
-  return data  
+  const data =  localStorage.getItem(STORAGE_KEYS.EVENTS);
+  if (!data) {
+    localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(defaultData.events));
+    return defaultData.events;
+  }
+  return JSON.parse(data);
 }
 
 export function getEventById(id: string): Event | undefined {

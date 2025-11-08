@@ -1,12 +1,18 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -26,7 +32,7 @@ interface SiteSettings {
     enableContactForm: boolean;
   };
   appearance: {
-    theme: 'light' | 'dark' | 'system';
+    theme: "light" | "dark" | "system";
     accentColor: string;
     showSocialLinks: boolean;
   };
@@ -46,7 +52,7 @@ interface SiteSettings {
 
 // Retrieve settings from localStorage or use defaults
 const getInitialSettings = (): SiteSettings => {
-  const savedSettings = localStorage.getItem('site_settings');
+  const savedSettings = localStorage.getItem("site_settings");
   if (savedSettings) {
     return JSON.parse(savedSettings);
   }
@@ -62,14 +68,14 @@ const getInitialSettings = (): SiteSettings => {
       enableContactForm: true,
     },
     appearance: {
-      theme: 'system',
-      accentColor: 'blue',
+      theme: "system",
+      accentColor: "blue",
       showSocialLinks: true,
     },
     content: {
-      siteName: 'Tova ku Status',
-      siteDescription: 'Empowering young talents in our community',
-      contactEmail: 'contact@tovakustatus.org',
+      siteName: "Tova ku Status",
+      siteDescription: "Empowering young talents in our community",
+      contactEmail: "contact@tovakustatus.org",
       postsPerPage: 10,
     },
     notifications: {
@@ -88,19 +94,22 @@ export default function Settings() {
   // Save settings when they change
   useEffect(() => {
     if (isDirty) {
-      localStorage.setItem('site_settings', JSON.stringify(settings));
+      localStorage.setItem("site_settings", JSON.stringify(settings));
       setIsDirty(false);
-      toast({
-        title: "Settings saved",
-        description: "Your changes have been saved successfully.",
-      });
+      toast.success("Your settings have been saved successfully.");
     }
   }, [settings, isDirty]);
 
-  type SettingsPath = Array<keyof SiteSettings | keyof SiteSettings['features'] | keyof SiteSettings['appearance'] | keyof SiteSettings['content'] | keyof SiteSettings['notifications']>;
+  type SettingsPath = Array<
+    | keyof SiteSettings
+    | keyof SiteSettings["features"]
+    | keyof SiteSettings["appearance"]
+    | keyof SiteSettings["content"]
+    | keyof SiteSettings["notifications"]
+  >;
 
   const updateSettings = (path: SettingsPath, value: unknown) => {
-    setSettings(prev => {
+    setSettings((prev) => {
       const newSettings = { ...prev };
       let current: any = newSettings;
       for (let i = 0; i < path.length - 1; i++) {
@@ -142,8 +151,8 @@ export default function Settings() {
                   <Switch
                     id="enableBlog"
                     checked={settings.features.enableBlog}
-                    onCheckedChange={(checked) => 
-                      updateSettings(['features', 'enableBlog'], checked)
+                    onCheckedChange={(checked) =>
+                      updateSettings(["features", "enableBlog"], checked)
                     }
                   />
                 </div>
@@ -153,8 +162,8 @@ export default function Settings() {
                   <Switch
                     id="enableEvents"
                     checked={settings.features.enableEvents}
-                    onCheckedChange={(checked) => 
-                      updateSettings(['features', 'enableEvents'], checked)
+                    onCheckedChange={(checked) =>
+                      updateSettings(["features", "enableEvents"], checked)
                     }
                   />
                 </div>
@@ -164,8 +173,8 @@ export default function Settings() {
                   <Switch
                     id="enableProjects"
                     checked={settings.features.enableProjects}
-                    onCheckedChange={(checked) => 
-                      updateSettings(['features', 'enableProjects'], checked)
+                    onCheckedChange={(checked) =>
+                      updateSettings(["features", "enableProjects"], checked)
                     }
                   />
                 </div>
@@ -175,8 +184,8 @@ export default function Settings() {
                   <Switch
                     id="enableTalents"
                     checked={settings.features.enableTalents}
-                    onCheckedChange={(checked) => 
-                      updateSettings(['features', 'enableTalents'], checked)
+                    onCheckedChange={(checked) =>
+                      updateSettings(["features", "enableTalents"], checked)
                     }
                   />
                 </div>
@@ -186,8 +195,8 @@ export default function Settings() {
                   <Switch
                     id="enableNewsletter"
                     checked={settings.features.enableNewsletter}
-                    onCheckedChange={(checked) => 
-                      updateSettings(['features', 'enableNewsletter'], checked)
+                    onCheckedChange={(checked) =>
+                      updateSettings(["features", "enableNewsletter"], checked)
                     }
                   />
                 </div>
@@ -197,8 +206,11 @@ export default function Settings() {
                   <Switch
                     id="enableMediaGallery"
                     checked={settings.features.enableMediaGallery}
-                    onCheckedChange={(checked) => 
-                      updateSettings(['features', 'enableMediaGallery'], checked)
+                    onCheckedChange={(checked) =>
+                      updateSettings(
+                        ["features", "enableMediaGallery"],
+                        checked
+                      )
                     }
                   />
                 </div>
@@ -208,8 +220,8 @@ export default function Settings() {
                   <Switch
                     id="enableContactForm"
                     checked={settings.features.enableContactForm}
-                    onCheckedChange={(checked) => 
-                      updateSettings(['features', 'enableContactForm'], checked)
+                    onCheckedChange={(checked) =>
+                      updateSettings(["features", "enableContactForm"], checked)
                     }
                   />
                 </div>
@@ -230,8 +242,8 @@ export default function Settings() {
                   <Label>Theme</Label>
                   <Select
                     value={settings.appearance.theme}
-                    onValueChange={(value) => 
-                      updateSettings(['appearance', 'theme'], value)
+                    onValueChange={(value) =>
+                      updateSettings(["appearance", "theme"], value)
                     }
                   >
                     <SelectTrigger>
@@ -248,8 +260,8 @@ export default function Settings() {
                   <Label>Accent Color</Label>
                   <Select
                     value={settings.appearance.accentColor}
-                    onValueChange={(value) => 
-                      updateSettings(['appearance', 'accentColor'], value)
+                    onValueChange={(value) =>
+                      updateSettings(["appearance", "accentColor"], value)
                     }
                   >
                     <SelectTrigger>
@@ -268,8 +280,8 @@ export default function Settings() {
                   <Switch
                     id="showSocialLinks"
                     checked={settings.appearance.showSocialLinks}
-                    onCheckedChange={(checked) => 
-                      updateSettings(['appearance', 'showSocialLinks'], checked)
+                    onCheckedChange={(checked) =>
+                      updateSettings(["appearance", "showSocialLinks"], checked)
                     }
                   />
                 </div>
@@ -291,8 +303,8 @@ export default function Settings() {
                   <Input
                     id="siteName"
                     value={settings.content.siteName}
-                    onChange={(e) => 
-                      updateSettings(['content', 'siteName'], e.target.value)
+                    onChange={(e) =>
+                      updateSettings(["content", "siteName"], e.target.value)
                     }
                   />
                 </div>
@@ -301,8 +313,11 @@ export default function Settings() {
                   <Input
                     id="siteDescription"
                     value={settings.content.siteDescription}
-                    onChange={(e) => 
-                      updateSettings(['content', 'siteDescription'], e.target.value)
+                    onChange={(e) =>
+                      updateSettings(
+                        ["content", "siteDescription"],
+                        e.target.value
+                      )
                     }
                   />
                 </div>
@@ -312,8 +327,11 @@ export default function Settings() {
                     id="contactEmail"
                     type="email"
                     value={settings.content.contactEmail}
-                    onChange={(e) => 
-                      updateSettings(['content', 'contactEmail'], e.target.value)
+                    onChange={(e) =>
+                      updateSettings(
+                        ["content", "contactEmail"],
+                        e.target.value
+                      )
                     }
                   />
                 </div>
@@ -325,8 +343,11 @@ export default function Settings() {
                     min="1"
                     max="50"
                     value={settings.content.postsPerPage}
-                    onChange={(e) => 
-                      updateSettings(['content', 'postsPerPage'], parseInt(e.target.value))
+                    onChange={(e) =>
+                      updateSettings(
+                        ["content", "postsPerPage"],
+                        parseInt(e.target.value)
+                      )
                     }
                   />
                 </div>
@@ -339,50 +360,72 @@ export default function Settings() {
           <Card>
             <CardHeader>
               <CardTitle>Notification Settings</CardTitle>
-              <CardDescription>Configure your notification preferences</CardDescription>
+              <CardDescription>
+                Configure your notification preferences
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="enableEmailNotifications">Email Notifications</Label>
+                  <Label htmlFor="enableEmailNotifications">
+                    Email Notifications
+                  </Label>
                   <Switch
                     id="enableEmailNotifications"
                     checked={settings.notifications.enableEmailNotifications}
-                    onCheckedChange={(checked) => 
-                      updateSettings(['notifications', 'enableEmailNotifications'], checked)
+                    onCheckedChange={(checked) =>
+                      updateSettings(
+                        ["notifications", "enableEmailNotifications"],
+                        checked
+                      )
                     }
                   />
                 </div>
                 <Separator />
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="enablePushNotifications">Push Notifications</Label>
+                  <Label htmlFor="enablePushNotifications">
+                    Push Notifications
+                  </Label>
                   <Switch
                     id="enablePushNotifications"
                     checked={settings.notifications.enablePushNotifications}
-                    onCheckedChange={(checked) => 
-                      updateSettings(['notifications', 'enablePushNotifications'], checked)
+                    onCheckedChange={(checked) =>
+                      updateSettings(
+                        ["notifications", "enablePushNotifications"],
+                        checked
+                      )
                     }
                   />
                 </div>
                 <Separator />
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="notifyOnNewContact">Notify on New Contact</Label>
+                  <Label htmlFor="notifyOnNewContact">
+                    Notify on New Contact
+                  </Label>
                   <Switch
                     id="notifyOnNewContact"
                     checked={settings.notifications.notifyOnNewContact}
-                    onCheckedChange={(checked) => 
-                      updateSettings(['notifications', 'notifyOnNewContact'], checked)
+                    onCheckedChange={(checked) =>
+                      updateSettings(
+                        ["notifications", "notifyOnNewContact"],
+                        checked
+                      )
                     }
                   />
                 </div>
                 <Separator />
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="notifyOnNewSubscriber">Notify on New Subscriber</Label>
+                  <Label htmlFor="notifyOnNewSubscriber">
+                    Notify on New Subscriber
+                  </Label>
                   <Switch
                     id="notifyOnNewSubscriber"
                     checked={settings.notifications.notifyOnNewSubscriber}
-                    onCheckedChange={(checked) => 
-                      updateSettings(['notifications', 'notifyOnNewSubscriber'], checked)
+                    onCheckedChange={(checked) =>
+                      updateSettings(
+                        ["notifications", "notifyOnNewSubscriber"],
+                        checked
+                      )
                     }
                   />
                 </div>

@@ -1,4 +1,12 @@
 import { useState, useEffect } from "react";
+import { format, set } from "date-fns";
+import { Calendar as CalendarIcon, Loader } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import {
   getEvents,
@@ -27,10 +35,13 @@ import {
   updateEvent,
   deleteEvent,
   Event,
+  saveEvents,
+  STORAGE_KEYS,
 } from "@/lib/localStorage";
-
+// import { toast } from "sonner";import
+import axios from "axios";
 export default function ManageEvents() {
-  const { toast } = useToast();
+  // const { toast } = toast();
   const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
@@ -39,7 +50,7 @@ export default function ManageEvents() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    fullDescription: "",
+
     date: "",
     time: "",
     location: "",
@@ -50,6 +61,8 @@ export default function ManageEvents() {
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     loadEvents();
@@ -69,13 +82,27 @@ export default function ManageEvents() {
     setEvents(data);
   };
 
+  const fetchEvents = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/events/all`
+      );
+      if (response.status === 200) {
+        saveEvents(response.data.events);
+        loadEvents();
+      }
+    } catch (error) {
+      toast.error("Failed to retrieve events data!");
+    }
+  };
+
   const handleOpenDialog = (event?: Event) => {
     if (event) {
       setEditingEvent(event);
       setFormData({
         title: event.title,
         description: event.description,
-        fullDescription: event.fullDescription || "",
+
         date: event.date,
         time: event.time,
         location: event.location,
@@ -83,12 +110,13 @@ export default function ManageEvents() {
         imageUrl: event.imageUrl || "",
         videoUrl: event.videoUrl || "", // Added videoUrl
       });
+      setPreviewUrl(event?.imageUrl || event.image?.url || null);
     } else {
       setEditingEvent(null);
       setFormData({
         title: "",
         description: "",
-        fullDescription: "",
+
         date: "",
         time: "",
         location: "",
@@ -100,35 +128,130 @@ export default function ManageEvents() {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleUpdate = async (payload: any) => {
+    setLoading(true);
+    try {
+      const id = editingEvent?._id;
+
+      const res = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/events/update/${id}`,
+        payload,
+        { timeout: 10000 }
+      );
+
+      if (res.status === 200) {
+        saveEvents(res.data.events);
+        fetchEvents();
+        toast.success("Event has been successfully updated.");
+
+        // Reset form
+        setFormData({
+          title: "",
+          description: "",
+          date: "",
+          time: "",
+          location: "",
+          status: "upcoming",
+          imageUrl: "",
+          videoUrl: "",
+        });
+        setSelectedImage(null);
+        setPreviewUrl(null);
+        setIsDialogOpen(false);
+        return true;
+      } else {
+        console.warn("Unexpected response on update:", res.status, res.data);
+        return false;
+      }
+    } catch (error: any) {
+      console.error("❌ Update error:", error.response || error);
+      toast.error(error.response?.data?.err || "Failed to update talent!");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreate = async (payload: any) => {
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/events/new`,
+        payload,
+        { timeout: 10000 }
+      );
+
+      if (res.status === 201) {
+        toast.success("New event has been successfully added.");
+
+        saveEvents(res.data.events);
+        fetchEvents();
+        toast.success("Event has been successfully created.");
+        setFormData({
+          title: "",
+          description: "",
+          date: "",
+          time: "",
+          location: "",
+          status: "upcoming",
+          imageUrl: "",
+          videoUrl: "",
+        });
+        setIsDialogOpen(false);
+        setSelectedImage(null);
+        setPreviewUrl(null);
+        return true;
+      } else {
+        console.warn("Unexpected response on create:", res.status, res.data);
+        return false;
+      }
+    } catch (error: any) {
+      console.error("❌ Create error:", error.response || error);
+      toast.error(error.response?.data?.err || "Failed to create talent!");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    const storedUser = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
+    const user = storedUser ? JSON.parse(storedUser) : null;
+    const token = user?.token;
 
     if (editingEvent) {
-      updateEvent(editingEvent.id, formData);
-      toast({
-        title: "Event Updated",
-        description: "Event has been successfully updated.",
-      });
-    } else {
-      addEvent(formData);
-      toast({
-        title: "Event Added",
-        description: "New event has been successfully added.",
-      });
-    }
+      if (selectedImage) {
+        const imageData = await uploadFileToServer(selectedImage);
 
-    loadEvents();
-    setIsDialogOpen(false);
+        const payload = {
+          ...formData,
+          token,
+          imageData,
+        };
+        await handleUpdate(payload);
+      } else {
+        const payload = { ...formData, token, imageData: "" };
+        await handleUpdate(payload);
+      }
+    } else {
+      if (selectedImage) {
+        const imageData = await uploadFileToServer(selectedImage);
+        const payload = { ...formData, token, imageData };
+        await handleCreate(payload);
+      } else {
+        const payload = { ...formData, token };
+        await handleCreate(payload);
+      }
+    }
   };
 
   const handleDelete = (id: string, title: string) => {
     if (confirm(`Are you sure you want to delete "${title}"?`)) {
       deleteEvent(id);
       loadEvents();
-      toast({
-        title: "Event Removed",
-        description: `"${title}" has been removed.`,
-      });
+      toast.success(`"${title}" has been removed.`);
     }
   };
 
@@ -137,7 +260,26 @@ export default function ManageEvents() {
       const file = e.target.files[0];
       setSelectedImage(file);
       setPreviewUrl(URL.createObjectURL(file));
-      setFormData((prev) => ({ ...prev, imageUrl: URL.createObjectURL(file) }));
+      setFormData((prev) => ({ ...prev }));
+    }
+  };
+
+  const uploadFileToServer = async (file: File) => {
+    setIsUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("image", file);
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/events/upload/image`,
+        fd,
+        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+      );
+
+      return data;
+    } catch (error) {
+      toast.error("Image upload failed, please try again!");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -204,38 +346,41 @@ export default function ManageEvents() {
                     setFormData({ ...formData, description: e.target.value })
                   }
                   data-testid="textarea-event-description"
+                  className="min-h-[250px] max-h-[200px]"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="event-full-description">
-                  Full Description (Optional)
-                </Label>
-                <Textarea
-                  id="event-full-description"
-                  placeholder="Detailed description..."
-                  rows={5}
-                  value={formData.fullDescription}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      fullDescription: e.target.value,
-                    })
-                  }
-                  data-testid="textarea-event-full-description"
-                />
-              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="event-date">Date</Label>
-                <Input
-                  id="event-date"
-                  placeholder="e.g., June 15, 2024"
-                  required
-                  value={formData.date}
-                  onChange={(e) =>
-                    setFormData({ ...formData, date: e.target.value })
-                  }
-                  data-testid="input-event-date"
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start text-left font-normal"
+                      data-testid="input-event-date"
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.date
+                        ? format(new Date(formData.date), "PPP")
+                        : "Pick a date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={
+                        formData.date ? new Date(formData.date) : undefined
+                      }
+                      onSelect={(date) =>
+                        setFormData({
+                          ...formData,
+                          date: date ? format(date, "yyyy-MM-dd") : "",
+                        })
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="event-time">Time</Label>
@@ -352,7 +497,22 @@ export default function ManageEvents() {
                 className="w-full"
                 data-testid="button-submit-event"
               >
-                {editingEvent ? "Update" : "Add"} Event
+                {editingEvent ? (
+                  isUploading || loading ? (
+                    <span className="flex justify-center items-center gap-2">
+                      Processing...
+                      <Loader className="animate-spin text-white" />
+                    </span>
+                  ) : (
+                    "Update Event"
+                  )
+                ) : isUploading || loading ? (
+                  <span className="flex justify-center items-center gap-2">
+                    Processing... <Loader className="animate-spin text-white" />
+                  </span>
+                ) : (
+                  "Add Event"
+                )}
               </Button>
             </form>
           </DialogContent>

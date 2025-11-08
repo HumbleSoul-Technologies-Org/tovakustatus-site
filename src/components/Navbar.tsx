@@ -33,16 +33,17 @@ export default function Navbar() {
             <div className="w-10 h-10 bg-accent rounded-md flex mr-[-5px] items-center justify-center">
               <span className="text-white font-bold text-2xl">T</span>
             </div>
-            <span className="font-bold text-lg md:text-xl ">ova ku</span>
+            <span className="font-bold text-lg md:text-xl ">ova ku Status</span>
             <img
-              className="size-24"
-              src="https://res.cloudinary.com/ghost150/image/upload/v1762428659/logo2_v9vcrt.png"
+              className="size-20"
+              src="https://res.cloudinary.com/ghost150/image/upload/v1762586138/tovakustatus-removebg-preview_ys9avx.png"
             />
           </Link>
 
           <div className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
               <Link key={item.path} href={item.path}>
+                {}
                 <Button
                   variant="ghost"
                   className={

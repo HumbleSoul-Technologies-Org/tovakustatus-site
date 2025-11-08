@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import {
   getBlogPosts,
@@ -23,7 +23,7 @@ import {
 } from "@/lib/localStorage";
 
 export default function ManageBlog() {
-  const { toast } = useToast();
+  // toast is imported directly from sonner
   const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -102,16 +102,10 @@ export default function ManageBlog() {
 
     if (editingPost) {
       updateBlogPost(editingPost.id, formData);
-      toast({
-        title: "Post Updated",
-        description: "Blog post has been successfully updated.",
-      });
+      toast.success("Blog post has been successfully updated.");
     } else {
       addBlogPost(formData);
-      toast({
-        title: "Post Added",
-        description: "New blog post has been successfully added.",
-      });
+      toast.success("New blog post has been successfully added.");
     }
 
     loadBlogPosts();
@@ -122,10 +116,7 @@ export default function ManageBlog() {
     if (confirm(`Are you sure you want to delete "${title}"?`)) {
       deleteBlogPost(id);
       loadBlogPosts();
-      toast({
-        title: "Post Removed",
-        description: `"${title}" has been removed.`,
-      });
+      toast.success(`"${title}" has been removed.`);
     }
   };
 
