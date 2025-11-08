@@ -14,8 +14,10 @@ export default function Events() {
     setEvents(data);
   }, []);
 
-  const upcomingEvents = events.filter(e => e.status === "upcoming" || e.status === "ongoing");
-  const pastEvents = events.filter(e => e.status === "past");
+  const upcomingEvents = events.filter(
+    (e) => e.status === "upcoming" || e.status === "ongoing"
+  );
+  const pastEvents = events.filter((e) => e.status === "past");
 
   return (
     <div>
@@ -28,7 +30,9 @@ export default function Events() {
       <section className="py-16 md:py-24 bg-background">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold">Upcoming Events({upcomingEvents?.length||0})</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">
+              Upcoming Events({upcomingEvents?.length || 0})
+            </h2>
             <div className="flex gap-2">
               <Button
                 variant={viewMode === "grid" ? "default" : "outline"}
@@ -51,14 +55,16 @@ export default function Events() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             {upcomingEvents.map((event) => (
-              <EventCard key={event.id} {...event} />
+              <EventCard key={event._id} {...event} />
             ))}
           </div>
 
-          <h2 className="text-3xl md:text-4xl font-bold mb-8">Past Events({pastEvents?.length||0})</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-8">
+            Past Events({pastEvents?.length || 0})
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {pastEvents.map((event) => (
-              <EventCard key={event.id} {...event} />
+              <EventCard key={event._id} {...event} />
             ))}
           </div>
         </div>

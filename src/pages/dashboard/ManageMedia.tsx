@@ -43,7 +43,6 @@ interface MediaItem {
 }
 
 export default function ManageMedia() {
-  const { toast } = useToast();
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -130,11 +129,7 @@ export default function ManageMedia() {
       reset();
       setSelectedFile(null);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add media item. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to upload media. Please try again.");
     }
     setIsUploading(false);
   };

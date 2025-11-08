@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
 import {
   Mail,
   Phone,
@@ -14,18 +13,49 @@ import {
   Twitter,
   Instagram,
   Youtube,
+  Loader,
 } from "lucide-react";
+import axios from "axios";
+import { toast } from "sonner";
+import { set } from "date-fns";
 
 export default function Contact() {
-  const { toast } = useToast();
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    contact: "",
+    subject: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Contact form submitted");
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for reaching out. We'll get back to you soon.",
-    });
+
+    try {
+      setIsSubmitting(true);
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/messages/new`,
+        formData,
+        {
+          timeout: 10000,
+        }
+      );
+      if (res.status === 201) {
+        toast.success("Your message has been sent successfully.");
+      }
+      setFormData({
+        name: "",
+        email: "",
+        contact: "",
+        subject: "",
+        message: "",
+      });
+    } catch (error) {
+      toast.error("Something went wrong. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -50,6 +80,9 @@ export default function Contact() {
                       <div className="space-y-2">
                         <Label htmlFor="contact-name">Full Name</Label>
                         <Input
+                          onChange={(e) =>
+                            setFormData({ ...formData, name: e.target.value })
+                          }
                           id="contact-name"
                           placeholder="John Doe"
                           required
@@ -59,6 +92,9 @@ export default function Contact() {
                       <div className="space-y-2">
                         <Label htmlFor="contact-email">Email</Label>
                         <Input
+                          onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })
+                          }
                           id="contact-email"
                           type="email"
                           placeholder="john@example.com"
@@ -66,10 +102,29 @@ export default function Contact() {
                           data-testid="input-contact-email"
                         />
                       </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="contact-phone">Contact</Label>
+                        <Input
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              contact: e.target.value,
+                            })
+                          }
+                          id="contact-phone"
+                          type="tel"
+                          placeholder="(123) 456-7890"
+                          required
+                          data-testid="input-contact-phone"
+                        />
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="contact-subject">Subject</Label>
                       <Input
+                        onChange={(e) =>
+                          setFormData({ ...formData, subject: e.target.value })
+                        }
                         id="contact-subject"
                         placeholder="How can we help you?"
                         required
@@ -79,6 +134,9 @@ export default function Contact() {
                     <div className="space-y-2">
                       <Label htmlFor="contact-message">Message</Label>
                       <Textarea
+                        onChange={(e) =>
+                          setFormData({ ...formData, message: e.target.value })
+                        }
                         id="contact-message"
                         placeholder="Your message..."
                         className="min-h-[150px]"
@@ -92,7 +150,14 @@ export default function Contact() {
                       className="w-full"
                       data-testid="button-submit-contact"
                     >
-                      Send Message
+                      {isSubmitting ? (
+                        <span className="flex items-center gap-2">
+                          Sending...
+                          <Loader className="animate-spin" />
+                        </span>
+                      ) : (
+                        "Send Message"
+                      )}
                     </Button>
                   </form>
                 </CardContent>

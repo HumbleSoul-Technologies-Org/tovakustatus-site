@@ -7,19 +7,23 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { format, isValid } from "date-fns";
 
 interface Message {
   id: string;
-  name: string;
+  fullName: string;
   email: string;
+  contact: string;
   subject: string;
   message: string;
-  date: string;
-  status: "new" | "read" | "archived";
+  createdAt: string;
+  isRead: boolean;
+  isArchived: boolean;
+  // status: "new" | "read" | "archived";
 }
 
 interface MessageDetailModalProps {
-  message: Message | null;
+  message: Message | any;
   onOpenChange: (open: boolean) => void;
   onArchive?: (messageId: string) => void;
   onUnarchive?: (messageId: string) => void;
@@ -33,19 +37,19 @@ export function MessageDetailModal({
 }: MessageDetailModalProps) {
   if (!message) return null;
 
-  const getStatusBadge = (status: Message["status"]) => {
-    if (status === "read") return null;
-    const variants = {
-      new: "bg-green-500 hover:bg-green-600",
-      read: "bg-blue-500 hover:bg-blue-600",
-      archived: "bg-gray-500 hover:bg-gray-600",
-    };
-    return (
-      <Badge className={variants[status]}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
-    );
-  };
+  // const getStatusBadge = (status: Message["status"]) => {
+  //   if (status === "read") return null;
+  //   const variants = {
+  //     new: "bg-green-500 hover:bg-green-600",
+  //     read: "bg-blue-500 hover:bg-blue-600",
+  //     archived: "bg-gray-500 hover:bg-gray-600",
+  //   };
+  //   return (
+  //     <Badge className={variants[status]}>
+  //       {status.charAt(0).toUpperCase() + status.slice(1)}
+  //     </Badge>
+  //   );
+  // };
 
   return (
     <Dialog open={!!message} onOpenChange={onOpenChange}>
@@ -53,7 +57,7 @@ export function MessageDetailModal({
         <DialogHeader>
           <div className="flex justify-between items-center">
             <DialogTitle className="text-xl">Message Details</DialogTitle>
-            {getStatusBadge(message.status)}
+            {/* {getStatusBadge(message.status)} */}
           </div>
         </DialogHeader>
 
@@ -62,13 +66,20 @@ export function MessageDetailModal({
             <h3 className="text-lg font-medium mb-4">{message.subject}</h3>
             <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
               <p>
-                <span className="font-semibold">From:</span> {message.name}
+                <span className="font-semibold">From:</span> {message.fullName}
               </p>
               <p>
                 <span className="font-semibold">Email:</span> {message.email}
               </p>
               <p>
-                <span className="font-semibold">Date:</span> {message.date}
+                <span className="font-semibold">Contact:</span>{" "}
+                {message.contact}
+              </p>
+              <p>
+                <span className="font-semibold">Sent On : </span>
+                {message.createdAt && isValid(new Date(message.createdAt))
+                  ? format(new Date(message.createdAt), "PPP 'at' p")
+                  : "Date not available"}
               </p>
             </div>
           </div>
@@ -83,7 +94,7 @@ export function MessageDetailModal({
           </div>
 
           <div className="flex justify-end space-x-2 mt-6">
-            {message.status !== "archived" && onArchive && (
+            {message.isArchived === false && onArchive && (
               <Button
                 variant="secondary"
                 onClick={() => {
@@ -94,7 +105,7 @@ export function MessageDetailModal({
                 Archive
               </Button>
             )}
-            {message.status === "archived" && onUnarchive && (
+            {message.isArchived === true && onUnarchive && (
               <Button
                 variant="secondary"
                 onClick={() => {
