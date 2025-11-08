@@ -137,7 +137,11 @@ export default function ManageNotifications() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Notifications</h1>
+        <h1 className="text-3xl font-bold mb-2">
+          Notifications{" "}
+          {notifications.filter((n) => !n.read).length > 0 &&
+            `(${notifications.filter((n) => !n.read).length})`}
+        </h1>
         <p className="text-muted-foreground">
           System and user notifications for the dashboard.
         </p>
