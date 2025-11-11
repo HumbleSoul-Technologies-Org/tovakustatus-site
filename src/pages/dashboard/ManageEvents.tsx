@@ -137,7 +137,10 @@ export default function ManageEvents() {
       const res = await axios.patch(
         `${import.meta.env.VITE_API_URL}/events/update/${id}`,
         payload,
-        { timeout: 10000 }
+        {
+          headers: { Authorization: `Bearer ${payload.token}` },
+          timeout: 10000,
+        }
       );
 
       if (res.status === 200) {
@@ -179,7 +182,10 @@ export default function ManageEvents() {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/events/new`,
         payload,
-        { timeout: 10000 }
+        {
+          headers: { Authorization: `Bearer ${payload.token}` },
+          timeout: 10000,
+        }
       );
 
       if (res.status === 201) {

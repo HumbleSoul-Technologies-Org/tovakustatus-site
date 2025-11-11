@@ -171,7 +171,10 @@ export default function ManageBlog() {
       const res = await axios.patch(
         `${import.meta.env.VITE_API_URL}/blogs/update/${id}`,
         payload,
-        { timeout: 10000 }
+        {
+          headers: { Authorization: `Bearer ${payload.token}` },
+          timeout: 10000,
+        }
       );
 
       if (res.status === 200) {
@@ -213,7 +216,10 @@ export default function ManageBlog() {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/blogs/new`,
         payload,
-        { timeout: 10000 }
+        {
+          headers: { Authorization: `Bearer ${payload.token}` },
+          timeout: 10000,
+        }
       );
 
       if (res.status === 201) {
