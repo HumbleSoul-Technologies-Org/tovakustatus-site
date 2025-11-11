@@ -28,9 +28,8 @@ export default function Contact() {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
 
+  const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
 
@@ -42,15 +41,15 @@ export default function Contact() {
         }
       );
       if (res.status === 201) {
+        setFormData({
+          name: "",
+          email: "",
+          contact: "",
+          subject: "",
+          message: "",
+        });
         toast.success("Your message has been sent successfully.");
       }
-      setFormData({
-        name: "",
-        email: "",
-        contact: "",
-        subject: "",
-        message: "",
-      });
     } catch (error) {
       toast.error("Something went wrong. Please try again later.");
     } finally {
