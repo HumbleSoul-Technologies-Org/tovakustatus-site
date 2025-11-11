@@ -187,7 +187,7 @@ export default function ManageEvents() {
 
         saveEvents(res.data.events);
         fetchEvents();
-        toast.success("Event has been successfully created.");
+
         setFormData({
           title: "",
           description: "",
@@ -558,6 +558,9 @@ export default function ManageEvents() {
                     Location
                   </th>
                   <th className="text-left py-3 px-4 font-semibold">Status</th>
+                  <th className="text-left py-3 px-4 font-semibold">
+                    Thumbnail
+                  </th>
                   <th className="text-right py-3 px-4 font-semibold">
                     Actions
                   </th>
@@ -581,6 +584,12 @@ export default function ManageEvents() {
                       <Badge className={statusColors[event.status]}>
                         {event.status}
                       </Badge>
+                    </td>
+                    <td className="py-3 px-4">
+                      <img
+                        src={event?.image?.url || event?.imageUrl}
+                        className="size-20 rounded-md"
+                      />
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center justify-end gap-2">

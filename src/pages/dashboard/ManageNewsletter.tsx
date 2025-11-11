@@ -22,6 +22,7 @@ import {
   type NewsletterSubscriber,
 } from "@/lib/localStorage";
 import axios from "axios";
+import { format, isValid } from "date-fns";
 
 export default function ManageNewsletter() {
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([]);
@@ -213,9 +214,12 @@ export default function ManageNewsletter() {
                     </TableCell>
                     <TableCell>{subscriber.email}</TableCell>
                     <TableCell>
-                      {new Date(subscriber.createdAt).toLocaleDateString()}
+                      {subscriber.createdAt &&
+                      isValid(new Date(subscriber.createdAt))
+                        ? format(new Date(subscriber.createdAt), "PPP 'at' p")
+                        : "Date not available"}
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -223,7 +227,7 @@ export default function ManageNewsletter() {
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>

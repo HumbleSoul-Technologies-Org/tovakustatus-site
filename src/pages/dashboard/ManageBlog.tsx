@@ -31,7 +31,6 @@ import {
   saveBlogPosts,
 } from "@/lib/localStorage";
 import axios from "axios";
-import { format, set } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -45,6 +44,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { format, isValid } from "date-fns";
 
 export default function ManageBlog() {
   // toast is imported directly from sonner
@@ -175,27 +175,24 @@ export default function ManageBlog() {
       );
 
       if (res.status === 200) {
-        console.log("====================================");
-        console.log("updates", res.data);
-        console.log("====================================");
-        // saveBlogPosts(res.data.blogs);
-        // fetchBlogPosts();
-        // toast.success("Blog post has been successfully updated.");
+        saveBlogPosts(res.data.blogs);
+        fetchBlogPosts();
+        toast.success("Blog post has been successfully updated.");
 
         // Reset form
-        // setFormData({
-        //   title: "",
-        //   description: "",
-        //   date: "",
-        //   time: "",
-        //   location: "",
-        //   status: "upcoming",
-        //   imageUrl: "",
-        //   videoUrl: "",
-        // });
-        // setSelectedImage(null);
-        // setPreviewUrl(null);
-        // setIsDialogOpen(false);
+        setFormData({
+          title: "",
+          description: "",
+          date: "",
+          time: "",
+          location: "",
+          status: "upcoming",
+          imageUrl: "",
+          videoUrl: "",
+        });
+        setSelectedImage(null);
+        setImagePreview(null);
+        setIsDialogOpen(false);
         return true;
       } else {
         console.warn("Unexpected response on update:", res.status, res.data);
@@ -224,7 +221,6 @@ export default function ManageBlog() {
 
         saveBlogPosts(res.data.blogs);
         fetchBlogPosts();
-        toast.success("Blog post has been successfully created.");
 
         setFormData({
           title: "",
@@ -693,6 +689,9 @@ export default function ManageBlog() {
                     Category
                   </th>
                   <th className="text-left py-3 px-4 font-semibold">Date</th>
+                  <th className="text-left py-3 px-4 font-semibold">
+                    Thumbnail
+                  </th>
                   <th className="text-right py-3 px-4 font-semibold">
                     Actions
                   </th>
@@ -711,7 +710,15 @@ export default function ManageBlog() {
                       <Badge variant="secondary">{post.category}</Badge>
                     </td>
                     <td className="py-3 px-4 text-sm text-muted-foreground">
-                      {post.date}
+                      {post.date && isValid(new Date(post.date))
+                        ? format(new Date(post.date), "PPP 'at' p")
+                        : "Date not available"}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-muted-foreground">
+                      <img
+                        src={post?.image?.url || post?.imageUrl}
+                        className="size-20 rounded-md"
+                      />
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center justify-end gap-2">

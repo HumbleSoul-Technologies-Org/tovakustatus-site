@@ -155,7 +155,10 @@ export default function ManageTalents() {
       const res = await axios.patch(
         `${import.meta.env.VITE_API_URL}/talents/update/${id}`,
         payload,
-        { timeout: 10000 }
+        {
+          headers: { Authorization: `Bearer ${payload.token}` },
+          timeout: 10000,
+        }
       );
 
       if (res.status === 200) {
@@ -193,7 +196,10 @@ export default function ManageTalents() {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/talents/new`,
         payload,
-        { timeout: 10000 }
+        {
+          headers: { Authorization: `Bearer ${payload.token}` },
+          timeout: 10000,
+        }
       );
 
       if (res.status === 201) {
@@ -530,6 +536,9 @@ export default function ManageTalents() {
                     Description
                   </th>
                   <th className="text-left py-3 px-4 font-semibold">Status</th>
+                  <th className="text-left py-3 px-4 font-semibold">
+                    Thumbnail
+                  </th>
                   <th className="text-right py-3 px-4 font-semibold">
                     Actions
                   </th>
@@ -554,6 +563,12 @@ export default function ManageTalents() {
                       <Badge className="bg-primary/10 text-primary">
                         {talent.status}
                       </Badge>
+                    </td>
+                    <td className="py-3 px-4">
+                      <img
+                        src={talent?.image?.url || talent?.imageUrl}
+                        className="size-20 rounded-md"
+                      />
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center justify-end gap-2">
