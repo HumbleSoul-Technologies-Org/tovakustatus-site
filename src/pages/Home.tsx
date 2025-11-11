@@ -261,8 +261,8 @@ export default function Home() {
                   </div>
                   <h3 className="font-semibold text-xl mb-2">{blog.title}</h3>
                   <p className="text-muted-foreground mb-4">{blog.excerpt}</p>
-                  <Link href={`/blog/${blog._id}`}>
-                    <Button className="px-0">Read More →</Button>
+                  <Link className={`text-primary`} href={`/blog/${blog._id}`}>
+                    Read More →
                   </Link>
                 </CardContent>
               </Card>
