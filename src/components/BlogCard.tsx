@@ -3,9 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, Eye, User } from "lucide-react";
 import { Link } from "wouter";
+import { format, isValid } from "date-fns";
 
 interface BlogCardProps {
-  id: string;
+  _id: string;
   title: string;
   excerpt: string;
   author: string;
@@ -13,11 +14,12 @@ interface BlogCardProps {
   category: string;
   imageUrl?: string;
   readTime?: string;
-  views?: number;
+  views?: [number];
+  image?: { url: string; public_id: string };
 }
 
 export default function BlogCard({
-  id,
+  _id,
   title,
   excerpt,
   author,
@@ -26,22 +28,24 @@ export default function BlogCard({
   imageUrl,
   readTime,
   views,
+  image,
 }: BlogCardProps) {
   return (
     <Card className="overflow-hidden hover-elevate">
-      {imageUrl && (
-        <div className=" overflow-hidden">
-          <img
-            src={imageUrl}
-            alt={title}
-            className="w-full h-full object-cover"
-            data-testid={`blog-image-${id}`}
-          />
-        </div>
-      )}
+      {imageUrl ||
+        (image?.url && (
+          <div className=" overflow-hidden">
+            <img
+              src={imageUrl || image?.url}
+              alt={title}
+              className="w-full h-full object-cover"
+              data-testid={`blog-image-${_id}`}
+            />
+          </div>
+        ))}
       <CardContent className="p-6">
-        <div className="flex items-center gap-2 mb-3">
-          <Badge variant="secondary" data-testid={`blog-category-${id}`}>
+        <div className="flex relative items-center gap-2 mb-3">
+          <Badge variant="secondary" data-testid={`blog-category-${_id}`}>
             {category}
           </Badge>
           {readTime && (
@@ -49,11 +53,12 @@ export default function BlogCard({
               {readTime}
             </span>
           )}
+
           {views && (
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs absolute right-1 flex-1 text-muted-foreground">
               <span className="flex-row cursor-pointer flex items-center gap-1 transition-colors">
                 <Eye className=" hover:text-primary" size={16} />
-                {views}
+                {10}
               </span>
             </span>
           )}
@@ -61,14 +66,14 @@ export default function BlogCard({
 
         <h3
           className="text-xl font-bold text-foreground mb-2 line-clamp-2"
-          data-testid={`blog-title-${id}`}
+          data-testid={`blog-title-${_id}`}
         >
           {title}
         </h3>
 
         <p
           className="text-sm text-muted-foreground mb-4 line-clamp-3 leading-relaxed"
-          data-testid={`blog-excerpt-${id}`}
+          data-testid={`blog-excerpt-${_id}`}
         >
           {excerpt}
         </p>
@@ -76,19 +81,23 @@ export default function BlogCard({
         <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
           <div className="flex items-center gap-1">
             <User className="h-3 w-3" />
-            <span data-testid={`blog-author-${id}`}>{author}</span>
+            <span data-testid={`blog-author-${_id}`}>{author}</span>
           </div>
           <div className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            <span data-testid={`blog-date-${id}`}>{date}</span>
+            <span data-testid={`blog-date-${_id}`}>
+              {date && isValid(new Date(date))
+                ? format(new Date(date), "PPP")
+                : "Date not available"}
+            </span>
           </div>
         </div>
 
-        <Link href={`/blog/${id}`}>
+        <Link href={`/blog/${_id}`}>
           <Button
             variant="outline"
             className="w-full"
-            data-testid={`button-read-more-${id}`}
+            data-testid={`button-read-more-${_id}`}
           >
             Read More
           </Button>

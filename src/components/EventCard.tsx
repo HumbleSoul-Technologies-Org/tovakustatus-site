@@ -3,9 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Clock } from "lucide-react";
 import { Link } from "wouter";
+import { format, isValid } from "date-fns";
 
 interface EventCardProps {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   date: string;
@@ -13,9 +14,20 @@ interface EventCardProps {
   location: string;
   status: "upcoming" | "ongoing" | "past";
   imageUrl?: string;
+  image?: { url: string; public_id: string };
 }
 
-export default function EventCard({ id, title, description, date, time, location, status, imageUrl }: EventCardProps) {
+export default function EventCard({
+  _id,
+  title,
+  description,
+  date,
+  time,
+  location,
+  status,
+  imageUrl,
+  image,
+}: EventCardProps) {
   const statusColors = {
     upcoming: "bg-primary/10 text-primary border-primary/20",
     ongoing: "bg-accent/10 text-accent-foreground border-accent/20",
@@ -24,45 +36,65 @@ export default function EventCard({ id, title, description, date, time, location
 
   return (
     <Card className="overflow-hidden hover-elevate">
-      {imageUrl && (
-        <div className="h-48 overflow-hidden">
-          <img 
-            src={imageUrl} 
-            alt={title} 
-            className="w-full h-full object-cover"
-            data-testid={`event-image-${id}`}
-          />
-        </div>
-      )}
+      {imageUrl ||
+        (image?.url && (
+          <div className="h-auto  overflow-hidden">
+            <img
+              src={imageUrl || image?.url}
+              alt={title}
+              className="w-full h-full object-cover"
+              data-testid={`event-image-${_id}`}
+            />
+          </div>
+        ))}
       <CardContent className="p-6">
         <div className="flex items-start justify-between gap-2 mb-3">
-          <h3 className="text-xl font-bold text-foreground flex-1" data-testid={`event-title-${id}`}>{title}</h3>
-          <Badge className={statusColors[status]} data-testid={`event-status-${id}`}>
+          <h3
+            className="text-xl font-bold text-foreground flex-1"
+            data-testid={`event-title-${_id}`}
+          >
+            {title}
+          </h3>
+          <Badge
+            className={statusColors[status]}
+            data-testid={`event-status-${_id}`}
+          >
             {status}
           </Badge>
         </div>
-        
-        <p className="text-sm text-muted-foreground mb-4 leading-relaxed line-clamp-2" data-testid={`event-description-${id}`}>
+
+        <p
+          className="text-sm text-muted-foreground mb-4 leading-relaxed line-clamp-2"
+          data-testid={`event-description-${_id}`}
+        >
           {description}
         </p>
-        
+
         <div className="space-y-2 mb-4 text-sm">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="h-4 w-4" />
-            <span data-testid={`event-date-${id}`}>{date}</span>
+            <span data-testid={`event-date-${_id}`}>
+              {date && isValid(new Date(date))
+                ? format(new Date(date), "PPP")
+                : "Date not available"}
+            </span>
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
             <Clock className="h-4 w-4" />
-            <span data-testid={`event-time-${id}`}>{time}</span>
+            <span data-testid={`event-time-${_id}`}>{time}</span>
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
             <MapPin className="h-4 w-4" />
-            <span data-testid={`event-location-${id}`}>{location}</span>
+            <span data-testid={`event-location-${_id}`}>{location}</span>
           </div>
         </div>
-        
-        <Link href={`/events/${id}`}>
-          <Button variant="outline" className="w-full" data-testid={`button-view-details-${id}`}>
+
+        <Link href={`/events/${_id}`}>
+          <Button
+            variant="outline"
+            className="w-full"
+            data-testid={`button-view-details-${_id}`}
+          >
             View Details
           </Button>
         </Link>

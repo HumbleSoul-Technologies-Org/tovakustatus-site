@@ -4,6 +4,7 @@ import EventCard from "@/components/EventCard";
 import { Button } from "@/components/ui/button";
 import { Calendar, Grid } from "lucide-react";
 import { getEvents, Event } from "@/lib/localStorage";
+import { format, isValid } from "date-fns";
 
 export default function Events() {
   const [viewMode, setViewMode] = useState<"grid" | "timeline">("grid");
@@ -33,7 +34,7 @@ export default function Events() {
             <h2 className="text-3xl md:text-4xl font-bold">
               Upcoming Events({upcomingEvents?.length || 0})
             </h2>
-            <div className="flex gap-2">
+            <div className="hidden gap-2">
               <Button
                 variant={viewMode === "grid" ? "default" : "outline"}
                 size="icon"
@@ -59,9 +60,11 @@ export default function Events() {
             ))}
           </div>
 
-          <h2 className="text-3xl md:text-4xl font-bold mb-8">
-            Past Events({pastEvents?.length || 0})
-          </h2>
+          {pastEvents.length > 0 && (
+            <h2 className="text-3xl md:text-4xl font-bold mb-8">
+              Past Events({pastEvents?.length || 0})
+            </h2>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {pastEvents.map((event) => (
               <EventCard key={event._id} {...event} />
