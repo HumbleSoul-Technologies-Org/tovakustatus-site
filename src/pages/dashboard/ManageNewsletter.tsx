@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Users, Trash2, Send } from "lucide-react";
 import {
+  STORAGE_KEYS,
   getNewsletterSubscribers,
   deleteNewsletterSubscriber,
   type NewsletterSubscriber,
@@ -25,6 +27,7 @@ export default function ManageNewsletter() {
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([]);
   const [selectedSubscribers, setSelectedSubscribers] = useState<string[]>([]);
   const [showBroadcastForm, setShowBroadcastForm] = useState(false);
+  const [sending, setSending] = useState(false);
   const [broadcastSubject, setBroadcastSubject] = useState("");
   const [broadcastMessage, setBroadcastMessage] = useState("");
 
@@ -38,15 +41,28 @@ export default function ManageNewsletter() {
     }
   };
 
-  const handleBroadcast = (e: React.FormEvent) => {
+  const handleBroadcast = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically send the email to all subscribers
-    console.log("Broadcasting to", subscribers.length, "subscribers");
-    console.log("Subject:", broadcastSubject);
-    console.log("Message:", broadcastMessage);
-    setShowBroadcastForm(false);
-    setBroadcastSubject("");
-    setBroadcastMessage("");
+    const storedUser = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
+    const user = storedUser ? JSON.parse(storedUser) : null;
+    const token = user?.token;
+    setSending(true);
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/news-letter/broadcast`,
+        { subject: broadcastSubject, message: broadcastMessage },
+        { headers: { Authorization: `Bearer ${token}` }, timeout: 10000 }
+      );
+      if (res.status === 201) {
+        toast.success("Broadcast email sent successfully!");
+        setShowBroadcastForm(false);
+        setBroadcastSubject("");
+        setBroadcastMessage("");
+      }
+    } catch (error) {
+    } finally {
+      setSending(false);
+    }
   };
 
   const fetchUsers = async () => {
@@ -77,10 +93,12 @@ export default function ManageNewsletter() {
             View and manage newsletter subscribers.
           </p>
         </div>
-        <Button onClick={() => setShowBroadcastForm(true)}>
-          <Send className="w-4 h-4 mr-2" />
-          Broadcast Email
-        </Button>
+        {!showBroadcastForm && (
+          <Button onClick={() => setShowBroadcastForm(true)}>
+            <Send className="w-4 h-4 mr-2" />
+            Broadcast Email
+          </Button>
+        )}
       </div>
 
       {showBroadcastForm && (
@@ -119,7 +137,16 @@ export default function ManageNewsletter() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Send Broadcast</Button>
+                <Button type="submit">
+                  {sending ? (
+                    <span className="flex items-center gap-2">
+                      Broadcasting ...
+                      <Send className="w-4 h-4 mr-2 animate-bounce" />
+                    </span>
+                  ) : (
+                    "Send Broadcast"
+                  )}
+                </Button>
               </div>
             </form>
           </CardContent>

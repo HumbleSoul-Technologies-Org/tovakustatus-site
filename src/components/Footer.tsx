@@ -20,18 +20,16 @@ export default function Footer() {
               className="flex items-center gap-2 hover-elevate rounded-md px-2 -ml-2 py-1"
               data-testid="link-home"
             >
-              <div className="w-10 h-10 bg-accent rounded-md flex mr-[-5px] items-center justify-center">
-                <span className="text-white font-bold text-2xl">T</span>
-              </div>
-              <span className="font-bold text-lg md:text-xl ">
-                ova ku Status
-              </span>
               <img
                 className="size-24"
                 src="https://res.cloudinary.com/ghost150/image/upload/v1762586138/tovakustatus-removebg-preview_ys9avx.png"
               />
+
+              <span className="font-bold ml-[-20px] text-lg md:text-xl ">
+                ova ku Status
+              </span>
             </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-muted-foreground  leading-relaxed">
               Identifying and empowering talented kids from underprivileged
               schools and slums.
             </p>
