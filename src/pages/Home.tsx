@@ -151,7 +151,7 @@ export default function Home() {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/new-letter/subscribe`,
+        `${import.meta.env.VITE_API_URL}/news-letter/subscribe`,
         { email, uuid }
       );
 

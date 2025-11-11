@@ -28,7 +28,7 @@ export default function DashboardSidebar({ onClose }: DashboardSidebarProps) {
   const menuItems = [
     { icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
     { icon: Users, label: "Manage Talents", path: "/dashboard/talents" },
-    { icon: FolderOpen, label: "Manage Projects", path: "/dashboard/projects" },
+    // { icon: FolderOpen, label: "Manage Projects", path: "/dashboard/projects" },
     { icon: Calendar, label: "Manage Events", path: "/dashboard/events" },
     { icon: BookOpen, label: "Manage Blog", path: "/dashboard/blog" },
     { icon: Image, label: "Media Uploads", path: "/dashboard/media" },
