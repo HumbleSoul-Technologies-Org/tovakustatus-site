@@ -2,11 +2,14 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { isAuthenticated } from "@/lib/localStorage";
+import { isAuthenticated, getBlogPosts, getEvents } from "@/lib/localStorage";
+import { Badge } from "@/components/ui/badge";
 
 export default function Navbar() {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const blogs = getBlogPosts();
+  const events = getEvents();
 
   const navItems = [
     { label: "Home", path: "/" },
@@ -34,31 +37,48 @@ export default function Navbar() {
               className="size-20"
               src="https://res.cloudinary.com/ghost150/image/upload/v1762586138/tovakustatus-removebg-preview_ys9avx.png"
             />
-            {/* <div className="w-10 h-10 bg-accent rounded-md flex mr-[-5px] items-center justify-center">
-              <span className="text-white font-bold text-2xl">T</span>
-            </div> */}
+
             <span className="font-bold ml-[-20px] text-lg md:text-xl ">
               ova ku Status
             </span>
           </Link>
 
           <div className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => (
-              <Link key={item.path} href={item.path}>
-                {}
-                <Button
-                  variant="ghost"
-                  className={
-                    isActive(item.path)
-                      ? "bg-accent/10 text-accent-foreground"
-                      : ""
-                  }
-                  data-testid={`link-${item.label.toLowerCase()}`}
-                >
-                  {item.label}
-                </Button>
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              return (
+                <Link className={`relative`} key={item.path} href={item.path}>
+                  <Button
+                    variant="ghost"
+                    className={
+                      isActive(item.path)
+                        ? "bg-accent/10 text-accent-foreground"
+                        : ""
+                    }
+                    data-testid={`link-${item.label.toLowerCase()}`}
+                  >
+                    {item.label}
+                    {item.path === "/blog" && blogs.length > 0 && (
+                      <Badge
+                        className={`bg-primary absolute size-5 right-1 flex items-center justify-center rounded-full ${
+                          isActive("/blog") ? "hidden" : ""
+                        }`}
+                      >
+                        {blogs.length}
+                      </Badge>
+                    )}
+                    {item.path === "/events" && events.length > 0 && (
+                      <Badge
+                        className={`bg-primary absolute size-5 right-1 flex items-center justify-center rounded-full ${
+                          isActive("/events") ? "hidden" : ""
+                        }`}
+                      >
+                        {events.length}
+                      </Badge>
+                    )}
+                  </Button>
+                </Link>
+              );
+            })}
           </div>
 
           <div className="hidden lg:flex items-center gap-2">
