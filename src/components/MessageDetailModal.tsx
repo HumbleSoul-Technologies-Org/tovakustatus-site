@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { format, isValid } from "date-fns";
+import { Trash2 } from "lucide-react";
 
 interface Message {
   id: string;
@@ -62,8 +63,10 @@ export function MessageDetailModal({
         </DialogHeader>
 
         <div className="mt-4">
-          <div className="mb-6">
+          <div className="mb-6 relative">
             <h3 className="text-lg font-medium mb-4">{message.subject}</h3>
+            <Trash2 className="absolute right-4 size-4 z-20 cursor-pointer text-red-600 top-2" />
+
             <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
               <p>
                 <span className="font-semibold">From:</span> {message.fullName}
@@ -105,17 +108,15 @@ export function MessageDetailModal({
                 Archive
               </Button>
             )}
-            {message.isArchived === true && onUnarchive && (
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  onUnarchive(message.id);
-                  onOpenChange(false);
-                }}
-              >
-                Unarchive
-              </Button>
-            )}
+            <Button
+              variant="secondary"
+              // onClick={() => {
+              //   onUnarchive(message._id);
+              //   onOpenChange(false);
+              // }}
+            >
+              {message.isArchived ? "Unarchive" : "Archive"}
+            </Button>
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Close
             </Button>
