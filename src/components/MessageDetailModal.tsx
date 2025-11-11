@@ -7,11 +7,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { format, isValid } from "date-fns";
-import { Trash2 } from "lucide-react";
+import { format, isValid, set } from "date-fns";
+import { Loader, Trash2 } from "lucide-react";
+import axios from "axios";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface Message {
-  id: string;
+  _id: string;
   fullName: string;
   email: string;
   contact: string;
@@ -27,16 +30,46 @@ interface MessageDetailModalProps {
   message: Message | any;
   onOpenChange: (open: boolean) => void;
   onArchive?: (messageId: string) => void;
+  refresh?: () => void;
   onUnarchive?: (messageId: string) => void;
 }
 
 export function MessageDetailModal({
   message,
   onOpenChange,
-  onArchive,
-  onUnarchive,
+  refresh,
 }: MessageDetailModalProps) {
   if (!message) return null;
+
+  const [archiving, setArchiving] = useState(false);
+
+  const archiveMessage = async (messageId: string) => {
+    setArchiving(true);
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/messages/archive/${messageId}`,
+        {},
+        {
+          timeout: 10000,
+        }
+      );
+      if (response.status === 200) {
+        console.log("====================================");
+        console.log(response.data);
+        console.log("====================================");
+        refresh && refresh();
+        console.log("Message added to archives");
+        toast.success("Message archived successfully");
+        onOpenChange(false);
+      }
+    } catch (error) {
+      console.log("====================================");
+      console.log(error);
+      console.log("====================================");
+    } finally {
+      setArchiving(false);
+    }
+  };
 
   // const getStatusBadge = (status: Message["status"]) => {
   //   if (status === "read") return null;
@@ -97,25 +130,29 @@ export function MessageDetailModal({
           </div>
 
           <div className="flex justify-end space-x-2 mt-6">
-            {message.isArchived === false && onArchive && (
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  onArchive(message.id);
-                  onOpenChange(false);
-                }}
-              >
-                Archive
-              </Button>
-            )}
             <Button
               variant="secondary"
-              // onClick={() => {
-              //   onUnarchive(message._id);
-              //   onOpenChange(false);
-              // }}
+              onClick={() => {
+                archiveMessage(message._id);
+              }}
             >
-              {message.isArchived ? "Unarchive" : "Archive"}
+              {message.isArchived ? (
+                archiving ? (
+                  <span className="flex gap-1 items-center">
+                    Processing...
+                    <Loader className="text-xs size-3 animate-spin" />
+                  </span>
+                ) : (
+                  "Unarchive"
+                )
+              ) : archiving ? (
+                <span className="flex gap-1 items-center">
+                  Processing...
+                  <Loader className="text-xs size-3 animate-spin" />
+                </span>
+              ) : (
+                "Archive"
+              )}
             </Button>
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Close

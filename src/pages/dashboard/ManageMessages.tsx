@@ -64,25 +64,24 @@ export default function ManageMessages() {
   // };
 
   useEffect(() => {
-    // Fetch messages from backend/storage here and setMessages
-    const fetchMessages = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/messages/all`,
-          {
-            timeout: 10000,
-          }
-        );
-        if (response.status === 200) {
-          setMessages(response.data.messages);
-        }
-      } catch (error) {
-        toast.error("Failed to fetch messages");
-      }
-    };
-
     fetchMessages();
   }, []);
+  // Fetch messages from backend/storage here and setMessages
+  const fetchMessages = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/messages/all`,
+        {
+          timeout: 10000,
+        }
+      );
+      if (response.status === 200) {
+        setMessages(response.data.messages);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch messages");
+    }
+  };
 
   const readMessage = async (id: string) => {
     try {
@@ -119,7 +118,13 @@ export default function ManageMessages() {
               activeTab === "new" ? "bg-primary" : "bg-background"
             } p-1`}
           >
-            Unread ({messages.filter((m) => m.isRead === false).length})
+            Unread (
+            {
+              messages.filter(
+                (m) => m.isRead === false && m.isArchived === false
+              ).length
+            }
+            )
           </Button>
           <Button
             variant={activeTab === "read" ? "default" : "outline"}
@@ -128,7 +133,13 @@ export default function ManageMessages() {
               activeTab === "read" ? "bg-primary" : "bg-background"
             } p-1`}
           >
-            Read ({messages.filter((m) => m.isRead === true).length})
+            Read (
+            {
+              messages.filter(
+                (m) => m.isRead === true && m.isArchived === false
+              ).length
+            }
+            )
           </Button>
           <Button
             variant={activeTab === "archived" ? "default" : "outline"}
@@ -200,7 +211,7 @@ export default function ManageMessages() {
                   (m) => m.isRead === true && m.isArchived === false
                 ).length > 0 ? (
                   messages
-                    .filter((m) => m.isRead === true)
+                    .filter((m) => m.isRead === true && m.isArchived === false)
                     .map((message) => (
                       <div key={message._id}>
                         <div
@@ -212,12 +223,12 @@ export default function ManageMessages() {
                             }
                           }}
                         >
-                          <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center justify-between ">
                             <h3 className="font-medium">{message.subject}</h3>
 
                             {/* {getStatusBadge(message.status)} */}
                           </div>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm font-semibold text-gray-500">
                             {message.fullName}
                           </p>
 
@@ -259,17 +270,12 @@ export default function ManageMessages() {
                             }
                           }}
                         >
-                          <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center justify-between ">
                             <h3 className="font-medium">{message.subject}</h3>
-                            {message.isArchived === false &&
-                              message.isRead === true && (
-                                <Badge className="bg-blue-200 text-blue-600">
-                                  Archieved
-                                </Badge>
-                              )}
+
                             {/* {getStatusBadge(message.status)} */}
                           </div>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm font-semibold text-gray-500">
                             {message.fullName}
                           </p>
 
@@ -300,6 +306,7 @@ export default function ManageMessages() {
 
         <MessageDetailModal
           message={selectedMessage}
+          refresh={fetchMessages}
           onOpenChange={(open) => {
             if (!open) setSelectedMessage(null);
           }}
