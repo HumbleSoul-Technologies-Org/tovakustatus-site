@@ -17,10 +17,6 @@ export default function Events() {
   useEffect(() => {
     if (data && data.events.length > 0) {
       setEvents(data.events);
-      saveEvents(data.events);
-    } else {
-      const savedData = getEvents();
-      setEvents(savedData);
     }
   }, []);
 
