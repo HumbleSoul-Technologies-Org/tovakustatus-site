@@ -62,11 +62,11 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/about" component={About} />
         <Route path="/talents" component={Talents} />
-        <Route path="/talents/:id" component={TalentDetail} />
+        <Route path="/talents/:_id" component={TalentDetail} />
         <Route path="/projects" component={Projects} />
         <Route path="/projects/:id" component={ProjectDetail} />
         <Route path="/events" component={Events} />
-        <Route path="/events/:id" component={EventDetail} />
+        <Route path="/events/:_id" component={EventDetail} />
         <Route path="/media" component={Media} />
         <Route path="/blog" component={Blog} />
         <Route path="/blog/:id" component={BlogDetail} />

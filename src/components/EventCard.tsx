@@ -40,7 +40,7 @@ export default function EventCard({
         (image?.url && (
           <div className="h-auto  overflow-hidden">
             <img
-              src={imageUrl || image?.url }
+              src={imageUrl || image?.url}
               alt={title}
               className="w-full h-full object-cover"
               data-testid={`event-image-${_id}`}

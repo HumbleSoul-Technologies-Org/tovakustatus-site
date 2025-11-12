@@ -13,16 +13,19 @@ import {
   ThumbsUpIcon,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 
 export default function TalentDetail() {
   const { toast } = useToast();
   const [, params] = useRoute("/talents/:id");
   const [talent, setTalent] = useState<Talent | null>(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["talents", `${params?.id}`],
+  });
 
   useEffect(() => {
-    if (params?.id) {
-      const foundTalent = getTalentById(params.id);
-      setTalent(foundTalent || null);
+    if (data) {
+      setTalent(data?.talent);
     }
   }, [params?.id]);
 

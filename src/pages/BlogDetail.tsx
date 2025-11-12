@@ -4,6 +4,8 @@ import { getBlogPostById, BlogPost } from "@/lib/localStorage";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+
 import {
   ArrowLeft,
   Calendar,
@@ -21,11 +23,13 @@ export default function BlogDetail() {
   const { toast } = useToast();
   const [, params] = useRoute("/blog/:id");
   const [post, setPost] = useState<BlogPost | null>(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["blogs", `${params?.id}`],
+  });
 
   useEffect(() => {
-    if (params?.id) {
-      const foundPost = getBlogPostById(params.id);
-      setPost(foundPost || null);
+    if (data) {
+      setPost(data?.blog);
     }
   }, [params?.id]);
 

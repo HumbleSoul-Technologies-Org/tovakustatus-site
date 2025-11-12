@@ -4,16 +4,21 @@ import TalentCard from "@/components/TalentCard";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
-import { getTalents, Talent, defaultData } from "@/lib/localStorage";
+import { Talent } from "@/lib/localStorage";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Talents() {
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [allTalents, setAllTalents] = useState<Talent[]>([]);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["talents", "all"],
+  });
 
   useEffect(() => {
-    const talents = getTalents();
-    setAllTalents(talents);
+    if (data) {
+      setAllTalents(data?.talents);
+    }
   }, []);
 
   const talentTypes = [

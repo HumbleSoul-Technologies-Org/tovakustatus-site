@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import Hero from "@/components/Hero";
 import EventCard from "@/components/EventCard";
-import { Button } from "@/components/ui/button";
-import { Calendar, Grid, Loader } from "lucide-react";
-import { getEvents, Event, saveEvents } from "@/lib/localStorage";
-import { format, isValid } from "date-fns";
+import { Loader } from "lucide-react";
+import { Event } from "@/lib/localStorage";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Events() {

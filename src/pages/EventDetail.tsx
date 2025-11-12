@@ -16,18 +16,21 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format, isValid } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
 
 export default function EventDetail() {
   const { toast } = useToast();
-  const [, params] = useRoute("/events/:id");
+  const [, params] = useRoute("/events/:_id");
   const [event, setEvent] = useState<Event | null>(null);
 
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["events", `${params?._id}`],
+  });
   useEffect(() => {
-    if (params?.id) {
-      const foundEvent = getEventById(params.id);
-      setEvent(foundEvent || null);
+    if (data) {
+      setEvent(data?.event);
     }
-  }, [params?.id]);
+  }, [params?._id, data]);
 
   if (!event) {
     return (
@@ -180,7 +183,7 @@ export default function EventDetail() {
                       className="flex-row cursor-pointer flex-1 flex items-center gap-2   transition-colors"
                       onClick={() => {
                         try {
-                          const url = `${window.location.origin}/events/${params?.id}`;
+                          const url = `${window.location.origin}/events/${params?._id}`;
                           navigator.clipboard?.writeText(url);
                           toast({ title: "link copied" });
                         } catch (e) {
