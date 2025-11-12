@@ -1,15 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isAuthenticated, getBlogPosts, getEvents } from "@/lib/localStorage";
 import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Navbar() {
+  const { data: eventsData } = useQuery({
+    queryKey: ["events", "all"],
+    refetchInterval: 5000, // every 30s
+  });
+
+  const { data: blogsData } = useQuery({
+    queryKey: ["blogs", "all"],
+    refetchInterval: 5000, // every 5s
+  });
+
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const blogs = getBlogPosts();
-  const events = getEvents();
+  const [events] = useState(eventsData?.events || []);
+  const [blogs] = useState(blogsData?.blogs || []);
 
   const navItems = [
     { label: "Home", path: "/" },
