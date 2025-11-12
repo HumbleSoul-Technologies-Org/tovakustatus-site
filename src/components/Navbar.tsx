@@ -19,8 +19,6 @@ export default function Navbar() {
 
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [events] = useState(eventsData?.events || []);
-  const [blogs] = useState(blogsData?.blogs || []);
 
   const navItems = [
     { label: "Home", path: "/" },
@@ -68,24 +66,25 @@ export default function Navbar() {
                     data-testid={`link-${item.label.toLowerCase()}`}
                   >
                     {item.label}
-                    {item.path === "/blog" && blogs.length > 0 && (
+                    {item.path === "/blog" && blogsData?.blogs.length > 0 && (
                       <Badge
                         className={`bg-primary absolute size-5 right-1 flex items-center justify-center rounded-full ${
                           isActive("/blog") ? "hidden" : ""
                         }`}
                       >
-                        {blogs.length}
+                        {blogsData?.blogs.length}
                       </Badge>
                     )}
-                    {item.path === "/events" && events.length > 0 && (
-                      <Badge
-                        className={`bg-primary absolute size-5 right-1 flex items-center justify-center rounded-full ${
-                          isActive("/events") ? "hidden" : ""
-                        }`}
-                      >
-                        {events.length}
-                      </Badge>
-                    )}
+                    {item.path === "/events" &&
+                      eventsData?.events.length > 0 && (
+                        <Badge
+                          className={`bg-primary absolute size-5 right-1 flex items-center justify-center rounded-full ${
+                            isActive("/events") ? "hidden" : ""
+                          }`}
+                        >
+                          {eventsData?.events.length}
+                        </Badge>
+                      )}
                   </Button>
                 </Link>
               );
