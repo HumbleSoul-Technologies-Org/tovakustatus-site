@@ -257,9 +257,15 @@ export default function ManageEvents() {
   const handleDelete = async (id: string, title: string) => {
     setDeleteLoading(id);
     try {
+      const storedUser = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
+      const user = storedUser ? JSON.parse(storedUser) : null;
+      const token = user?.token;
       const res = await axios.delete(
         `${import.meta.env.VITE_API_URL}/events/delete/${id}`,
-        { timeout: 10000 }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: 10000,
+        }
       );
       if (res.status === 200) {
         saveEvents(res.data.events);
@@ -267,8 +273,8 @@ export default function ManageEvents() {
         toast.success(`"${title}" has been removed.`);
         deleteEvent(id);
       }
-    } catch (error) {
-      toast.error("Failed to delete event. Please try again.");
+    } catch (error: any) {
+      toast.error(`${error.response.data.err}`);
     } finally {
       setDeleteLoading("");
     }

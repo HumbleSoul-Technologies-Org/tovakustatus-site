@@ -30,25 +30,7 @@ export default function ManageMessages() {
 
   const filteredMessages = messages.filter((msg) => msg.isRead === false);
 
-  const handleStatusChange = (
-    messageId: string,
-    newStatus: "isRead" | "isArchived"
-  ) => {
-    setMessages(
-      messages.map((msg) =>
-        msg._id === messageId ? { ...msg, status: newStatus } : msg
-      )
-    );
-  };
-
-  const truncateMessage = (message: string, lines: number = 2) => {
-    const splitMessage = message.split("\n").slice(0, lines);
-    return (
-      splitMessage.join("\n") +
-      (message.split("\n").length > lines ? "..." : "")
-    );
-  };
-
+   
   // const getStatusBadge = (status: Message["status"]) => {
   //   if (status === "read") return null;
   //   const variants = {

@@ -2,17 +2,26 @@ import { useState, useEffect } from "react";
 import Hero from "@/components/Hero";
 import EventCard from "@/components/EventCard";
 import { Button } from "@/components/ui/button";
-import { Calendar, Grid } from "lucide-react";
-import { getEvents, Event } from "@/lib/localStorage";
+import { Calendar, Grid, Loader } from "lucide-react";
+import { getEvents, Event, saveEvents } from "@/lib/localStorage";
 import { format, isValid } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Events() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["events", "all"],
+  });
   const [viewMode, setViewMode] = useState<"grid" | "timeline">("grid");
   const [events, setEvents] = useState<Event[]>([]);
 
   useEffect(() => {
-    const data = getEvents();
-    setEvents(data);
+    if (data && data.events.length > 0) {
+      setEvents(data.events);
+      saveEvents(data.events);
+    } else {
+      const savedData = getEvents();
+      setEvents(savedData);
+    }
   }, []);
 
   const upcomingEvents = events.filter(
@@ -34,31 +43,23 @@ export default function Events() {
             <h2 className="text-3xl md:text-4xl font-bold">
               Upcoming Events({upcomingEvents?.length || 0})
             </h2>
-            <div className="hidden gap-2">
-              <Button
-                variant={viewMode === "grid" ? "default" : "outline"}
-                size="icon"
-                onClick={() => setViewMode("grid")}
-                data-testid="button-view-grid"
-              >
-                <Grid className="h-5 w-5" />
-              </Button>
-              <Button
-                variant={viewMode === "timeline" ? "default" : "outline"}
-                size="icon"
-                onClick={() => setViewMode("timeline")}
-                data-testid="button-view-timeline"
-              >
-                <Calendar className="h-5 w-5" />
-              </Button>
-            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-            {upcomingEvents.map((event) => (
-              <EventCard key={event._id} {...event} />
-            ))}
-          </div>
+          {isLoading ? (
+            <span className="flex-1 text-3xl items-center flex gap-1">
+              Loading Events... <Loader className="size-10 animate-spin" />
+            </span>
+          ) : data ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+              {upcomingEvents.map((event) => (
+                <EventCard key={event._id} {...event} />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+              <p className="text-muted-foreground">No events yet!</p>
+            </div>
+          )}
 
           {pastEvents.length > 0 && (
             <h2 className="text-3xl md:text-4xl font-bold mb-8">

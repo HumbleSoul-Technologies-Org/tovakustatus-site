@@ -392,7 +392,14 @@ export function deleteProject(id: string) {
 // Events
 export function getEvents(): Event[] {
   const data:any =  localStorage.getItem(STORAGE_KEYS.EVENTS);
-  
+ if (!data) {
+    // Initialize with default data including required likes and shares arrays
+    const eventsWithArrays:any = defaultData.talents.map(event => ({
+      ...event 
+    }));
+    localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(eventsWithArrays));
+    return eventsWithArrays;
+  }
   return JSON.parse(data);
 }
 
