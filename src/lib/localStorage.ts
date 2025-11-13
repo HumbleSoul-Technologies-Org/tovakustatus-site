@@ -15,7 +15,7 @@ export interface Talent {
   videoUrl?: string;
   fullStory?: string;
   status: string;
-  views: number;
+  views: [number];
   likes: [string],
   shares:[string]
 }

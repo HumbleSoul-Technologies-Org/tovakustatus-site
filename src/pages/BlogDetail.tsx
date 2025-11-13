@@ -158,7 +158,7 @@ export default function BlogDetail() {
               <span className="flex-row mt-10 flex items-center gap-4 p-3 text-xs text-muted-foreground">
                 {/* Liking Btn */}
                 <span className="flex-row cursor-pointer flex   items-center gap-2   transition-colors">
-                  {post?.views.length} Views
+                  {(post as any)?.views?.length ?? 0} Views
                   <Eye className=" hover:text-primary" size={16} />
                 </span>
                 <span className="flex-row cursor-pointer flex   items-center gap-2   transition-colors">

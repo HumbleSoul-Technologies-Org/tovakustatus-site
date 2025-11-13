@@ -4,30 +4,59 @@ import { getTalentById, Talent } from "@/lib/localStorage";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+
 import {
   ArrowLeft,
   Bookmark,
   Eye,
+  Loader,
   Share,
   Share2,
   ThumbsUpIcon,
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
+import { toggleLike, setViews, setShares } from "@/lib/talentsAPIs";
 
 export default function TalentDetail() {
-  const { toast } = useToast();
   const [, params] = useRoute("/talents/:id");
   const [talent, setTalent] = useState<Talent | null>(null);
-  const { data, isLoading, error } = useQuery({
+  const [userId, setUserId] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean | null>(false);
+
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["talents", `${params?.id}`],
+    enabled: !!params?.id,
   });
 
   useEffect(() => {
     if (data) {
-      setTalent(data?.talent);
+      setTalent((data as any)?.talent);
     }
-  }, [params?.id]);
+  }, [data, params?.id]);
+
+  // initialize userId from localStorage once
+  useEffect(() => {
+    const stored = localStorage.getItem("visitor_id");
+    if (stored) setUserId(stored);
+    if (params?.id && stored) {
+      setViews(params.id, stored);
+      refetch();
+    }
+  }, []);
+  const likeTalent = async () => {
+    setLoading(true);
+    try {
+      const storedId = localStorage.getItem("visitor_id");
+      const res = await toggleLike(params?.id, storedId ? storedId : null);
+      await refetch();
+      toast.success(`${res.message}`);
+    } catch (error) {
+      toast.error("Failed to like post!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!talent) {
     return (
@@ -122,13 +151,20 @@ export default function TalentDetail() {
                 <span className="flex-row mt-10 flex items-center gap-4 p-3 text-xs text-muted-foreground">
                   {/* Liking Btn */}
                   <span className="flex-row cursor-pointer flex   items-center gap-2   transition-colors">
-                    {talent.views} Views
+                    {talent.views.length} Views
                     <Eye className=" hover:text-primary" size={16} />
                   </span>
                   <span className="flex-row cursor-pointer flex   items-center gap-2   transition-colors">
-                    0 Likes
+                    {talent.likes.length} Likes
                     <ThumbsUpIcon
-                      className="mb-1 hover:text-primary"
+                      onClick={likeTalent}
+                      className={`mb-1 ${
+                        (talent as any)?.likes?.some(
+                          (m: any) => m.visitorId === userId
+                        )
+                          ? "text-green-500"
+                          : ""
+                      }`}
                       size={16}
                     />
                   </span>
@@ -136,26 +172,32 @@ export default function TalentDetail() {
                   {/* Sharing Btn */}
                   <span
                     className="flex-row cursor-pointer flex-1 flex items-center gap-2   transition-colors"
-                    onClick={() => {
+                    onClick={async () => {
+                      await setShares(params?.id, userId ? userId : null);
+                      refetch();
                       try {
                         const url = `${window.location.origin}/talents/${params?.id}`;
                         navigator.clipboard?.writeText(url);
-                        toast({ title: "link copied" });
+                        toast.success("Talent link copied to clipboard!");
                       } catch (e) {
-                        toast({
-                          title: "Could not copy link",
-                          variant: "destructive",
-                        });
+                        toast.error("Failed to copy link!");
                       }
                     }}
                   >
-                    <span>Share</span>
+                    <span className="flex items-center gap-1">
+                      {talent.shares.length} <p>Shares</p>
+                    </span>
                     <Share2 size={16} className="hover:text-primary" />
                   </span>
                   {/* <span className="text-xs text-muted">
                          {post.date}
                       </span> */}
                 </span>
+                {loading && (
+                  <span className="flex gap-2 mb-10 text-xs items-center">
+                    Processing ... <Loader className="animate-spin size-3" />
+                  </span>
+                )}
               </CardContent>
             </Card>
           )}
