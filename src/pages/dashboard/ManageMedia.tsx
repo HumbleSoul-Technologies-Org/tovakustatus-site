@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Image, Upload, ChevronLeft, ChevronRight } from "lucide-react";
+import { Image, Upload, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import "@splidejs/splide/css";
@@ -407,6 +407,23 @@ const MediaLibrary = ({
     return acc;
   }, {} as Record<string, MediaItem[]>);
 
+  const handleDeleteImage = async (itemId: string | undefined) => {
+    if (!itemId) {
+      toast.error("Cannot delete image without ID");
+      return;
+    }
+
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/gallery/${itemId}`);
+      toast.success("Image deleted successfully!");
+      // Refresh the library after deletion
+      window.location.reload();
+    } catch (error) {
+      toast.error("Failed to delete image. Please try again.");
+      console.error("Delete error:", error);
+    }
+  };
+
   return (
     <div className="space-y-8">
       {Object.entries(grouped).map(([category, categoryItems]) => {
@@ -417,6 +434,7 @@ const MediaLibrary = ({
           getImageSources(item).map((src) => ({
             src,
             title: item.title,
+            itemId: item._id,
           }))
         );
 
@@ -441,7 +459,7 @@ const MediaLibrary = ({
                 options={{
                   perPage: 2,
                   gap: "1rem",
-                  pagination: true,
+                  pagination: false,
                   arrows: false,
                   drag: true,
                   loop: true,
@@ -456,7 +474,7 @@ const MediaLibrary = ({
               >
                 {slides.map((img, idx) => (
                   <SplideSlide key={idx}>
-                    <div className="w-full h-[400px] object-contain overflow-hidden rounded-md shadow-sm bg-neutral-900">
+                    <div className="w-full h-[400px] object-contain overflow-hidden rounded-md shadow-md bg-neutral-900 relative group">
                       <img
                         src={img.src}
                         alt={img.title || `image-${idx + 1}`}
@@ -465,6 +483,24 @@ const MediaLibrary = ({
                         className="w-full h-full object-cover"
                         style={{ objectPosition: "center" }}
                       />
+
+                      {/* Hover overlay with title and delete button */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4">
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() => handleDeleteImage(img.itemId)}
+                            className="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-colors"
+                            title="Delete image"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-white text-sm">
+                            {img.title || "Untitled"}
+                          </h3>
+                        </div>
+                      </div>
                     </div>
                   </SplideSlide>
                 ))}
