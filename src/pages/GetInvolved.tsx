@@ -5,21 +5,87 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
-import { Heart, Users, Handshake } from "lucide-react";
+import axios from "axios";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
+import { Heart, Users, Handshake, Loader, Send } from "lucide-react";
 
 export default function GetInvolved() {
-  const { toast } = useToast();
-  const [activeForm, setActiveForm] = useState<"donate" | "volunteer" | "partner">("donate");
+  const [activeForm, setActiveForm] = useState<
+    "donate" | "volunteer" | "partner"
+  >("donate");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [partnershipForm, setPartnershipForm] = useState<any | null>({
+    organizationName: "",
+    contactPerson: "",
+    email: "",
+    partnershipType: "",
+    message: "",
+  });
+  const [volunteerForm, setVolunteerForm] = useState<any | null>({
+    fullName: "",
+    email: "",
+    phone: "",
+    skills: "",
+    availability: "",
+    motivation: "",
+  });
 
-  const handleSubmit = (e: React.FormEvent, formType: string) => {
+  const handleSubmit = async (e: React.FormEvent, formType: string) => {
     e.preventDefault();
-    console.log(`${formType} form submitted`);
-    toast({
-      title: "Form Submitted!",
-      description: `Thank you for your interest in ${formType}ing with us. We'll be in touch soon.`,
-    });
+    setIsSubmitting(true);
+    try {
+      toast.success(
+        `Your ${formType} form has been submitted successfully! We will get back to you soon.`
+      );
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/messages/${formType}/submit`,
+        formType === "donate"
+          ? {
+              // Collect donation form data
+            }
+          : formType === "volunteer"
+          ? volunteerForm
+          : partnershipForm
+      );
+      if (res.status === 201) {
+        // Reset forms
+        setVolunteerForm({
+          fullName: "",
+          email: "",
+          phone: "",
+          skills: "",
+          availability: "",
+          motivation: "",
+        });
+        setPartnershipForm({
+          organizationName: "",
+          contactPerson: "",
+          email: "",
+          partnershipType: "",
+          message: "",
+        });
+      }
+      toast.success(
+        `Your ${formType} form has been submitted successfully! We will get back to you soon.`
+      );
+    } catch (error) {
+      console.log("====================================");
+      console.log(error);
+      console.log("====================================");
+      toast.error(
+        `There was an error submitting your ${formType} form. Please try again later.`
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -33,8 +99,10 @@ export default function GetInvolved() {
       <section className="py-16 md:py-24 bg-background">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            <Card 
-              className={`cursor-pointer hover-elevate ${activeForm === "donate" ? "border-primary" : ""}`}
+            <Card
+              className={`cursor-pointer hover-elevate ${
+                activeForm === "donate" ? "border-primary" : ""
+              }`}
               onClick={() => setActiveForm("donate")}
               data-testid="card-donate"
             >
@@ -46,13 +114,16 @@ export default function GetInvolved() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Your financial support helps us provide instruments, training, and opportunities to talented youth.
+                  Your financial support helps us provide instruments, training,
+                  and opportunities to talented youth.
                 </p>
               </CardContent>
             </Card>
 
-            <Card 
-              className={`cursor-pointer hover-elevate ${activeForm === "volunteer" ? "border-primary" : ""}`}
+            <Card
+              className={`cursor-pointer hover-elevate ${
+                activeForm === "volunteer" ? "border-primary" : ""
+              }`}
               onClick={() => setActiveForm("volunteer")}
               data-testid="card-volunteer"
             >
@@ -64,13 +135,16 @@ export default function GetInvolved() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Share your skills and time to mentor, teach, or support our programs and events.
+                  Share your skills and time to mentor, teach, or support our
+                  programs and events.
                 </p>
               </CardContent>
             </Card>
 
-            <Card 
-              className={`cursor-pointer hover-elevate ${activeForm === "partner" ? "border-primary" : ""}`}
+            <Card
+              className={`cursor-pointer hover-elevate ${
+                activeForm === "partner" ? "border-primary" : ""
+              }`}
               onClick={() => setActiveForm("partner")}
               data-testid="card-partner"
             >
@@ -82,7 +156,8 @@ export default function GetInvolved() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Organizations and businesses can partner with us for sponsorships and collaborations.
+                  Organizations and businesses can partner with us for
+                  sponsorships and collaborations.
                 </p>
               </CardContent>
             </Card>
@@ -95,25 +170,48 @@ export default function GetInvolved() {
                   <CardTitle className="text-2xl">Make a Donation</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={(e) => handleSubmit(e, "donat")} className="space-y-6">
+                  <form
+                    onSubmit={(e) => handleSubmit(e, "donat")}
+                    className="space-y-6"
+                  >
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="donor-name">Full Name</Label>
-                        <Input id="donor-name" placeholder="John Doe" required data-testid="input-donor-name" />
+                        <Input
+                          id="donor-name"
+                          placeholder="John Doe"
+                          required
+                          data-testid="input-donor-name"
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="donor-email">Email</Label>
-                        <Input id="donor-email" type="email" placeholder="john@example.com" required data-testid="input-donor-email" />
+                        <Input
+                          id="donor-email"
+                          type="email"
+                          placeholder="john@example.com"
+                          required
+                          data-testid="input-donor-email"
+                        />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="amount">Donation Amount (RWF)</Label>
-                      <Input id="amount" type="number" placeholder="50000" required data-testid="input-amount" />
+                      <Input
+                        id="amount"
+                        type="number"
+                        placeholder="50000"
+                        required
+                        data-testid="input-amount"
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="donation-type">Donation Type</Label>
                       <Select required>
-                        <SelectTrigger id="donation-type" data-testid="select-donation-type">
+                        <SelectTrigger
+                          id="donation-type"
+                          data-testid="select-donation-type"
+                        >
                           <SelectValue placeholder="Select type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -125,9 +223,18 @@ export default function GetInvolved() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="donor-message">Message (Optional)</Label>
-                      <Textarea id="donor-message" placeholder="Your message of support..." data-testid="textarea-donor-message" />
+                      <Textarea
+                        id="donor-message"
+                        placeholder="Your message of support..."
+                        data-testid="textarea-donor-message"
+                      />
                     </div>
-                    <Button type="submit" size="lg" className="w-full" data-testid="button-submit-donation">
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="w-full"
+                      data-testid="button-submit-donation"
+                    >
                       Proceed to Payment
                     </Button>
                   </form>
@@ -138,49 +245,128 @@ export default function GetInvolved() {
             {activeForm === "volunteer" && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-2xl">Volunteer Application</CardTitle>
+                  <CardTitle className="text-2xl">
+                    Volunteer Application
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={(e) => handleSubmit(e, "volunteer")} className="space-y-6">
+                  <form
+                    onSubmit={(e) => handleSubmit(e, "volunteer")}
+                    className="space-y-6"
+                  >
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="volunteer-name">Full Name</Label>
-                        <Input id="volunteer-name" placeholder="John Doe" required data-testid="input-volunteer-name" />
+                        <Input
+                          onChange={(e) =>
+                            setVolunteerForm({
+                              ...volunteerForm,
+                              fullName: e.target.value,
+                            })
+                          }
+                          id="volunteer-name"
+                          placeholder="John Doe"
+                          required
+                          data-testid="input-volunteer-name"
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="volunteer-email">Email</Label>
-                        <Input id="volunteer-email" type="email" placeholder="john@example.com" required data-testid="input-volunteer-email" />
+                        <Input
+                          onChange={(e) =>
+                            setVolunteerForm({
+                              ...volunteerForm,
+                              email: e.target.value,
+                            })
+                          }
+                          id="volunteer-email"
+                          type="email"
+                          placeholder="john@example.com"
+                          required
+                          data-testid="input-volunteer-email"
+                        />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="volunteer-phone">Phone Number</Label>
-                      <Input id="volunteer-phone" type="tel" placeholder="+250 123 456 789" required data-testid="input-volunteer-phone" />
+                      <Input
+                        onChange={(e) =>
+                          setVolunteerForm({
+                            ...volunteerForm,
+                            phone: e.target.value,
+                          })
+                        }
+                        id="volunteer-phone"
+                        type="tel"
+                        placeholder="+250 123 456 789"
+                        required
+                        data-testid="input-volunteer-phone"
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="skills">Skills & Expertise</Label>
-                      <Select required>
-                        <SelectTrigger id="skills" data-testid="select-skills">
-                          <SelectValue placeholder="Select your primary skill" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="music">Music Instruction</SelectItem>
-                          <SelectItem value="sports">Sports Coaching</SelectItem>
-                          <SelectItem value="art">Art Instruction</SelectItem>
-                          <SelectItem value="admin">Administrative Support</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="volunteer-skills">Skills</Label>
+                      <Input
+                        onChange={(e) =>
+                          setVolunteerForm({
+                            ...volunteerForm,
+                            skills: e.target.value,
+                          })
+                        }
+                        id="volunteer-skills"
+                        type="text"
+                        placeholder="Your skills and expertise. Separate with commas ( , )"
+                        required
+                        data-testid="input-volunteer-skills"
+                      />
                     </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="availability">Availability</Label>
-                      <Textarea id="availability" placeholder="When are you available to volunteer?" required data-testid="textarea-availability" />
+
+                      <Textarea
+                        onChange={(e) =>
+                          setVolunteerForm({
+                            ...volunteerForm,
+                            availability: e.target.value,
+                          })
+                        }
+                        id="availability"
+                        placeholder="When are you available to volunteer?"
+                        required
+                        data-testid="textarea-availability"
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="volunteer-message">Why do you want to volunteer?</Label>
-                      <Textarea id="volunteer-message" placeholder="Tell us about your motivation..." required data-testid="textarea-volunteer-message" />
+                      <Label htmlFor="volunteer-message">
+                        Why do you want to volunteer?
+                      </Label>
+                      <Textarea
+                        onChange={(e) =>
+                          setVolunteerForm({
+                            ...volunteerForm,
+                            motivation: e.target.value,
+                          })
+                        }
+                        id="volunteer-message"
+                        placeholder="Tell us about your motivation..."
+                        required
+                        data-testid="textarea-volunteer-message"
+                      />
                     </div>
-                    <Button type="submit" size="lg" className="w-full" data-testid="button-submit-volunteer">
-                      Submit Application
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="w-full"
+                      data-testid="button-submit-volunteer"
+                    >
+                      {isSubmitting ? (
+                        <span className="flex items-center gap-1">
+                          Submitting ....
+                          <Send className="animate-bounce size-3" />
+                        </span>
+                      ) : (
+                        "Submit Application"
+                      )}
                     </Button>
                   </form>
                 </CardContent>
@@ -190,50 +376,127 @@ export default function GetInvolved() {
             {activeForm === "partner" && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-2xl">Partnership Inquiry</CardTitle>
+                  <CardTitle className="text-2xl">
+                    Partnership Inquiry
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={(e) => handleSubmit(e, "partner")} className="space-y-6">
+                  <form
+                    onSubmit={(e) => handleSubmit(e, "partner")}
+                    className="space-y-6"
+                  >
                     <div className="space-y-2">
                       <Label htmlFor="org-name">Organization Name</Label>
-                      <Input id="org-name" placeholder="Your Organization" required data-testid="input-org-name" />
+                      <Input
+                        onChange={(e) =>
+                          setPartnershipForm({
+                            ...partnershipForm,
+                            organizationName: e.target.value,
+                          })
+                        }
+                        id="org-name"
+                        placeholder="Your Organization"
+                        required
+                        data-testid="input-org-name"
+                      />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="contact-name">Contact Person</Label>
-                        <Input id="contact-name" placeholder="John Doe" required data-testid="input-contact-name" />
+                        <Input
+                          onChange={(e) =>
+                            setPartnershipForm({
+                              ...partnershipForm,
+                              contactPerson: e.target.value,
+                            })
+                          }
+                          id="contact-name"
+                          placeholder="John Doe"
+                          required
+                          data-testid="input-contact-name"
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="contact-email">Email</Label>
-                        <Input id="contact-email" type="email" placeholder="john@organization.com" required data-testid="input-contact-email" />
+                        <Input
+                          onChange={(e) =>
+                            setPartnershipForm({
+                              ...partnershipForm,
+                              email: e.target.value,
+                            })
+                          }
+                          id="contact-email"
+                          type="email"
+                          placeholder="john@organization.com"
+                          required
+                          data-testid="input-contact-email"
+                        />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="partnership-type">Partnership Type</Label>
-                      <Select required>
-                        <SelectTrigger id="partnership-type" data-testid="select-partnership-type">
+                      <Select
+                        required
+                        value={partnershipForm?.partnershipType || ""}
+                        onValueChange={(value: string) =>
+                          setPartnershipForm({
+                            ...partnershipForm,
+                            partnershipType: value,
+                          })
+                        }
+                      >
+                        <SelectTrigger
+                          id="partnership-type"
+                          data-testid="select-partnership-type"
+                        >
                           <SelectValue placeholder="Select type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="sponsorship">Sponsorship</SelectItem>
-                          <SelectItem value="collaboration">Program Collaboration</SelectItem>
-                          <SelectItem value="resource">Resource Sharing</SelectItem>
+                          <SelectItem value="sponsorship">
+                            Sponsorship
+                          </SelectItem>
+                          <SelectItem value="collaboration">
+                            Program Collaboration
+                          </SelectItem>
+                          <SelectItem value="resource">
+                            Resource Sharing
+                          </SelectItem>
                           <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="partner-message">Tell us about your organization and partnership idea</Label>
-                      <Textarea 
-                        id="partner-message" 
-                        placeholder="Describe your organization and how you'd like to partner with us..." 
-                        className="min-h-[150px]" 
-                        required 
+                      <Label htmlFor="partner-message">
+                        Tell us about your organization and partnership idea
+                      </Label>
+                      <Textarea
+                        onChange={(e) =>
+                          setPartnershipForm({
+                            ...partnershipForm,
+                            message: e.target.value,
+                          })
+                        }
+                        id="partner-message"
+                        placeholder="Describe your organization and how you'd like to partner with us..."
+                        className="min-h-[150px]"
+                        required
                         data-testid="textarea-partner-message"
                       />
                     </div>
-                    <Button type="submit" size="lg" className="w-full" data-testid="button-submit-partner">
-                      Submit Inquiry
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="w-full"
+                      data-testid="button-submit-partner"
+                    >
+                      {isSubmitting ? (
+                        <span className="flex items-center gap-1">
+                          Submitting ....
+                          <Send className="animate-bounce size-3" />
+                        </span>
+                      ) : (
+                        "Submit Inquiry"
+                      )}
                     </Button>
                   </form>
                 </CardContent>

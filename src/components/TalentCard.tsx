@@ -10,7 +10,7 @@ interface TalentCardProps {
   talentType: string;
   description: string;
   imageUrl: string;
-  views?: number;
+  views?: [number];
   image?: { url: string; public_id: string };
 }
 
