@@ -390,8 +390,9 @@ const MediaLibrary = ({
   if (isLoading) {
     return (
       <Card>
-        <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">Loading media items...</p>
+        <CardContent className="py-12 flex items-center gap-2 justify-center text-center">
+          <p className="text-muted-foreground">Loading media items...</p>{" "}
+          <Loader className="animate-spin size-7" />
         </CardContent>
       </Card>
     );
@@ -635,25 +636,6 @@ export default function ManageMedia() {
       toast.error("Failed to upload media. Please try again.");
     } finally {
       setIsUploading(false);
-    }
-  };
-
-  const deleteImage = async (
-    itemId: string | undefined,
-    galleryId: string | undefined
-  ) => {
-    if (!itemId) {
-      toast.error("Cannot delete image without ID");
-      return;
-    }
-    try {
-      await axios.delete(
-        `${import.meta.env.VITE_API_URL}/gallery/delete/${galleryId}/${itemId}`
-      );
-      toast.success("Image deleted successfully!");
-      await fetchMediaItems();
-    } catch (error) {
-      toast.error("Failed to delete image. Please try again.");
     }
   };
 

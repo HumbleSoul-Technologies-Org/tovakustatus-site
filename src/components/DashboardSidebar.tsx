@@ -26,7 +26,7 @@ export default function DashboardSidebar({ onClose }: DashboardSidebarProps) {
   const isMobile = useIsMobile();
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
+    // { icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
     { icon: Users, label: "Manage Talents", path: "/dashboard/talents" },
     // { icon: FolderOpen, label: "Manage Projects", path: "/dashboard/projects" },
     { icon: Calendar, label: "Manage Events", path: "/dashboard/events" },
@@ -36,7 +36,7 @@ export default function DashboardSidebar({ onClose }: DashboardSidebarProps) {
     { icon: MessageCircle, label: "Messages", path: "/dashboard/messages" },
     { icon: BellDot, label: "Notifications", path: "/dashboard/notifications" },
     // { icon: LineChart, label: "Analytics", path: "/dashboard/analysis" },
-    { icon: Settings, label: "Settings", path: "/dashboard/settings" },
+    // { icon: Settings, label: "Settings", path: "/dashboard/settings" },
   ];
 
   const isActive = (path: string) => location === path;
