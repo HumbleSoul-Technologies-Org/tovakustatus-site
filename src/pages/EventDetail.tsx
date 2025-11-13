@@ -10,6 +10,7 @@ import {
   Calendar,
   Clock,
   Eye,
+  Loader,
   MapPin,
   Share2,
   ThumbsUpIcon,
@@ -50,7 +51,17 @@ export default function EventDetail() {
       </div>
     );
   }
-
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <span className="flex gap-3 items-center">
+            Loading details ... <Loader className="animate-spin size-6" />
+          </span>
+        </div>
+      </div>
+    );
+  }
   const statusColors = {
     upcoming: "bg-primary/10 text-primary border-primary/20",
     ongoing: "bg-accent/10 text-accent-foreground border-accent/20",
