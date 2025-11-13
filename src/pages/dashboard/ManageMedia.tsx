@@ -15,7 +15,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Image, Upload, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+import {
+  Image,
+  Upload,
+  ChevronLeft,
+  ChevronRight,
+  Trash2,
+  Loader,
+} from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import "@splidejs/splide/css";
@@ -36,7 +43,7 @@ interface MediaItem {
   category: string;
   url: string;
   imageUrls?: string[];
-  images?: { url: string; public_id: string }[];
+  images?: [{ url: string; public_id: string }];
   videoUrls?: string[];
 }
 
@@ -374,9 +381,11 @@ const MediaForm = ({
 const MediaLibrary = ({
   items,
   isLoading,
+  reload,
 }: {
   items: MediaItem[];
   isLoading: boolean;
+  reload: () => void;
 }) => {
   if (isLoading) {
     return (
@@ -401,26 +410,39 @@ const MediaLibrary = ({
     );
   }
 
+  const [deleting, setDeleting] = useState<string | null>(null);
+
   const grouped = items.reduce((acc, item) => {
     if (!acc[item.category]) acc[item.category] = [];
     acc[item.category].push(item);
     return acc;
   }, {} as Record<string, MediaItem[]>);
 
-  const handleDeleteImage = async (itemId: string | undefined) => {
-    if (!itemId) {
+  const handleDeleteImage = async (
+    galleryId: string | undefined,
+
+    url: string | undefined
+  ) => {
+    if (!galleryId) {
       toast.error("Cannot delete image without ID");
       return;
     }
-
+    setDeleting(galleryId);
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/gallery/${itemId}`);
-      toast.success("Image deleted successfully!");
-      // Refresh the library after deletion
-      window.location.reload();
+      const res = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/gallery/delete/${galleryId}`,
+        { url: url }
+      );
+      if (res.status === 200) {
+        toast.success(`${res.data.message}`);
+
+        reload();
+      }
     } catch (error) {
       toast.error("Failed to delete image. Please try again.");
       console.error("Delete error:", error);
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -432,7 +454,7 @@ const MediaLibrary = ({
 
         const slides = categoryItems.flatMap((item) =>
           getImageSources(item).map((src) => ({
-            src,
+            url: src,
             title: item.title,
             itemId: item._id,
           }))
@@ -447,89 +469,102 @@ const MediaLibrary = ({
         };
 
         return (
-          <div key={category}>
-            <h2 className="text-xl font-semibold mb-4 capitalize">
-              {category}
-            </h2>
+          <>
+            {slides.length > 0 && (
+              <div key={category}>
+                <h2 className="text-xl font-semibold mb-4 capitalize">
+                  {category}
+                </h2>
 
-            {/* Splide carousel for category images */}
-            <div className="w-full">
-              <SplideReact
-                ref={splideRef}
-                options={{
-                  perPage: 2,
-                  gap: "1rem",
-                  pagination: false,
-                  arrows: false,
-                  drag: true,
-                  loop: true,
-                  breakpoints: {
-                    1024: { perPage: 3 },
-                    768: { perPage: 2 },
-                    480: { perPage: 1 },
-                  },
-                }}
-                aria-label={`${category} images`}
-                className="py-2"
-              >
-                {slides.map((img, idx) => (
-                  <SplideSlide key={idx}>
-                    <div className="w-full h-[400px] object-contain overflow-hidden rounded-md shadow-md bg-neutral-900 relative group">
-                      <img
-                        src={img.src}
-                        alt={img.title || `image-${idx + 1}`}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover"
-                        style={{ objectPosition: "center" }}
-                      />
+                {/* Splide carousel for category images */}
+                <div className="w-full">
+                  <SplideReact
+                    ref={splideRef}
+                    options={{
+                      perPage: 2,
+                      gap: "1rem",
+                      pagination: false,
+                      arrows: false,
+                      drag: true,
+                      loop: true,
+                      breakpoints: {
+                        1024: { perPage: 3 },
+                        768: { perPage: 2 },
+                        480: { perPage: 1 },
+                      },
+                    }}
+                    aria-label={`${category} images`}
+                    className="py-2"
+                  >
+                    {slides.map((img, idx) => (
+                      <SplideSlide key={idx}>
+                        <div className="w-full h-[400px] object-contain overflow-hidden rounded-md shadow-md bg-neutral-900 relative group">
+                          <img
+                            src={img.url}
+                            alt={img.title || `image-${idx + 1}`}
+                            loading="lazy"
+                            decoding="async"
+                            className="w-full h-full object-cover"
+                            style={{ objectPosition: "center" }}
+                          />
 
-                      {/* Hover overlay with title and delete button */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4">
-                        <div className="flex justify-end">
-                          <button
-                            onClick={() => handleDeleteImage(img.itemId)}
-                            className="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-colors"
-                            title="Delete image"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
+                          {/* Hover overlay with title and delete button */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4">
+                            <div className="flex justify-end">
+                              {deleting === img.itemId ? (
+                                <span className="flex text-white items-center gap-1">
+                                  deleting...{" "}
+                                  <Loader className="animate-spin size-5 text-white" />
+                                </span>
+                              ) : (
+                                <button
+                                  onClick={() =>
+                                    handleDeleteImage(img.itemId, img.url)
+                                  }
+                                  className="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-colors"
+                                  title="Delete image"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              )}
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-white text-sm">
+                                {img.title || "Untitled"}
+                              </h3>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-white text-sm">
-                            {img.title || "Untitled"}
-                          </h3>
-                        </div>
-                      </div>
-                    </div>
-                  </SplideSlide>
-                ))}
-              </SplideReact>
-            </div>
+                      </SplideSlide>
+                    ))}
+                  </SplideReact>
+                </div>
 
-            {/* Pagination buttons */}
-            <div className="flex items-center justify-center gap-3 mt-4">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 rounded-full"
-                onClick={handlePrevPage}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="text-xs text-muted-foreground">
-                {slides.length} images
-              </span>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 rounded-full"
-                onClick={handleNextPage}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+                {/* Pagination buttons */}
+                <div className="flex items-center justify-center gap-3 mt-4">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 rounded-full"
+                    onClick={handlePrevPage}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <span className="text-xs text-muted-foreground">
+                    {slides.length} images
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 rounded-full"
+                    onClick={handleNextPage}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
         );
       })}
     </div>
@@ -603,6 +638,25 @@ export default function ManageMedia() {
     }
   };
 
+  const deleteImage = async (
+    itemId: string | undefined,
+    galleryId: string | undefined
+  ) => {
+    if (!itemId) {
+      toast.error("Cannot delete image without ID");
+      return;
+    }
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/gallery/delete/${galleryId}/${itemId}`
+      );
+      toast.success("Image deleted successfully!");
+      await fetchMediaItems();
+    } catch (error) {
+      toast.error("Failed to delete image. Please try again.");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -623,7 +677,11 @@ export default function ManageMedia() {
         </TabsContent>
 
         <TabsContent value="library" className="space-y-6">
-          <MediaLibrary items={mediaItems} isLoading={isLoadingLibrary} />
+          <MediaLibrary
+            items={mediaItems}
+            reload={fetchMediaItems}
+            isLoading={isLoadingLibrary}
+          />
         </TabsContent>
       </Tabs>
     </div>
