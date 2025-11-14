@@ -102,7 +102,7 @@ function DashboardRouter() {
   const [location] = useLocation();
 
   if (location === "/dashboard") {
-    return <DashboardOverview />;
+    return <ManageTalents />;
   }
 
   return (

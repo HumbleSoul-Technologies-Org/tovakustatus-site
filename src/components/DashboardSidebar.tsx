@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useQuery } from "@tanstack/react-query";
+import { Badge } from "./ui/badge";
 
 interface DashboardSidebarProps {
   onClose?: () => void;
@@ -24,7 +26,18 @@ interface DashboardSidebarProps {
 export default function DashboardSidebar({ onClose }: DashboardSidebarProps) {
   const [location] = useLocation();
   const isMobile = useIsMobile();
-
+  const { data: notificationsData } = useQuery({
+    queryKey: ["notifications", "all"],
+    refetchInterval: 5000, // every 30s
+  });
+  const { data: newsletter } = useQuery({
+    queryKey: ["newsletter", "all"],
+    refetchInterval: 5000, // every 30s
+  });
+  const { data: messagesData } = useQuery({
+    queryKey: ["messages", "all"],
+    refetchInterval: 5000, // every 30s
+  });
   const menuItems = [
     // { icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
     { icon: Users, label: "Manage Talents", path: "/dashboard/talents" },
@@ -89,7 +102,38 @@ export default function DashboardSidebar({ onClose }: DashboardSidebarProps) {
                   .replace(/\s+/g, "-")}`}
               >
                 <Icon className="h-5 w-5 flex-shrink-0" />
-                <span className="truncate">{item.label}</span>
+                <span className="truncate flex gap-3">
+                  {item.label}
+
+                  {item.path === "/dashboard/messages" &&
+                    (messagesData as any).messages.length > 0 && (
+                      <Badge
+                        className={`bg-primary  p-1 size-8  flex items-center justify-center rounded-full `}
+                      >
+                        <p className="text-xs">100</p>
+                      </Badge>
+                    )}
+                  {item.path === "/dashboard/notifications" &&
+                    (notificationsData as any).notifications.filter(
+                      (n: any) => n.read === false
+                    ).length > 0 && (
+                      <Badge
+                        className={`bg-primary ${
+                          item.path === "/dashboard/notifications"
+                            ? "hidden"
+                            : ""
+                        }  p-1 size-5  flex items-center justify-center rounded-full `}
+                      >
+                        <p className="text-xs">
+                          {
+                            (notificationsData as any).notifications.filter(
+                              (n: any) => n.read === false
+                            ).length
+                          }
+                        </p>
+                      </Badge>
+                    )}
+                </span>
               </Button>
             </Link>
           );
