@@ -10,6 +10,7 @@ import {
   LightbulbIcon,
   BookOpen,
   Users2,
+  TrendingUpIcon,
 } from "lucide-react";
 import { FaBeer } from "react-icons/fa";
 // import founderImage from '@assets/generated_images/Founder_professional_portrait_photo_15a7b392.png';
@@ -51,7 +52,7 @@ export default function About() {
               </h3>
               <p className="text-muted-foreground leading-relaxed mb-4">
                 As a well-known TV presenter and MC, I've had the privilege of
-                witnessing incredible talent across Rwanda. However, I've also
+                witnessing incredible talent across Uganda. However, I've also
                 seen how economic circumstances can limit opportunities for
                 gifted young people from underprivileged backgrounds.
               </p>
@@ -84,7 +85,7 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <Card className="p-6 bg-white">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-md flex items-center justify-center">
+                <div className="w-12 h-12 bg-primary/10 px-3 rounded-md flex items-center justify-center">
                   <BookOpen className="h-6 w-6 text-primary" />
                 </div>
                 <div>
@@ -103,7 +104,7 @@ export default function About() {
 
             <Card className="p-6 bg-white">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-md flex items-center justify-center">
+                <div className="w-12 h-12 bg-primary/10 px-3 rounded-md flex items-center justify-center">
                   <Users className="h-6 w-6 text-primary" />
                 </div>
                 <div>
@@ -123,6 +124,7 @@ export default function About() {
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
             <Card className="p-6 bg-white">
               <h4 className="font-semibold mb-2">Annual Talent Showcase</h4>
+
               <p className="text-sm text-muted-foreground">
                 Our flagship event where beneficiaries showcase their skills to
                 the public, partners and potential sponsors — helping open
@@ -215,7 +217,7 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <Card className="p-8 bg-white">
               <div className="w-12 h-12 bg-primary/10 rounded-md flex items-center justify-center mb-4">
-                <Target className="h-6 w-6 text-primary" />
+                <TrendingUpIcon className="h-6 w-6 text-primary" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Our Mission</h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -227,7 +229,7 @@ export default function About() {
             </Card>
             <Card className="p-8 bg-white">
               <div className="w-12 h-12 bg-accent/10 rounded-md flex items-center justify-center mb-4">
-                <Heart className="h-6 w-6 text-accent-foreground" />
+                <Target className="h-6 w-6 text-accent" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Our Vision</h3>
               <p className="text-muted-foreground leading-relaxed">

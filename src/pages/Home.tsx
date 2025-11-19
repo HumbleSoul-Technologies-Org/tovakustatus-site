@@ -486,7 +486,7 @@ export default function Home() {
               <Button
                 size="lg"
                 variant="secondary"
-                className="text-lg px-8 py-6"
+                className="text-lg px-8 hidden py-6"
                 data-testid="button-donate-cta"
               >
                 Donate Now
