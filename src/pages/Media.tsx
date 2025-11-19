@@ -2,64 +2,81 @@ import { useState } from "react";
 import Hero from "@/components/Hero";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import mediaImage1 from "/Community_workshop_outreach_event_photo_3fb17f3c.png";
-import mediaImage2 from "/Sports_day_community_event_photo_a4d50b69.png";
-import mediaImage3 from "/Talent_showcase_performance_event_photo_037e6d5f.png";
-import talentImage1 from "/Talented_girl_with_violin_portrait_f9f1e1a7.png";
-import talentImage2 from "/Talented_boy_playing_soccer_portrait_4a119641.png";
-import talentImage3 from "/Talented_girl_painting_art_portrait_9df2082c.png";
+import { Loader } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
+
+interface MediaItem {
+  _id?: string;
+  title: string;
+  category: string;
+  url: string;
+  imageUrls?: string[];
+  images?: [{ url: string; public_id: string }];
+}
+
+// Helper to normalize image sources from different formats
+const getImageSources = (item: MediaItem): string[] => {
+  const fromImages: string[] = Array.isArray(item.images)
+    ? item.images
+        .map((i: any) => {
+          if (!i) return "";
+          if (typeof i === "string") return i;
+          if (i.url && typeof i.url === "string") return i.url;
+          return "";
+        })
+        .filter(Boolean)
+    : [];
+
+  let fromImageUrls: string[] = [];
+  if (Array.isArray(item.imageUrls)) {
+    fromImageUrls = (item.imageUrls as any[])
+      .map((v) => {
+        if (!v) return "";
+        if (typeof v === "string") return v;
+        if (v.url && typeof v.url === "string") return v.url;
+        return "";
+      })
+      .filter(Boolean);
+  } else if (item.imageUrls && typeof (item.imageUrls as any) === "string") {
+    fromImageUrls = (item.imageUrls as unknown as string)
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+
+  const fallback = item.url ? [item.url] : [];
+
+  const all = [...fromImages, ...fromImageUrls, ...fallback]
+    .map((s) => (s || "").trim())
+    .filter(Boolean);
+
+  const seen = new Set<string>();
+  return all.filter((s) => (seen.has(s) ? false : seen.add(s)));
+};
 
 export default function Media() {
-  // TODO: remove mock data functionality
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
-  const categories = ["All", "Events", "Talents", "Projects", "Workshops"];
+  const { data, isLoading } = useQuery<{ galleries: MediaItem[] } | null>({
+    queryKey: ["gallery", "all"],
+    queryFn: getQueryFn({ on401: "returnNull", timeout: 5000 }),
+    retry: 1,
+    retryDelay: 2000,
+  });
 
-  const mediaItems = [
-    {
-      id: "1",
-      imageUrl: mediaImage1,
-      category: "Workshops",
-      title: "Music Workshop",
-    },
-    { id: "2", imageUrl: mediaImage2, category: "Events", title: "Sports Day" },
-    {
-      id: "3",
-      imageUrl: mediaImage3,
-      category: "Events",
-      title: "Talent Showcase",
-    },
-    {
-      id: "4",
-      imageUrl: talentImage1,
-      category: "Talents",
-      title: "Young Musician",
-    },
-    {
-      id: "5",
-      imageUrl: talentImage2,
-      category: "Talents",
-      title: "Football Player",
-    },
-    {
-      id: "6",
-      imageUrl: talentImage3,
-      category: "Talents",
-      title: "Young Artist",
-    },
-    {
-      id: "7",
-      imageUrl: mediaImage1,
-      category: "Projects",
-      title: "Community Outreach",
-    },
-    {
-      id: "8",
-      imageUrl: mediaImage2,
-      category: "Workshops",
-      title: "Art Class",
-    },
+  const mediaItems = data?.galleries || [];
+
+  const categories = [
+    "All",
+    ...Array.from(
+      new Set(
+        mediaItems
+          .filter((item) => getImageSources(item).length > 0)
+          .map((item) => item.category)
+      )
+    ),
   ];
 
   const filteredMedia =
@@ -77,43 +94,64 @@ export default function Media() {
 
       <section className="py-16 md:py-24 bg-background">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="flex flex-wrap gap-2 mb-8">
-            {categories.map((category) => (
-              <Badge
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                className={`cursor-pointer hover-elevate ${
-                  selectedCategory === category
-                    ? "bg-accent text-accent-foreground"
-                    : ""
-                }`}
-                onClick={() => setSelectedCategory(category)}
-                data-testid={`category-${category.toLowerCase()}`}
-              >
-                {category}
-              </Badge>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredMedia.map((item) => (
-              <div
-                key={item.id}
-                className="aspect-square overflow-hidden  rounded-lg hover:opacity-60 cursor-pointer hover-elevate"
-                onClick={() => setSelectedImage(item.imageUrl)}
-                data-testid={`media-item-${item.id}`}
-              >
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  className="w-full h-full object-cover"
-                />
-                <p className="absolute bottom-0 left-1 text-white text-xs">
-                  {item.title}
-                </p>
+          {isLoading ? (
+            <div className="flex items-center justify-center gap-2 py-12">
+              <Loader className="animate-spin size-7 text-muted-foreground" />
+              <p className="text-muted-foreground">
+                Loading media from gallery...
+              </p>
+            </div>
+          ) : mediaItems.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No media items available.</p>
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-wrap gap-2 mb-8">
+                {categories.map((category) => (
+                  <Badge
+                    key={category}
+                    variant={
+                      selectedCategory === category ? "default" : "outline"
+                    }
+                    className={`cursor-pointer hover-elevate ${
+                      selectedCategory === category
+                        ? "bg-accent text-accent-foreground"
+                        : ""
+                    }`}
+                    onClick={() => setSelectedCategory(category)}
+                    data-testid={`category-${category.toLowerCase()}`}
+                  >
+                    {category}
+                  </Badge>
+                ))}
               </div>
-            ))}
-          </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {filteredMedia.flatMap((item) =>
+                  getImageSources(item).map((imageUrl, idx) => (
+                    <div
+                      key={`${item._id}-${idx}`}
+                      className="aspect-square overflow-hidden rounded-lg hover:opacity-60 cursor-pointer hover-elevate"
+                      onClick={() => setSelectedImage(imageUrl)}
+                      data-testid={`media-item-${item._id}-${idx}`}
+                    >
+                      <img
+                        src={imageUrl}
+                        alt={item.title}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p className="absolute bottom-0 left-1 text-white text-xs">
+                        {item.title}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </>
+          )}
         </div>
       </section>
 

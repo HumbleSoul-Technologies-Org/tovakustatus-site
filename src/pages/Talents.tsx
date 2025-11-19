@@ -6,19 +6,23 @@ import { Badge } from "@/components/ui/badge";
 import { Loader, Search } from "lucide-react";
 import { Talent } from "@/lib/localStorage";
 import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
 import { toggleLike, setViews, setShares } from "@/lib/talentsAPIs";
 
 export default function Talents() {
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [allTalents, setAllTalents] = useState<Talent[]>([]);
-  const { data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery<{ talents: Talent[] } | null>({
     queryKey: ["talents", "all"],
+    queryFn: getQueryFn({ on401: "throw", timeout: 5000 }),
+    retry: 1,
+    retryDelay: 2000,
   });
 
   useEffect(() => {
-    if (data) {
-      setAllTalents((data as any)?.talents);
+    if (data && data.talents) {
+      setAllTalents(data.talents);
     }
   }, [data]);
 
@@ -48,7 +52,7 @@ export default function Talents() {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <span className="flex gap-3 items-center">
-              Loading details ... <Loader className="animate-spin size-6" />
+              Loading talents ... <Loader className="animate-spin size-6" />
             </span>
           </div>
         </div>

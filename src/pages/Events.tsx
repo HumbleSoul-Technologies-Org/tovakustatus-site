@@ -4,10 +4,14 @@ import EventCard from "@/components/EventCard";
 import { Loader } from "lucide-react";
 import { Event } from "@/lib/localStorage";
 import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
 
 export default function Events() {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<{ events: Event[] } | null>({
     queryKey: ["events", "all"],
+    queryFn: getQueryFn({ on401: "throw", timeout: 5000 }),
+    retry: 1,
+    retryDelay: 2000,
   });
   const [viewMode, setViewMode] = useState<"grid" | "timeline">("grid");
   const [events, setEvents] = useState<Event[]>([]);
@@ -16,7 +20,7 @@ export default function Events() {
     if (data && data.events) {
       setEvents(data.events);
     }
-  }, []);
+  }, [data]);
 
   const upcomingEvents = events.filter(
     (e) => e.status === "upcoming" || e.status === "ongoing"

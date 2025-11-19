@@ -8,6 +8,7 @@ import {
   Phone,
   MapPin,
 } from "lucide-react";
+import { FaTiktok } from "react-icons/fa";
 
 export default function Footer() {
   return (
@@ -161,7 +162,8 @@ export default function Footer() {
                 className="w-9 h-9 bg-muted rounded-md flex items-center justify-center hover-elevate"
                 data-testid="social-instagram"
               >
-                <Instagram className="h-4 w-4" />
+                {/* <Instagram className="h-4 w-4" /> */}
+                <FaTiktok className="h-4 w-4" />
               </a>
               <a
                 href="#"

@@ -36,26 +36,44 @@ export async function apiRequest(
 
 type UnauthorizedBehavior = "returnNull" | "throw";
 
-// ✅ GET requests now use Axios
 export const getQueryFn: <T>(options: {
   on401: UnauthorizedBehavior;
+  timeout?: number; // optional timeout in ms
 }) => QueryFunction<T> =
-  ({ on401 }) =>
-  async ({ queryKey }) => {
+  ({ on401, timeout = 5000 }) =>
+  async ({ queryKey, signal }) => {
+    // React Query passes its own abort signal
+    const controller = new AbortController();
+
+    // If React Query aborts, abort axios request too
+    signal?.addEventListener("abort", () => controller.abort());
+
+    // Custom timeout abort
+    const timer = setTimeout(() => controller.abort(), timeout);
+
     try {
-      // Convert ['messages', 'all'] → "/messages/all"
       const url = `/${queryKey.join("/")}`;
 
-      const response = await axiosClient.get(url);
+      const response = await axiosClient.get(url, {
+        signal: controller.signal,
+      });
+
       return response.data;
     } catch (error: any) {
-      if (error.response && error.response.status === 401 && on401 === "returnNull") {
+      if (axios.isCancel(error)) {
+        throw new Error("Request cancelled");
+      }
+
+      if (error.response?.status === 401 && on401 === "returnNull") {
         return null;
       }
 
       throw new Error(error.response?.data || error.message);
+    } finally {
+      clearTimeout(timer);
     }
   };
+
 
 // ✅ React Query Global Config
 export const queryClient = new QueryClient({

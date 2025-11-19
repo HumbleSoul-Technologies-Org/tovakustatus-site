@@ -19,7 +19,7 @@ import { Heart, Users, Handshake, Loader, Send } from "lucide-react";
 export default function GetInvolved() {
   const [activeForm, setActiveForm] = useState<
     "donate" | "volunteer" | "partner"
-  >("donate");
+  >("volunteer");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [partnershipForm, setPartnershipForm] = useState<any | null>({
     organizationName: "",
@@ -100,7 +100,7 @@ export default function GetInvolved() {
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             <Card
-              className={`cursor-pointer hover-elevate ${
+              className={`cursor-pointer hidden hover-elevate ${
                 activeForm === "donate" ? "border-primary" : ""
               }`}
               onClick={() => setActiveForm("donate")}

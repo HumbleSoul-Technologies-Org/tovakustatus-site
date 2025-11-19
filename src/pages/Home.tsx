@@ -7,6 +7,8 @@ import {
   Building2Icon,
   Building,
   Loader,
+  Calendar as CalendarIcon,
+  Clock,
 } from "lucide-react";
 import { Link } from "wouter";
 import Hero from "@/components/Hero";
@@ -18,56 +20,72 @@ import { Card, CardContent } from "@/components/ui/card";
 import heroImage from "/Hero_image_diverse_talented_kids_8dd4ac07.png";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
+
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calendar } from "lucide-react";
-import { getTalents, getEvents, getBlogPosts } from "@/lib/localStorage";
+import { Talent, BlogPost, Event } from "@/lib/localStorage";
+
+// Loading skeleton component
+const SkeletonCard = () => (
+  <Card className="overflow-hidden animate-pulse">
+    <div className="aspect-video bg-muted" />
+    <CardContent className="p-6">
+      <div className="h-4 bg-muted rounded mb-3" />
+      <div className="h-6 bg-muted rounded mb-4" />
+      <div className="h-4 bg-muted rounded w-2/3" />
+    </CardContent>
+  </Card>
+);
+
 export default function Home() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  // TODO: remove mock data functionality
-  const featuredTalents: any = [
-    {
-      _id: "1",
-      name: "Amani Grace",
-      age: 12,
-      talentType: "Music",
-      description:
-        "Amani has been playing violin for 3 years and dreams of performing in international orchestras. Her dedication and natural talent shine through every performance.",
-      imageUrl: "/Talented_girl_with_violin_portrait_f9f1e1a7.png",
-    },
-    {
-      _id: "2",
-      name: "David Kwame",
-      age: 14,
-      talentType: "Sports",
-      description:
-        "An exceptional football player with incredible speed and technique. David aspires to play professionally and represent his country on the world stage.",
-      imageUrl: "/Talented_boy_playing_soccer_portrait_4a119641.png",
-    },
-    {
-      _id: "3",
-      name: "Sarah Nkunda",
-      age: 11,
-      talentType: "Art",
-      description:
-        "Sarah's vibrant paintings capture the beauty of her community. She uses art as a powerful medium to tell stories and inspire others.",
-      imageUrl: "/Talented_girl_painting_art_portrait_9df2082c.png",
-    },
-  ];
+  const [latestBlogs, setLatestBlogs] = useState<BlogPost[]>([]);
+  const [featuredTalents, setFeaturedTalents] = useState<Talent[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
 
-  const recentProjects: any = [
-    {
-      _id: "1",
-      title: "Music Workshop Series",
-      description:
-        "A comprehensive music education program providing instruments, training, and performance opportunities to talented young musicians from underprivileged communities.",
-      date: "March 15, 2024",
-      participants: 45,
-      imageUrl: "/Community_workshop_outreach_event_photo_3fb17f3c.png",
-    },
-  ];
+  const { data: blogData, isLoading: isBlogLoading } = useQuery<{
+    blogs: BlogPost[];
+  } | null>({
+    queryKey: ["blogs", "all"],
+    queryFn: getQueryFn({ on401: "returnNull", timeout: 5000 }),
+    retry: 1,
+    retryDelay: 2000,
+  });
+
+  const { data: talentData, isLoading: isTalentLoading } = useQuery<{
+    talents: Talent[];
+  } | null>({
+    queryKey: ["talents", "all"],
+    queryFn: getQueryFn({ on401: "throw", timeout: 5000 }),
+    retry: 1,
+    retryDelay: 2000,
+  });
+
+  const { data: eventData, isLoading: isEventLoading } = useQuery<{
+    events: Event[];
+  } | null>({
+    queryKey: ["events", "all"],
+    queryFn: getQueryFn({ on401: "throw", timeout: 5000 }),
+    retry: 1,
+    retryDelay: 2000,
+  });
+
+  useEffect(() => {
+    if (blogData && blogData.blogs && blogData.blogs.length > 0) {
+      setLatestBlogs(blogData.blogs);
+    }
+    if (talentData && talentData.talents && talentData.talents.length > 0) {
+      setFeaturedTalents(talentData.talents);
+    }
+    if (eventData && eventData.events && eventData.events.length > 0) {
+      setUpcomingEvents(eventData.events);
+    }
+  }, [blogData, talentData, eventData]);
 
   const partners: any = [
     {
@@ -109,36 +127,6 @@ export default function Home() {
       _id: 8,
       name: "KFM",
       logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQjNZnzECFC0PbGq2K-Eh433w3z6xeXXEUAA&s",
-    },
-  ];
-
-  const latestBlogs: any = [
-    {
-      _id: "1",
-      title: "Empowering Young Musicians in Uganda",
-      excerpt: "How music education is transforming lives in local communities",
-      date: "March 20, 2024",
-      author: "Jane Doe",
-      readTime: "5 min read",
-      imageUrl: "/Community_workshop_outreach_event_photo_3fb17f3c.png",
-    },
-    {
-      _id: "2",
-      title: "Success Story: From Street Art to Gallery",
-      excerpt: "The inspiring journey of young artists finding their voice",
-      date: "March 18, 2024",
-      author: "John Smith",
-      readTime: "4 min read",
-      imageUrl: "/Talented_girl_painting_art_portrait_9df2082c.png",
-    },
-    {
-      _id: "3",
-      title: "Sports Development in Rural Schools",
-      excerpt: "Building future champions through grassroots programs",
-      date: "March 15, 2024",
-      author: "Michael Brown",
-      readTime: "6 min read",
-      imageUrl: "/Talented_boy_playing_soccer_portrait_4a119641.png",
     },
   ];
 
@@ -219,9 +207,15 @@ export default function Home() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            {featuredTalents.map((talent: any) => (
-              <TalentCard key={talent._id} {...talent} />
-            ))}
+            {isTalentLoading
+              ? Array.from({ length: 3 }).map((_, i) => (
+                  <SkeletonCard key={i} />
+                ))
+              : featuredTalents
+                  .slice(0, 3)
+                  .map((talent: any) => (
+                    <TalentCard key={talent._id} {...talent} />
+                  ))}
           </div>
           <div className="text-center">
             <Link href="/talents">
@@ -233,7 +227,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Add this section for Latest Blog Posts */}
       <section className="py-16 md:py-24 bg-background">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
@@ -245,28 +238,39 @@ export default function Home() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            {latestBlogs.map((blog: any) => (
-              <Card key={blog._id} className="overflow-hidden">
-                <div className="aspect-video relative">
-                  <img
-                    src={blog.imageUrl}
-                    alt={blog.title}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-                <CardContent className="p-6">
-                  <div className="flex items-center text-sm text-muted-foreground mb-3">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    {blog.date} • {blog.readTime}
-                  </div>
-                  <h3 className="font-semibold text-xl mb-2">{blog.title}</h3>
-                  <p className="text-muted-foreground mb-4">{blog.excerpt}</p>
-                  <Link className={`text-primary`} href={`/blog/${blog._id}`}>
-                    Read More →
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
+            {isBlogLoading
+              ? Array.from({ length: 3 }).map((_, i) => (
+                  <SkeletonCard key={i} />
+                ))
+              : latestBlogs.slice(0, 3).map((blog: any) => (
+                  <Card key={blog._id} className="overflow-hidden">
+                    <div className="aspect-video relative">
+                      <img
+                        src={blog.imageUrl}
+                        alt={blog.title}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                    <CardContent className="p-6">
+                      <div className="flex items-center text-sm text-muted-foreground mb-3">
+                        <Calendar className="w-4 h-4 mr-2" />
+                        {blog.date} • {blog.readTime}
+                      </div>
+                      <h3 className="font-semibold text-xl mb-2">
+                        {blog.title}
+                      </h3>
+                      <p className="text-muted-foreground mb-4">
+                        {blog.excerpt}
+                      </p>
+                      <Link
+                        className={`text-primary`}
+                        href={`/blog/${blog._id}`}
+                      >
+                        Read More →
+                      </Link>
+                    </CardContent>
+                  </Card>
+                ))}
           </div>
           <div className="text-center">
             <Link href="/blog">
@@ -323,29 +327,62 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-card hidden">
+      <section className="py-16 md:py-24 bg-card">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Recent Projects
+              Upcoming Events
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Explore our latest initiatives making a difference
+              Join us at our upcoming events and be part of the talent discovery
+              journey
             </p>
           </div>
-          <div className="space-y-8 ">
-            {recentProjects.map((project: any) => (
-              <ProjectCard key={project._id} {...project} />
+          <div className="space-y-6">
+            {upcomingEvents.slice(0, 3).map((event: any) => (
+              <Card key={event._id} className="overflow-hidden">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="aspect-video md:aspect-auto relative">
+                    <img
+                      src={event.imageUrl}
+                      alt={event.title}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div className="col-span-2 p-6 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center gap-4 mb-3 flex-wrap">
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <CalendarIcon className="w-4 h-4 mr-2" />
+                          {event.date}
+                        </div>
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Clock className="w-4 h-4 mr-2" />
+                          {event.time}
+                        </div>
+                      </div>
+                      <h3 className="font-semibold text-xl mb-2">
+                        {event.title}
+                      </h3>
+                      <p className="text-muted-foreground mb-3">
+                        {event.description}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        📍 {event.location} • {event.participants} participants
+                      </p>
+                    </div>
+                    <div className="mt-4">
+                      <Button variant="outline">Learn More</Button>
+                    </div>
+                  </div>
+                </div>
+              </Card>
             ))}
           </div>
           <div className="text-center mt-8">
-            <Link href="/projects">
-              <Button
-                size="lg"
-                variant="outline"
-                data-testid="button-view-all-projects"
-              >
-                View All Projects
+            <Link href="/events">
+              <Button size="lg" variant="outline">
+                View All Events
               </Button>
             </Link>
           </div>
