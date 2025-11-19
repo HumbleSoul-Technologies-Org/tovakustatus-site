@@ -14,7 +14,8 @@ interface BlogCardProps {
   category: string;
   imageUrl?: string;
   readTime?: string;
-  views?: [number];
+  // views can be an array of view entries or a numeric count
+  views?: any[] | number;
   image?: { url: string; public_id: string };
 }
 
@@ -30,19 +31,24 @@ export default function BlogCard({
   views,
   image,
 }: BlogCardProps) {
+  // Support both array-of-views and numeric views
+  const viewsCount = Array.isArray(views)
+    ? views.length
+    : typeof views === "number"
+    ? views
+    : 0;
   return (
     <Card className="overflow-hidden hover-elevate">
-      {imageUrl ||
-        (image?.url && (
-          <div className=" overflow-hidden">
-            <img
-              src={imageUrl || image?.url}
-              alt={title}
-              className="w-full h-full object-cover"
-              data-testid={`blog-image-${_id}`}
-            />
-          </div>
-        ))}
+      {(image?.url || imageUrl) && (
+        <div className=" overflow-hidden">
+          <img
+            src={imageUrl || image?.url}
+            alt={title}
+            className="w-full h-full object-cover"
+            data-testid={`blog-image-${_id}`}
+          />
+        </div>
+      )}
       <CardContent className="p-6">
         <div className="flex relative items-center gap-2 mb-3">
           <Badge variant="secondary" data-testid={`blog-category-${_id}`}>
@@ -54,11 +60,11 @@ export default function BlogCard({
             </span>
           )}
 
-          {views && (
+          {viewsCount > 0 && (
             <span className="text-xs absolute right-1 flex-1 text-muted-foreground">
               <span className="flex-row cursor-pointer flex items-center gap-1 transition-colors">
                 <Eye className=" hover:text-primary" size={16} />
-                {10}
+                {viewsCount}
               </span>
             </span>
           )}

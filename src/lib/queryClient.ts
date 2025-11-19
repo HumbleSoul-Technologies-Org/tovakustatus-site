@@ -6,7 +6,8 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 // ✅ Axios instance for GET only
 const axiosClient = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true, // include cookies
+  // Don't include credentials globally - let individual requests decide
+  // withCredentials: true is causing CORS issues with some endpoints
 });
 
 // ✅ Throws error if response is not OK
@@ -27,7 +28,8 @@ export async function apiRequest(
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
+    // Don't include credentials by default - let the backend handle CORS properly
+    // credentials: "include",
   });
 
   await throwIfResNotOk(res);
@@ -56,6 +58,7 @@ export const getQueryFn: <T>(options: {
 
       const response = await axiosClient.get(url, {
         signal: controller.signal,
+        withCredentials: false, // Explicitly disable credentials for GET requests
       });
 
       return response.data;

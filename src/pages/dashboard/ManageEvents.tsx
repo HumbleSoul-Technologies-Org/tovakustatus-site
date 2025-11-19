@@ -66,7 +66,7 @@ export default function ManageEvents() {
   const [deleteLoading, setDeleteLoading] = useState<string>("");
 
   useEffect(() => {
-    loadEvents();
+    fetchEvents();
   }, []);
 
   useEffect(() => {

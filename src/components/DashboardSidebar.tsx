@@ -106,15 +106,17 @@ export default function DashboardSidebar({ onClose }: DashboardSidebarProps) {
                   {item.label}
 
                   {item.path === "/dashboard/messages" &&
-                    (messagesData as any).messages.length > 0 && (
+                    (messagesData as any)?.messages.length > 0 && (
                       <Badge
                         className={`bg-primary  p-1 size-8  flex items-center justify-center rounded-full `}
                       >
-                        <p className="text-xs">100</p>
+                        <p className="text-xs">
+                          {(messagesData as any)?.messages.length}
+                        </p>
                       </Badge>
                     )}
                   {item.path === "/dashboard/notifications" &&
-                    (notificationsData as any).notifications.filter(
+                    (notificationsData as any)?.notifications.filter(
                       (n: any) => n.read === false
                     ).length > 0 && (
                       <Badge

@@ -27,6 +27,8 @@ export default function TalentDetail() {
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["talents", `${params?.id}`],
     enabled: !!params?.id,
+    refetchInterval: false,
+    staleTime: Infinity,
   });
 
   useEffect(() => {
@@ -45,6 +47,22 @@ export default function TalentDetail() {
     }
   }, []);
   const likeTalent = async () => {
+    if (!talent || !userId) return;
+
+    // Optimistically update the UI
+    const wasLiked = (talent as any)?.likes?.some(
+      (m: any) => m.visitorId === userId
+    );
+
+    const updatedTalent = {
+      ...talent,
+      likes: wasLiked
+        ? (talent as any).likes.filter((m: any) => m.visitorId !== userId)
+        : [...(talent as any).likes, { visitorId: userId }],
+    };
+    setTalent(updatedTalent);
+
+    // Process the API call in the background
     setLoading(true);
     try {
       const storedId = localStorage.getItem("visitor_id");
@@ -52,6 +70,8 @@ export default function TalentDetail() {
       await refetch();
       toast.success(`${res.message}`);
     } catch (error) {
+      // Revert on error
+      setTalent(talent);
       toast.error("Failed to like post!");
     } finally {
       setLoading(false);
@@ -151,22 +171,26 @@ export default function TalentDetail() {
                 <span className="flex-row mt-10 flex items-center gap-4 p-3 text-xs text-muted-foreground">
                   {/* Liking Btn */}
                   <span className="flex-row cursor-pointer flex   items-center gap-2   transition-colors">
-                    {talent.views.length} Views
+                    {talent?.views.length} Views
                     <Eye className=" hover:text-primary" size={16} />
                   </span>
                   <span className="flex-row cursor-pointer flex   items-center gap-2   transition-colors">
-                    {talent.likes.length} Likes
-                    <ThumbsUpIcon
-                      onClick={likeTalent}
-                      className={`mb-1 ${
-                        (talent as any)?.likes?.some(
-                          (m: any) => m.visitorId === userId
-                        )
-                          ? "text-green-500"
-                          : ""
-                      }`}
-                      size={16}
-                    />
+                    {talent?.likes.length} Likes
+                    {loading ? (
+                      <Loader className="animate-spin size-3" />
+                    ) : (
+                      <ThumbsUpIcon
+                        onClick={likeTalent}
+                        className={`mb-1 cursor-pointer ${
+                          (talent as any)?.likes?.some(
+                            (m: any) => m.visitorId === userId
+                          )
+                            ? "text-green-500"
+                            : ""
+                        }`}
+                        size={16}
+                      />
+                    )}
                   </span>
 
                   {/* Sharing Btn */}
@@ -185,7 +209,7 @@ export default function TalentDetail() {
                     }}
                   >
                     <span className="flex items-center gap-1">
-                      {talent.shares.length} <p>Shares</p>
+                      {talent?.shares.length} <p>Shares</p>
                     </span>
                     <Share2 size={16} className="hover:text-primary" />
                   </span>
@@ -193,11 +217,6 @@ export default function TalentDetail() {
                          {post.date}
                       </span> */}
                 </span>
-                {loading && (
-                  <span className="flex gap-2 mb-10 text-xs items-center">
-                    Processing ... <Loader className="animate-spin size-3" />
-                  </span>
-                )}
               </CardContent>
             </Card>
           )}

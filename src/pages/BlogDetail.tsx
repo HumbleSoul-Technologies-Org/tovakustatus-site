@@ -51,6 +51,22 @@ export default function BlogDetail() {
   }, []);
 
   const likePost = async () => {
+    if (!post || !userId) return;
+
+    // Optimistically update the UI
+    const wasLiked = (post as any)?.likes?.some(
+      (m: any) => m.visitorId === userId
+    );
+
+    const updatedPost = {
+      ...post,
+      likes: wasLiked
+        ? (post as any).likes.filter((m: any) => m.visitorId !== userId)
+        : [...(post as any).likes, { visitorId: userId }],
+    };
+    setPost(updatedPost);
+
+    // Process the API call in the background
     setLoading(true);
     try {
       const storedId = localStorage.getItem("visitor_id");
@@ -58,6 +74,8 @@ export default function BlogDetail() {
       await refetch();
       toast.success(`${res.message}`);
     } catch (error) {
+      // Revert on error
+      setPost(post);
       toast.error("Failed to like post!");
     } finally {
       setLoading(false);
@@ -124,17 +142,16 @@ export default function BlogDetail() {
                 </div>
               </div>
 
-              {post.imageUrl ||
-                (post?.image?.url && (
-                  <div className="mb-8">
-                    <img
-                      src={post.imageUrl || post?.image?.url}
-                      alt={post.title}
-                      className="w-full max-h-[500px] object-fill rounded-2xl"
-                      data-testid="blog-detail-image"
-                    />
-                  </div>
-                ))}
+              {(post?.image?.url || post?.imageUrl) && (
+                <div className="mb-8">
+                  <img
+                    src={post.imageUrl || post?.image?.url}
+                    alt={post.title}
+                    className="w-full max-h-[500px] object-fill shadow-md rounded-2xl"
+                    data-testid="blog-detail-image"
+                  />
+                </div>
+              )}
 
               <div className="prose prose-lg max-w-none mb-12">
                 <p
@@ -163,17 +180,21 @@ export default function BlogDetail() {
                 </span>
                 <span className="flex-row cursor-pointer flex   items-center gap-2   transition-colors">
                   {(post as any)?.likes?.length ?? 0} Likes
-                  <ThumbsUp
-                    onClick={likePost}
-                    className={`mb-1 ${
-                      (post as any)?.likes?.some(
-                        (m: any) => m.visitorId === userId
-                      )
-                        ? "text-green-500"
-                        : ""
-                    }`}
-                    size={16}
-                  />
+                  {loading ? (
+                    <Loader className="animate-spin size-3" />
+                  ) : (
+                    <ThumbsUp
+                      onClick={likePost}
+                      className={`mb-1 ${
+                        (post as any)?.likes?.some(
+                          (m: any) => m.visitorId === userId
+                        )
+                          ? "text-green-500"
+                          : ""
+                      }`}
+                      size={16}
+                    />
+                  )}
                 </span>
 
                 {/* Saving Btn */}
@@ -209,11 +230,6 @@ export default function BlogDetail() {
                     : "Date not available"}
                 </span>
               </span>
-              {loading && (
-                <span className="flex gap-2 mb-10 text-xs items-center">
-                  Processing ... <Loader className="animate-spin size-3" />
-                </span>
-              )}
 
               <Card className="p-6 bg-card">
                 <div className="flex items-center gap-4">
