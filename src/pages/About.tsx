@@ -38,18 +38,21 @@ export default function About() {
             <div className="relative w-full aspect-square">
               <div className="absolute inset-0 bg-gradient-to-l from-white/100 to-transparent z-10 border-0 rounded-2xl" />
               <img
-                src="https://plus.unsplash.com/premium_photo-1661627681947-4431c8c97659?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y29vbCUyMGd1eXxlbnwwfHwwfHx8MA%3D%3D&fm=jpg&q=60&w=3000"
+                src="port4.PNG"
                 alt="Founder"
-                className="w-full aspect-square border-0 rounded-2xl object-cover"
+                className="w-full h-auto aspect-square border-0 rounded-2xl object-cover"
               />
             </div>
             <div>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 Meet Our Founder
               </h2>
-              <h3 className="text-xl text-primary font-semibold mb-4">
-                TV Presenter & MC
+              <h3 className="text-2xl text-muted-foreground font-semibold mb-4">
+                ALLAN KIYEE
               </h3>
+              <h6 className="text-1xl text-primary font-semibold mb-4">
+                BTM TV Presenter & MC
+              </h6>
               <p className="text-muted-foreground leading-relaxed mb-4">
                 As a well-known TV presenter and MC, I've had the privilege of
                 witnessing incredible talent across Uganda. However, I've also
