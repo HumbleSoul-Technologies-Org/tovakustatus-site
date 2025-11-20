@@ -40,6 +40,10 @@ export default function BlogDetail() {
     }
   }, [data, params?.id]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   // initialize userId from localStorage once
   useEffect(() => {
     const stored = localStorage.getItem("visitor_id");

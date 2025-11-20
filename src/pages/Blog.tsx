@@ -14,6 +14,9 @@ export default function Blog() {
     retry: 1,
     retryDelay: 2000,
   });
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   useEffect(() => {
     if (data && data.blogs && data.blogs.length > 0) {

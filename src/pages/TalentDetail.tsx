@@ -30,6 +30,9 @@ export default function TalentDetail() {
     refetchInterval: false,
     staleTime: Infinity,
   });
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -221,8 +224,8 @@ export default function TalentDetail() {
             </Card>
           )}
 
-          <div className="mt-12 text-center">
-            <Link href="/get-involved">
+          <div className="mt-12  text-center">
+            <Link href="/contact">
               <Button size="lg" data-testid="button-support">
                 Support Talents Like {talent.name.split(" ")[0]}
               </Button>

@@ -169,17 +169,6 @@ export default function Settings() {
                 </div>
                 <Separator />
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="enableProjects">Projects</Label>
-                  <Switch
-                    id="enableProjects"
-                    checked={settings.features.enableProjects}
-                    onCheckedChange={(checked) =>
-                      updateSettings(["features", "enableProjects"], checked)
-                    }
-                  />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
                   <Label htmlFor="enableTalents">Talents</Label>
                   <Switch
                     id="enableTalents"

@@ -29,9 +29,13 @@ export default function EventDetail() {
   });
   useEffect(() => {
     if (data) {
-      setEvent(data?.event);
+      setEvent((data as any)?.event);
     }
   }, [params?._id, data]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   if (!event) {
     return (

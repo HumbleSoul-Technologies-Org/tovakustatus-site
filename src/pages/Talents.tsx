@@ -21,6 +21,10 @@ export default function Talents() {
   });
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
     if (data && data.talents) {
       setAllTalents(data.talents);
     }

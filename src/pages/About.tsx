@@ -13,6 +13,7 @@ import {
   TrendingUpIcon,
 } from "lucide-react";
 import { FaBeer } from "react-icons/fa";
+import React, { useEffect } from "react";
 // import founderImage from '@assets/generated_images/Founder_professional_portrait_photo_15a7b392.png';
 
 export default function About() {
@@ -23,6 +24,9 @@ export default function About() {
     { name: "Grace Mutesi", role: "Sports Coordinator", initials: "GM" },
     { name: "David Nkunda", role: "Arts Coordinator", initials: "DN" },
   ];
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   return (
     <div>

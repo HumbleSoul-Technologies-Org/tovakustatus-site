@@ -66,23 +66,24 @@ export default function Navbar() {
                     data-testid={`link-${item.label.toLowerCase()}`}
                   >
                     {item.label}
-                    {item.path === "/blog" && blogsData?.blogs.length > 0 && (
-                      <Badge
-                        className={`bg-primary absolute size-5 right-1 flex items-center justify-center rounded-full ${
-                          isActive("/blog") ? "hidden" : ""
-                        }`}
-                      >
-                        {blogsData?.blogs.length}
-                      </Badge>
-                    )}
+                    {item.path === "/blog" &&
+                      (blogsData as any)?.blogs.length > 0 && (
+                        <Badge
+                          className={`bg-primary absolute size-5 right-1 flex items-center justify-center rounded-full ${
+                            isActive("/blog") ? "hidden" : ""
+                          }`}
+                        >
+                          {(blogsData as any)?.blogs.length}
+                        </Badge>
+                      )}
                     {item.path === "/events" &&
-                      eventsData?.events.length > 0 && (
+                      (eventsData as any)?.events.length > 0 && (
                         <Badge
                           className={`bg-primary absolute size-5 right-1 flex items-center justify-center rounded-full ${
                             isActive("/events") ? "hidden" : ""
                           }`}
                         >
-                          {eventsData?.events.length}
+                          {(eventsData as any)?.events.length}
                         </Badge>
                       )}
                   </Button>
@@ -116,7 +117,15 @@ export default function Navbar() {
             {mobileMenuOpen ? (
               <X className="h-6 w-6" />
             ) : (
-              <Menu className="h-6 w-6" />
+              <span className="relative">
+                <Menu className="h-6 w-6" />
+                <span className="bg-primary absolute size-2 -top-1  -right-1 flex items-center justify-center rounded-full"></span>
+
+                {(eventsData as any)?.events.length > 0 ||
+                  ((blogsData as any)?.blogs.length > 0 && (
+                    <span className="bg-primary absolute size-2 -top-1 -right-1 flex items-center justify-center rounded-full"></span>
+                  ))}
+              </span>
             )}
           </Button>
         </div>
@@ -136,6 +145,26 @@ export default function Navbar() {
                   data-testid={`mobile-link-${item.label.toLowerCase()}`}
                 >
                   {item.label}
+                  {item.path === "/blog" &&
+                    (blogsData as any)?.blogs.length > 0 && (
+                      <p
+                        className={`text-primary absolute size-5 right-1  ${
+                          isActive("/blog") ? "hidden" : ""
+                        }`}
+                      >
+                        {(blogsData as any)?.blogs.length}
+                      </p>
+                    )}
+                  {item.path === "/events" &&
+                    (eventsData as any)?.events.length > 0 && (
+                      <p
+                        className={`text-primary absolute size-5 right-1  ${
+                          isActive("/events") ? "hidden" : ""
+                        }`}
+                      >
+                        {(eventsData as any)?.events.length}
+                      </p>
+                    )}
                 </Button>
               </Link>
             ))}

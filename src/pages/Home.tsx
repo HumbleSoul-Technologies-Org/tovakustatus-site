@@ -14,7 +14,6 @@ import { Link } from "wouter";
 import Hero from "@/components/Hero";
 import StatCard from "@/components/StatCard";
 import TalentCard from "@/components/TalentCard";
-import ProjectCard from "@/components/ProjectCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import heroImage from "/Hero_image_diverse_talented_kids_8dd4ac07.png";
@@ -47,6 +46,9 @@ export default function Home() {
   const [latestBlogs, setLatestBlogs] = useState<BlogPost[]>([]);
   const [featuredTalents, setFeaturedTalents] = useState<Talent[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   const { data: blogData, isLoading: isBlogLoading } = useQuery<{
     blogs: BlogPost[];

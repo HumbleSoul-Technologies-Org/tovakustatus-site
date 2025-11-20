@@ -15,6 +15,9 @@ export default function Events() {
   });
   const [viewMode, setViewMode] = useState<"grid" | "timeline">("grid");
   const [events, setEvents] = useState<Event[]>([]);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   useEffect(() => {
     if (data && data.events) {

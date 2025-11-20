@@ -59,15 +59,6 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/projects"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                  data-testid="footer-link-projects"
-                >
-                  Projects
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/events"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                   data-testid="footer-link-events"
