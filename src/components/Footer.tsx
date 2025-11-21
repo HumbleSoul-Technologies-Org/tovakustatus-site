@@ -8,7 +8,15 @@ import {
   Phone,
   MapPin,
 } from "lucide-react";
-import { FaTiktok } from "react-icons/fa";
+import {
+  FaFacebook,
+  FaFacebookF,
+  FaTiktok,
+  FaTwitter,
+  FaWhatsapp,
+  FaYoutube,
+  FaYoutubeSquare,
+} from "react-icons/fa";
 
 export default function Footer() {
   return (
@@ -130,27 +138,34 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 flex-shrink-0" />
-                <span>+250 123 456 789</span>
+                <span>+256 708-805-040</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <FaWhatsapp className="h-4 w-4 flex-shrink-0" />
+                <span>+256 708-805-040</span>
               </li>
             </ul>
-            <div className="flex items-center gap-2 mt-4">
+            <div className="flex  items-center gap-2 mt-4">
               <a
                 href="#"
-                className="w-9 h-9 bg-muted rounded-md flex items-center justify-center hover-elevate"
+                target="_blank"
+                className="w-9 h-9 bg-muted hover:bg-primary hover:text-white rounded-md flex items-center justify-center hover-elevate"
                 data-testid="social-facebook"
               >
-                <Facebook className="h-4 w-4" />
+                <FaFacebookF className="h-4 w-4" />
               </a>
               <a
                 href="#"
-                className="w-9 h-9 bg-muted rounded-md flex items-center justify-center hover-elevate"
+                target="_blank"
+                className="w-9 h-9 bg-muted hover:bg-blue-300 hover:text-white rounded-md flex items-center justify-center hover-elevate"
                 data-testid="social-twitter"
               >
-                <Twitter className="h-4 w-4" />
+                <FaTwitter className="h-4 w-4" />
               </a>
               <a
                 href="#"
-                className="w-9 h-9 bg-muted rounded-md flex items-center justify-center hover-elevate"
+                target="_blank"
+                className="w-9 h-9 bg-muted rounded-md flex hover:bg-black hover:text-white items-center justify-center hover-elevate"
                 data-testid="social-instagram"
               >
                 {/* <Instagram className="h-4 w-4" /> */}
@@ -158,10 +173,11 @@ export default function Footer() {
               </a>
               <a
                 href="#"
-                className="w-9 h-9 bg-muted rounded-md flex items-center justify-center hover-elevate"
+                target="_blank"
+                className="w-9 h-9 bg-muted rounded-md hover:bg-destructive hover:text-white flex items-center justify-center hover-elevate"
                 data-testid="social-youtube"
               >
-                <Youtube className="h-4 w-4" />
+                <FaYoutube className="h-4 w-4" />
               </a>
             </div>
           </div>

@@ -18,6 +18,7 @@ import {
 import axios from "axios";
 import { toast } from "sonner";
 import { set } from "date-fns";
+import { FaTiktok } from "react-icons/fa";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -176,9 +177,7 @@ export default function Contact() {
                     <div>
                       <p className="font-semibold mb-1">Address</p>
                       <p className="text-sm text-muted-foreground">
-                        KG 123 St, kampala
-                        <br />
-                        Uganda
+                        kampala, Uganda
                       </p>
                     </div>
                   </div>
@@ -200,7 +199,7 @@ export default function Contact() {
                     <div>
                       <p className="font-semibold mb-1">Phone</p>
                       <p className="text-sm text-muted-foreground">
-                        +250 123 456 789
+                        +256 708-805-040
                       </p>
                     </div>
                   </div>
@@ -215,31 +214,35 @@ export default function Contact() {
                   <div className="flex items-center gap-3">
                     <a
                       href="#"
-                      className="w-10 h-10 bg-primary/10 rounded-md flex items-center justify-center hover-elevate"
+                      target="_blank"
+                      className="w-10 h-10 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-md flex items-center justify-center hover-elevate"
                       data-testid="social-facebook"
                     >
-                      <Facebook className="h-5 w-5 text-primary" />
+                      <Facebook className="h-5 w-5 " />
                     </a>
                     <a
                       href="#"
-                      className="w-10 h-10 bg-primary/10 rounded-md flex items-center justify-center hover-elevate"
+                      target="_blank"
+                      className="w-10 h-10 bg-primary/10 text-primary hover:bg-blue-300 hover:text-white rounded-md flex items-center justify-center hover-elevate"
                       data-testid="social-twitter"
                     >
-                      <Twitter className="h-5 w-5 text-primary" />
+                      <Twitter className="h-5 w-5  " />
                     </a>
                     <a
                       href="#"
-                      className="w-10 h-10 bg-primary/10 rounded-md flex items-center justify-center hover-elevate"
+                      target="_blank"
+                      className="w-10 h-10 bg-primary/10 text-primary hover:bg-black hover:text-white rounded-md flex items-center justify-center hover-elevate"
                       data-testid="social-instagram"
                     >
-                      <Instagram className="h-5 w-5 text-primary" />
+                      <FaTiktok className="h-5 w-5 " />
                     </a>
                     <a
                       href="#"
-                      className="w-10 h-10 bg-primary/10 rounded-md flex items-center justify-center hover-elevate"
+                      target="_blank"
+                      className="w-10 h-10 bg-primary/10 text-primary hover:bg-destructive hover:text-white rounded-md flex items-center justify-center hover-elevate"
                       data-testid="social-youtube"
                     >
-                      <Youtube className="h-5 w-5 text-primary" />
+                      <Youtube className="h-5 w-5  hover:text-white" />
                     </a>
                   </div>
                 </CardContent>
