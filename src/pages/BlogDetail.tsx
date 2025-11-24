@@ -26,33 +26,38 @@ export default function BlogDetail() {
   const [, params] = useRoute("/blog/:id");
   const [post, setPost] = useState<BlogPost | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-
   const [loading, setLoading] = useState<boolean | null>(false);
 
+  // Extract blog ID from route params or URL pathname
+  const getBlogId = () => {
+    if (params?.id) return params.id;
+    const pathMatch = window.location.pathname.match(/\/blog\/([^/]+)/);
+    return pathMatch?.[1] || null;
+  };
+
+  const blogId = getBlogId();
+
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["blogs", `${params?.id}`],
-    enabled: !!params?.id,
+    queryKey: ["blogs", blogId],
+    enabled: !!blogId,
   });
   // Set post whenever the query data updates (including after refetch)
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (data) {
       setPost((data as any)?.blog);
     }
-  }, [data, params?.id]);
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+  }, [data, blogId]);
 
   // initialize userId from localStorage once
   useEffect(() => {
     const stored = localStorage.getItem("visitor_id");
     if (stored) setUserId(stored);
-    if (params?.id && stored) {
-      setViews(params.id, stored);
+    if (blogId && stored) {
+      setViews(blogId, stored);
       refetch();
     }
-  }, []);
+  }, [blogId]);
 
   const likePost = async () => {
     if (!post || !userId) return;
@@ -74,8 +79,8 @@ export default function BlogDetail() {
     setLoading(true);
     try {
       const storedId = localStorage.getItem("visitor_id");
-      const res = await toggleLike(params?.id, storedId ? storedId : null);
-      await refetch();
+      const res = await toggleLike(blogId, storedId ? storedId : null);
+
       toast.success(`${res.message}`);
     } catch (error) {
       // Revert on error
@@ -149,7 +154,7 @@ export default function BlogDetail() {
               {(post?.image?.url || post?.imageUrl) && (
                 <div className="mb-8">
                   <img
-                    src={post.imageUrl || post?.image?.url}
+                    src={post?.image?.url ? post?.image?.url : post.imageUrl}
                     alt={post.title}
                     className="w-full max-h-[500px] object-fill shadow-md rounded-2xl"
                     data-testid="blog-detail-image"
@@ -201,20 +206,13 @@ export default function BlogDetail() {
                   )}
                 </span>
 
-                {/* Saving Btn */}
-                {/* <span className="flex-row cursor-pointer flex items-center gap-2   transition-colors">
-                Save
-                <Bookmark size={16} className="hover:text-primary" />
-              </span> */}
-
-                {/* Sharing Btn */}
                 <span
                   className="flex-row cursor-pointer flex-1 flex items-center gap-2   transition-colors"
                   onClick={() => {
-                    setShares(params?.id, userId ? userId : null);
-                    refetch();
+                    setShares(blogId, userId ? userId : null);
+
                     try {
-                      const url = `${window.location.origin}/blog/${params?.id}`;
+                      const url = `${window.location.origin}/blog/${blogId}`;
                       navigator.clipboard?.writeText(url);
                       toast.success("Post link copied");
                     } catch (e) {
@@ -222,7 +220,7 @@ export default function BlogDetail() {
                     }
                   }}
                 >
-                  <span className="flex gap-2 items-center">
+                  <span className="flex gap-1 items-center">
                     {(post as any)?.shares?.length ?? 0}
                     <p>Shares</p>
                   </span>

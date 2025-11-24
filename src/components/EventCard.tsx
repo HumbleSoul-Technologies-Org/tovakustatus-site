@@ -36,17 +36,16 @@ export default function EventCard({
 
   return (
     <Card className="overflow-hidden hover-elevate">
-      {imageUrl ||
-        (image?.url && (
-          <div className="h-auto  overflow-hidden">
-            <img
-              src={imageUrl || image?.url}
-              alt={title}
-              className="w-full h-full object-cover"
-              data-testid={`event-image-${_id}`}
-            />
-          </div>
-        ))}
+      {(imageUrl || image?.url) && (
+        <div className="h-auto  overflow-hidden">
+          <img
+            src={imageUrl || image?.url}
+            alt={title}
+            className="w-full h-full object-cover"
+            data-testid={`event-image-${_id}`}
+          />
+        </div>
+      )}
       <CardContent className="p-6">
         <div className="flex items-start justify-between gap-2 mb-3">
           <h3

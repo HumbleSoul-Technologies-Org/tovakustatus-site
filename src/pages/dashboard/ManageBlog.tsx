@@ -284,15 +284,11 @@ export default function ManageBlog() {
         imageData: imageData || formData.imageUrl,
       };
 
-      console.log("====================================");
-      console.log(imageData);
-      console.log("====================================");
-
-      // if (editingPost) {
-      //   await handleUpdate(payload);
-      // } else {
-      //   await handleCreate(payload);
-      // }
+      if (editingPost) {
+        await handleUpdate(payload);
+      } else {
+        await handleCreate(payload);
+      }
 
       // Cleanup
       if (imagePreview && selectedImage) {

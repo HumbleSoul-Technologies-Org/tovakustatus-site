@@ -277,27 +277,23 @@ export default function ManageTalents() {
     const storedUser = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
     const user = storedUser ? JSON.parse(storedUser) : null;
     const token = user?.token;
-    if (confirm(`Are you sure you want to delete ${name}?`)) {
-      try {
-        setDeleteLoading(id);
+    try {
+      setDeleteLoading(id);
 
-        const res = await axios.delete(
-          `${import.meta.env.VITE_API_URL}/talents/${id}`,
-          { headers: { Authorization: `Bearer ${token}` }, timeout: 10000 }
-        );
+      const res = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/talents/${id}`,
+        { headers: { Authorization: `Bearer ${token}` }, timeout: 10000 }
+      );
 
-        if (res.status === 200) {
-          fetchTalents();
-          toast.success(`${name} has been removed.`);
-          deleteTalent(id);
-        }
-      } catch (error) {
-        console.log("====================================");
-        console.log(error);
-        console.log("====================================");
-      } finally {
-        setDeleteLoading("");
+      if (res.status === 200) {
+        fetchTalents();
+        toast.success(`${name} has been removed.`);
+        deleteTalent(id);
       }
+    } catch (error) {
+      toast.error("Failed to delete talent, please try again.");
+    } finally {
+      setDeleteLoading("");
     }
   };
 

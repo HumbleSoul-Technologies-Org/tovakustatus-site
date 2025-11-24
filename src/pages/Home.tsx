@@ -27,6 +27,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useState, useEffect } from "react";
 import { Calendar } from "lucide-react";
 import { Talent, BlogPost, Event } from "@/lib/localStorage";
+import { format, isValid } from "date-fns";
 
 // Loading skeleton component
 const SkeletonCard = () => (
@@ -47,7 +48,7 @@ export default function Home() {
   const [featuredTalents, setFeaturedTalents] = useState<Talent[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo(0, 0);
   }, []);
 
   const { data: blogData, isLoading: isBlogLoading } = useQuery<{
@@ -78,6 +79,8 @@ export default function Home() {
   });
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
     if (blogData && blogData.blogs && blogData.blogs.length > 0) {
       setLatestBlogs(blogData.blogs);
     }
@@ -256,7 +259,10 @@ export default function Home() {
                     <CardContent className="p-6">
                       <div className="flex items-center text-sm text-muted-foreground mb-3">
                         <Calendar className="w-4 h-4 mr-2" />
-                        {blog.date} • {blog.readTime}
+                        {blog.date && isValid(new Date(blog.date))
+                          ? format(new Date(blog.date), "PPP")
+                          : "Date not available"}
+                        {blog.readTime && <>• {blog.readTime}</>}
                       </div>
                       <h3 className="font-semibold text-xl mb-2">
                         {blog.title}
@@ -356,7 +362,9 @@ export default function Home() {
                       <div className="flex items-center gap-4 mb-3 flex-wrap">
                         <div className="flex items-center text-sm text-muted-foreground">
                           <CalendarIcon className="w-4 h-4 mr-2" />
-                          {event.date}
+                          {event.date && isValid(new Date(event.date))
+                            ? format(new Date(event.date), "PPP")
+                            : "Date not available"}
                         </div>
                         <div className="flex items-center text-sm text-muted-foreground">
                           <Clock className="w-4 h-4 mr-2" />
@@ -370,7 +378,7 @@ export default function Home() {
                         {event.description}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        📍 {event.location} • {event.participants} participants
+                        📍 {event.location}
                       </p>
                     </div>
                     <div className="mt-4">

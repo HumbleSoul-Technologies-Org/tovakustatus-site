@@ -15,7 +15,7 @@ export default function Blog() {
     retryDelay: 2000,
   });
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   useEffect(() => {

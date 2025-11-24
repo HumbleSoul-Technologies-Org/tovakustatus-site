@@ -39,10 +39,10 @@ export default function BlogCard({
     : 0;
   return (
     <Card className="overflow-hidden hover-elevate">
-      {(image?.url || imageUrl) && (
+      {(imageUrl || image?.url) && (
         <div className=" overflow-hidden">
           <img
-            src={imageUrl || image?.url}
+            src={image?.url ? image?.url : imageUrl}
             alt={title}
             className="w-full h-full object-cover"
             data-testid={`blog-image-${_id}`}

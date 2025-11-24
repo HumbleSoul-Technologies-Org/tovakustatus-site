@@ -66,7 +66,7 @@ export default function Media() {
     retryDelay: 2000,
   });
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
   const mediaItems = data?.galleries || [];
 
