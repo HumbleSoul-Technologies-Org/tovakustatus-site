@@ -156,10 +156,11 @@ const MediaForm = ({
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<MediaFormData>({
     resolver: zodResolver(mediaFormSchema),
-    defaultValues: { category: "", videoUrl: "" },
+    defaultValues: { title: "", category: "", url: "", videoUrl: "" },
   });
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -175,8 +176,8 @@ const MediaForm = ({
     maxFiles: 1,
   });
 
-  const urlValue = watch("url");
-  const videoUrlValue = watch("videoUrl");
+  const urlValue: any = watch("url");
+  const videoUrlValue: any = watch("videoUrl");
   const categoryValue = watch("category");
   const { previewUrl, previewUrls, currentIndex, navigate } = usePreview(
     selectedFile,
@@ -187,6 +188,7 @@ const MediaForm = ({
   const handleFormSubmit = async (data: MediaFormData) => {
     await onSubmit({ ...data, selectedFile });
     setSelectedFile(null);
+    reset();
   };
 
   return (
@@ -241,7 +243,7 @@ const MediaForm = ({
                 <Input
                   id="url"
                   {...register("url")}
-                  placeholder="https://example.com/image.jpg"
+                  placeholder="https://example.com/image1.jpg, https://example.com/image2.png, ..."
                   type="url"
                 />
                 <span className="text-xs text-muted-foreground">
