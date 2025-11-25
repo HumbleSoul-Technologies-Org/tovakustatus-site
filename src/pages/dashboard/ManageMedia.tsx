@@ -22,6 +22,7 @@ import {
   ChevronRight,
   Trash2,
   Loader,
+  LassoSelect,
 } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
@@ -370,7 +371,13 @@ const MediaForm = ({
 
           <div className="flex justify-end">
             <Button type="submit" disabled={isUploading}>
-              {isUploading ? "Uploading..." : "Upload Image"}
+              {isUploading ? (
+                <span className="flex gap-2 items-center">
+                  Uploading... <Loader className="animate-spin size-3" />
+                </span>
+              ) : (
+                "Upload Image"
+              )}
             </Button>
           </div>
         </form>
@@ -499,47 +506,53 @@ const MediaLibrary = ({
                     aria-label={`${category} images`}
                     className="py-2"
                   >
-                    {slides.map((img, idx) => (
-                      <SplideSlide key={idx}>
-                        <div className="w-full h-[400px] object-contain overflow-hidden rounded-md shadow-md bg-neutral-900 relative group">
-                          <img
-                            src={img.url}
-                            alt={img.title || `image-${idx + 1}`}
-                            loading="lazy"
-                            decoding="async"
-                            className="w-full h-full object-cover"
-                            style={{ objectPosition: "center" }}
-                          />
+                    {slides.map((img: any, idx) => {
+                      // Split comma-separated titles into an array
+                      const titlesArray = img.title ? img.title.split(",") : [];
 
-                          {/* Hover overlay with title and delete button */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4">
-                            <div className="flex justify-end">
-                              {deleting === img.itemId ? (
-                                <span className="flex text-white items-center gap-1">
-                                  deleting...{" "}
-                                  <Loader className="animate-spin size-5 text-white" />
-                                </span>
-                              ) : (
-                                <button
-                                  onClick={() =>
-                                    handleDeleteImage(img.itemId, img.url)
-                                  }
-                                  className="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-colors"
-                                  title="Delete image"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </button>
-                              )}
-                            </div>
-                            <div>
-                              <h3 className="font-semibold text-white text-sm">
-                                {img.title || "Untitled"}
-                              </h3>
+                      // Get the title that corresponds to this index
+                      const titleForSlide =
+                        titlesArray[idx] || `image-${idx + 1}`;
+
+                      return (
+                        <SplideSlide key={idx}>
+                          <div className="w-full h-[400px] object-contain overflow-hidden rounded-md shadow-md bg-neutral-900 relative group">
+                            <img
+                              src={img.url}
+                              alt={titleForSlide}
+                              loading="lazy"
+                              decoding="async"
+                              className="w-full h-full object-cover"
+                              style={{ objectPosition: "center" }}
+                            />
+
+                            {/* Hover overlay with title and delete button */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4">
+                              <div className="flex justify-end">
+                                {deleting === img.itemId ? (
+                                  <span className="flex text-white items-center gap-1">
+                                    deleting...{" "}
+                                    <Loader className="animate-spin size-5 text-white" />
+                                  </span>
+                                ) : (
+                                  <Trash2
+                                    onClick={() =>
+                                      handleDeleteImage(img.itemId, img.url)
+                                    }
+                                    className="size-4 cursor-pointer text-white"
+                                  />
+                                )}
+                              </div>
+                              <div>
+                                <h3 className="font-semibold text-white text-sm">
+                                  {titleForSlide}
+                                </h3>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </SplideSlide>
-                    ))}
+                        </SplideSlide>
+                      );
+                    })}
                   </SplideReact>
                 </div>
 

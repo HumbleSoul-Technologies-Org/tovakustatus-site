@@ -131,25 +131,33 @@ export default function Media() {
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {filteredMedia.flatMap((item) =>
-                  getImageSources(item).map((imageUrl, idx) => (
-                    <div
-                      key={`${item._id}-${idx}`}
-                      className="aspect-square overflow-hidden rounded-lg hover:opacity-60 cursor-pointer hover-elevate"
-                      onClick={() => setSelectedImage(imageUrl)}
-                      data-testid={`media-item-${item._id}-${idx}`}
-                    >
-                      <img
-                        src={imageUrl}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                      <p className="absolute bottom-0 left-1 text-white text-xs">
-                        {item.title}
-                      </p>
-                    </div>
-                  ))
+                  getImageSources(item).map((imageUrl, idx) => {
+                    const titlesArray = item.title ? item.title.split(",") : [];
+                    const titleForSlide =
+                      titlesArray[idx] || `image-${idx + 1}`;
+
+                    return (
+                      <div
+                        key={`${item._id}-${idx}`}
+                        className="relative w-full h-48 rounded-lg overflow-hidden bg-neutral-900 group cursor-pointer"
+                        onClick={() => setSelectedImage(imageUrl)}
+                        data-testid={`media-item-${item._id}-${idx}`}
+                      >
+                        <img
+                          src={imageUrl}
+                          alt={item.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <div className="absolute text-center inset-0 bg-gradient-to-t from-black/50 to-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+                          <p className="text-white text-xs font-medium truncate">
+                            {titleForSlide.trim()}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </>
@@ -161,12 +169,12 @@ export default function Media() {
         open={!!selectedImage}
         onOpenChange={() => setSelectedImage(null)}
       >
-        <DialogContent className="max-w-4xl p-0">
+        <DialogContent className="max-w-4xl rounded-md border-0 p-0">
           {selectedImage && (
             <img
               src={selectedImage}
               alt="Full size"
-              className="w-full h-auto"
+              className="w-full h-auto rounded-md shadow-md border-0"
               data-testid="lightbox-image"
             />
           )}

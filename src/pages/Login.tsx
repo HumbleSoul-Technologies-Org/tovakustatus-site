@@ -44,7 +44,6 @@ export default function Login() {
           description: "Welcome to the dashboard!",
         });
         navigate("/dashboard");
-        console.log("Response Data:", res.data);
       }
     } catch (error: any) {
       console.error(error);
