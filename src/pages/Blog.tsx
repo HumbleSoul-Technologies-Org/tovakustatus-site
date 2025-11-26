@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Hero from "@/components/Hero";
 import BlogCard from "@/components/BlogCard";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
 import { getBlogPosts, BlogPost } from "@/lib/localStorage";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
@@ -43,6 +44,17 @@ export default function Blog() {
       {!isLoading && blogPosts && blogPosts.length > 0 ? (
         <section className="py-16 md:py-24 bg-background">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
+            {/* Featured Video Section */}
+            {blogPosts.some((post) => post.videoUrl) && (
+              <div className="mb-16">
+                <h2 className="text-3xl font-bold mb-8">Featured Video</h2>
+                <YouTubeEmbed
+                  videoUrl={blogPosts.find((post) => post.videoUrl)?.videoUrl}
+                  title="Featured Blog Video"
+                />
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {blogPosts?.map((post) => (
                 <BlogCard key={post._id} {...post} />

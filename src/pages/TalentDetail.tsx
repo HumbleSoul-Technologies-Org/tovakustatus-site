@@ -4,6 +4,8 @@ import { getTalentById, Talent } from "@/lib/localStorage";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
+import VideoPlayerCard from "@/components/VideoPlayerCard";
 
 import {
   ArrowLeft,
@@ -153,6 +155,13 @@ export default function TalentDetail() {
                     </div>
                   </div>
 
+                  {/* {!talent.videoUrl && (
+                    <div className="mb-12 p-4 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-800">
+                      Debug: No videoUrl found. Available properties:{" "}
+                      {Object.keys(talent).join(", ")}
+                    </div>
+                  )} */}
+
                   {talent.fullStory && (
                     <Card>
                       <CardContent className="p-8">
@@ -234,6 +243,16 @@ export default function TalentDetail() {
                         </span>
                       </CardContent>
                     </Card>
+                  )}
+
+                  {talent.videoUrl && (
+                    <div className="mb-12">
+                      <VideoPlayerCard
+                        videoUrl={talent.videoUrl}
+                        title="Featured Video"
+                        talentName={talent.name}
+                      />
+                    </div>
                   )}
 
                   <div className="mt-12  text-center">

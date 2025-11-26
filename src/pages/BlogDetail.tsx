@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { format, isValid } from "date-fns";
+import VideoPlayerCard from "@/components/VideoPlayerCard";
 
 export default function BlogDetail() {
   const [, params] = useRoute("/blog/:id");
@@ -245,6 +246,15 @@ export default function BlogDetail() {
                     </p>
                   </div>
                 </div>
+
+                {post.videoUrl && (
+                  <div className="mb-12">
+                    <VideoPlayerCard
+                      videoUrl={post.videoUrl}
+                      title="Featured Video"
+                    />
+                  </div>
+                )}
               </Card>
 
               <div className="mt-12 pt-8 border-t border-border">

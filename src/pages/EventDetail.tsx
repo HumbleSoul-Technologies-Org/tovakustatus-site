@@ -93,7 +93,7 @@ export default function EventDetail() {
                           (data as any)?.event?.image?.url
                         }
                         alt={(data as any)?.event?.title}
-                        className="w-full h-96 object-cover rounded-2xl"
+                        className="w-full h-full object-fit rounded-2xl"
                         data-testid="event-detail-image"
                       />
                     </div>

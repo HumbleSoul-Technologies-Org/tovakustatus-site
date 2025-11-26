@@ -37,11 +37,11 @@ export default function EventCard({
   return (
     <Card className="overflow-hidden hover-elevate">
       {(imageUrl || image?.url) && (
-        <div className="h-auto  overflow-hidden">
+        <div className="h-[400px]  overflow-hidden">
           <img
             src={imageUrl || image?.url}
             alt={title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
             data-testid={`event-image-${_id}`}
           />
         </div>

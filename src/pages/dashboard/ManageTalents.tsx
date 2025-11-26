@@ -562,7 +562,11 @@ export default function ManageTalents() {
                     </td>
                     <td className="py-3 px-4">
                       <img
-                        src={talent?.image?.url || talent?.imageUrl}
+                        src={
+                          talent?.image?.url ||
+                          talent?.imageUrl ||
+                          "https://t4.ftcdn.net/jpg/07/91/22/59/360_F_791225927_caRPPH99D6D1iFonkCRmCGzkJPf36QDw.jpg"
+                        }
                         className="size-20 rounded-md"
                       />
                     </td>
