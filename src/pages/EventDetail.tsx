@@ -83,10 +83,10 @@ export default function EventDetail() {
                     </Button>
                   </Link>
 
-                  {(event.imageUrl || event?.image?.url) && (
+                  {(event?.imageUrl || event?.image?.url) && (
                     <div className="mb-8">
                       <img
-                        src={event.imageUrl || event?.image?.url}
+                        src={event?.imageUrl || event?.image?.url}
                         alt={event.title}
                         className="w-full h-96 object-cover rounded-2xl"
                         data-testid="event-detail-image"
