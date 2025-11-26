@@ -251,7 +251,7 @@ export default function Home() {
                   <Card key={blog._id} className="overflow-hidden">
                     <div className="aspect-video relative">
                       <img
-                        src={blog.imageUrl}
+                        src={blog.imageUrl || blog?.image.url}
                         alt={blog.title}
                         className="object-cover w-full h-full"
                       />
@@ -352,7 +352,7 @@ export default function Home() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="aspect-video md:aspect-auto relative">
                     <img
-                      src={event.imageUrl}
+                      src={event?.imageUrl || event?.image.url}
                       alt={event.title}
                       className="object-cover w-full h-full"
                     />
