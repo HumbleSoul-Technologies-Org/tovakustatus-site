@@ -83,7 +83,7 @@ export default function ManageTalents() {
         talentType: talent.talentType,
         description: talent.description,
         fullStory: talent.fullStory || "",
-        imageUrl: talent?.image?.url ? talent.imageUrl : "",
+        imageUrl: talent.imageUrl || "",
         videoUrl: talent.videoUrl || "",
         status: talent.status,
       });
