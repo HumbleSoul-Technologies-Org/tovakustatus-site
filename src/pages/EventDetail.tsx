@@ -29,10 +29,11 @@ export default function EventDetail() {
   });
   useEffect(() => {
     window.scrollTo(0, 0);
-
-    if (data) {
-      setEvent((data as any)?.event);
-    }
+    // if (data) {
+    //   console.log("====================================");
+    //   console.log(data.event._id);
+    //   console.log("====================================");
+    // }
   }, [params?._id, data]);
 
   const statusColors: any = {
@@ -53,7 +54,7 @@ export default function EventDetail() {
         </div>
       ) : (
         <>
-          {event ? (
+          {!(data as any)?.event ? (
             <div className="min-h-screen flex items-center justify-center">
               <div className="text-center">
                 <h1 className="text-3xl font-bold mb-4">Event Not Found</h1>
@@ -83,11 +84,15 @@ export default function EventDetail() {
                     </Button>
                   </Link>
 
-                  {(event?.imageUrl || event?.image?.url) && (
+                  {((data as any)?.event?.imageUrl ||
+                    (data as any)?.event?.image?.url) && (
                     <div className="mb-8">
                       <img
-                        src={event?.imageUrl || event?.image?.url}
-                        alt={event.title}
+                        src={
+                          (data as any)?.event?.imageUrl ||
+                          (data as any)?.event?.image?.url
+                        }
+                        alt={(data as any)?.event?.title}
                         className="w-full h-96 object-cover rounded-2xl"
                         data-testid="event-detail-image"
                       />
@@ -99,13 +104,13 @@ export default function EventDetail() {
                       className="text-4xl md:text-5xl font-bold flex-1"
                       data-testid="event-detail-title"
                     >
-                      {event.title}
+                      {(data as any)?.event?.title}
                     </h1>
                     <Badge
-                      className={statusColors[event.status]}
+                      className={statusColors[(data as any)?.event?.status]}
                       data-testid="event-detail-status"
                     >
-                      {event.status}
+                      {(data as any)?.event?.status}
                     </Badge>
                   </div>
 
@@ -120,8 +125,12 @@ export default function EventDetail() {
                               className="text-sm text-muted-foreground"
                               data-testid="event-detail-date"
                             >
-                              {event.date && isValid(new Date(event.date))
-                                ? format(new Date(event.date), "PPP")
+                              {(data as any)?.event?.date &&
+                              isValid(new Date((data as any)?.event?.date))
+                                ? format(
+                                    new Date((data as any)?.event?.date),
+                                    "PPP"
+                                  )
                                 : "Date not available"}
                             </p>
                           </div>
@@ -134,7 +143,7 @@ export default function EventDetail() {
                               className="text-sm text-muted-foreground"
                               data-testid="event-detail-time"
                             >
-                              {event.time}
+                              {(data as any)?.event?.time}
                             </p>
                           </div>
                         </div>
@@ -146,7 +155,7 @@ export default function EventDetail() {
                               className="text-sm text-muted-foreground"
                               data-testid="event-detail-location"
                             >
-                              {event.location}
+                              {(data as any)?.event?.location}
                             </p>
                           </div>
                         </div>
@@ -163,16 +172,16 @@ export default function EventDetail() {
                         className="text-lg text-muted-foreground leading-relaxed mb-6"
                         data-testid="event-detail-description"
                       >
-                        {event.description}
+                        {(data as any)?.event?.description}
                       </p>
 
-                      {event.fullDescription && (
+                      {(data as any)?.event?.fullDescription && (
                         <div className="prose prose-lg max-w-none mt-6">
                           <p
                             className="text-muted-foreground leading-relaxed whitespace-pre-line"
                             data-testid="event-detail-full-description"
                           >
-                            {event.fullDescription}
+                            {(data as any)?.event?.fullDescription}
                           </p>
                           <span className="flex-row mt-10 flex items-center gap-4 p-3 text-xs text-muted-foreground">
                             {/* Liking Btn */}
@@ -220,7 +229,7 @@ export default function EventDetail() {
                               />
                             </span>
                             <span className="text-xs text-muted">
-                              {event.date}
+                              {(data as any)?.event?.date}
                             </span>
                           </span>
                         </div>
@@ -228,7 +237,7 @@ export default function EventDetail() {
                     </CardContent>
                   </Card>
 
-                  {event.status === "upcoming" && (
+                  {(data as any)?.event?.status === "upcoming" && (
                     <Card className="bg-primary/5 border-primary/20">
                       <CardContent className="p-6">
                         <h3 className="font-semibold text-lg mb-3">
@@ -257,11 +266,11 @@ export default function EventDetail() {
                     </Card>
                   )}
 
-                  {event.status === "past" && (
+                  {(data as any)?.event?.status === "past" && (
                     <Card>
                       <CardContent className="p-6">
                         <h3 className="font-semibold text-lg mb-3">
-                          Missed This Event?
+                          Missed This (data as any)?.Event?
                         </h3>
                         <p className="text-muted-foreground mb-4">
                           Check out our upcoming events or view highlights from
