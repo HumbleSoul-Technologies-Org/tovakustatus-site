@@ -14,11 +14,47 @@ import {
   Instagram,
   Youtube,
   Loader,
+  AlertCircle,
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
-import { set } from "date-fns";
 import { FaTiktok } from "react-icons/fa";
+
+const validateForm = (data: any) => {
+  const errors: Record<string, string> = {};
+
+  if (!data.name?.trim()) {
+    errors.name = "Full name is required";
+  } else if (data.name.trim().length < 2) {
+    errors.name = "Name must be at least 2 characters";
+  }
+
+  if (!data.email?.trim()) {
+    errors.email = "Email is required";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+    errors.email = "Please enter a valid email address";
+  }
+
+  if (!data.contact?.trim()) {
+    errors.contact = "Contact number is required";
+  } else if (!/^\+?[\d\s\-()]{7,}$/.test(data.contact.replace(/\s/g, ""))) {
+    errors.contact = "Please enter a valid contact number";
+  }
+
+  if (!data.subject?.trim()) {
+    errors.subject = "Subject is required";
+  } else if (data.subject.trim().length < 3) {
+    errors.subject = "Subject must be at least 3 characters";
+  }
+
+  if (!data.message?.trim()) {
+    errors.message = "Message is required";
+  } else if (data.message.trim().length < 10) {
+    errors.message = "Message must be at least 10 characters";
+  }
+
+  return errors;
+};
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -29,10 +65,30 @@ export default function Contact() {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
-  const handleSubmit = async () => {
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData({ ...formData, [field]: value });
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors({ ...errors, [field]: "" });
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const validationErrors = validateForm(formData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      toast.error("Please fix the errors in the form");
+      return;
+    }
+
     try {
       setIsSubmitting(true);
 
@@ -51,6 +107,7 @@ export default function Contact() {
           subject: "",
           message: "",
         });
+        setErrors({});
         toast.success("Your message has been sent successfully.");
       }
     } catch (error) {
@@ -83,74 +140,113 @@ export default function Contact() {
                         <Label htmlFor="contact-name">Full Name</Label>
                         <Input
                           onChange={(e) =>
-                            setFormData({ ...formData, name: e.target.value })
+                            handleInputChange("name", e.target.value)
                           }
+                          value={formData.name}
                           id="contact-name"
                           placeholder="John Doe"
                           required
                           data-testid="input-contact-name"
+                          className={errors.name ? "border-destructive" : ""}
                         />
+                        {errors.name && (
+                          <p className="text-sm text-destructive flex items-center gap-1">
+                            <AlertCircle className="h-4 w-4" />
+                            {errors.name}
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="contact-email">Email</Label>
                         <Input
                           onChange={(e) =>
-                            setFormData({ ...formData, email: e.target.value })
+                            handleInputChange("email", e.target.value)
                           }
+                          value={formData.email}
                           id="contact-email"
                           type="email"
                           placeholder="john@example.com"
                           required
                           data-testid="input-contact-email"
+                          className={errors.email ? "border-destructive" : ""}
                         />
+                        {errors.email && (
+                          <p className="text-sm text-destructive flex items-center gap-1">
+                            <AlertCircle className="h-4 w-4" />
+                            {errors.email}
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="contact-phone">Contact</Label>
                         <Input
                           onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              contact: e.target.value,
-                            })
+                            handleInputChange("contact", e.target.value)
                           }
+                          value={formData.contact}
                           id="contact-phone"
                           type="tel"
                           placeholder="(123) 456-7890"
                           required
                           data-testid="input-contact-phone"
+                          className={errors.contact ? "border-destructive" : ""}
                         />
+                        {errors.contact && (
+                          <p className="text-sm text-destructive flex items-center gap-1">
+                            <AlertCircle className="h-4 w-4" />
+                            {errors.contact}
+                          </p>
+                        )}
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="contact-subject">Subject</Label>
                       <Input
                         onChange={(e) =>
-                          setFormData({ ...formData, subject: e.target.value })
+                          handleInputChange("subject", e.target.value)
                         }
+                        value={formData.subject}
                         id="contact-subject"
                         placeholder="How can we help you?"
                         required
                         data-testid="input-contact-subject"
+                        className={errors.subject ? "border-destructive" : ""}
                       />
+                      {errors.subject && (
+                        <p className="text-sm text-destructive flex items-center gap-1">
+                          <AlertCircle className="h-4 w-4" />
+                          {errors.subject}
+                        </p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="contact-message">Message</Label>
                       <Textarea
                         onChange={(e) =>
-                          setFormData({ ...formData, message: e.target.value })
+                          handleInputChange("message", e.target.value)
                         }
+                        value={formData.message}
                         id="contact-message"
                         placeholder="Your message..."
-                        className="min-h-[150px]"
+                        className={`min-h-[150px] ${
+                          errors.message ? "border-destructive" : ""
+                        }`}
                         required
                         data-testid="textarea-contact-message"
                       />
+                      {errors.message && (
+                        <p className="text-sm text-destructive flex items-center gap-1">
+                          <AlertCircle className="h-4 w-4" />
+                          {errors.message}
+                        </p>
+                      )}
                     </div>
                     <Button
                       type="submit"
                       size="lg"
                       className="w-full"
                       data-testid="button-submit-contact"
+                      disabled={isSubmitting}
                     >
                       {isSubmitting ? (
                         <span className="flex items-center gap-2">
@@ -186,11 +282,11 @@ export default function Contact() {
                     <div>
                       <p className="font-semibold mb-1">Email</p>
                       <a
-                        href="mailto:info@tovakustatus.org"
+                        href="mailto:tovakustatus.org.ug@gmail.com"
                         className="text-sm text-primary hover:underline"
                         data-testid="email-link"
                       >
-                        info@tovakustatus.org
+                        tovakustatus.org.ug@gmail.com
                       </a>
                     </div>
                   </div>

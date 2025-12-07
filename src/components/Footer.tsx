@@ -129,11 +129,11 @@ export default function Footer() {
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 flex-shrink-0" />
                 <a
-                  href="mailto:info@tovakustatus.org"
+                  href="mailto:tovakustatus.org.ug@gmail.com"
                   className="hover:text-foreground transition-colors"
                   data-testid="footer-email"
                 >
-                  info@tovakustatus.org
+                  tovakustatus.org.ug@gmail.com
                 </a>
               </li>
               <li className="flex items-center gap-2">
