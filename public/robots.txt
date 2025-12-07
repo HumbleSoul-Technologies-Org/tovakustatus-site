@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /admin
+Disallow: /*.json$
+Disallow: /node_modules/
+
+# Allow crawling of specific paths
+Allow: /api/
+Allow: /public/
+
+# Specify crawl delay to be respectful
+Crawl-delay: 1
+
+# Specify sitemap
+Sitemap: https://tovakustatus.com/sitemap.xml
+
+# Additional sitemaps if needed
+# Sitemap: https://tovakustatus.com/sitemap-talents.xml
+# Sitemap: https://tovakustatus.com/sitemap-blog.xml

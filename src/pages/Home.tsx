@@ -11,6 +11,7 @@ import {
   Clock,
 } from "lucide-react";
 import { Link } from "wouter";
+import { useSEO } from "@/hooks/use-seo";
 import Hero from "@/components/Hero";
 import StatCard from "@/components/StatCard";
 import TalentCard from "@/components/TalentCard";
@@ -47,6 +48,26 @@ export default function Home() {
   const [latestBlogs, setLatestBlogs] = useState<BlogPost[]>([]);
   const [featuredTalents, setFeaturedTalents] = useState<Talent[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+
+  // SEO Optimization
+  useSEO({
+    title: "Home - Empowering Talented Youth",
+    description:
+      "Discover and empower talented kids from underprivileged schools. Tova ku Status identifies extraordinary potential and provides mentorship, education, and opportunities.",
+    keywords: [
+      "youth empowerment",
+      "talented kids",
+      "social impact",
+      "education",
+      "mentorship",
+      "underprivileged",
+      "Kenya",
+      "talent discovery",
+    ],
+    imageUrl:
+      "https://res.cloudinary.com/ghost150/image/upload/v1762586138/tovakustatus-removebg-preview_ys9avx.png",
+  });
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
