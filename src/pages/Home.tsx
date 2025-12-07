@@ -140,7 +140,7 @@ export default function Home() {
     if (!email) return;
 
     setLoading(true);
-    const uuid = localStorage.getItem("visitor_id") || "";
+    const uuid = localStorage.getItem("tovakustatus_visitor_id") || "";
 
     try {
       const response = await axios.post(

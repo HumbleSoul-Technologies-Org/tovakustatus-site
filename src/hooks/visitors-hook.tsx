@@ -33,7 +33,7 @@ export const useVisitorHook = (): VisitorAuth => {
   const [user, setUser] = useState<User | null>(null);
   const [visitor, setVisitor] = useState<Visitor | null>(null);
   const [visitorId, setVisitorId] = useState<string | null>(
-    localStorage.getItem("visitor_id")
+    localStorage.getItem("tovakustatus_visitor_id")
   );
 
   const API_URL = import.meta.env.VITE_API_URL; // ✅ safer than process.env for Vite
@@ -51,7 +51,7 @@ export const useVisitorHook = (): VisitorAuth => {
    */
   const createVisitorProfile = useCallback(
     async (retryCount = 0): Promise<Visitor | null> => {
-      const storedVisitorId = localStorage.getItem("visitor_id");
+      const storedVisitorId = localStorage.getItem("tovakustatus_visitor_id");
       const visitorUuid = storedVisitorId || uuidv4();
       const isNewVisitor = !storedVisitorId;
 
@@ -61,7 +61,8 @@ export const useVisitorHook = (): VisitorAuth => {
         });
 
         if ((status === 200 || status === 201) && data.visitor) {
-          if (isNewVisitor) localStorage.setItem("visitor_id", visitorUuid);
+          if (isNewVisitor)
+            localStorage.setItem("tovakustatus_visitor_id", visitorUuid);
           setVisitorId(visitorUuid);
           setVisitor(data.visitor);
 

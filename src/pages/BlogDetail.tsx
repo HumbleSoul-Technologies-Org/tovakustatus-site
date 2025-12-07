@@ -52,7 +52,7 @@ export default function BlogDetail() {
 
   // initialize userId from localStorage once
   useEffect(() => {
-    const stored = localStorage.getItem("visitor_id");
+    const stored = localStorage.getItem("tovakustatus_visitor_id");
     if (stored) setUserId(stored);
     if (blogId && stored) {
       setViews(blogId, stored);
@@ -79,7 +79,7 @@ export default function BlogDetail() {
     // Process the API call in the background
     setLoading(true);
     try {
-      const storedId = localStorage.getItem("visitor_id");
+      const storedId = localStorage.getItem("tovakustatus_visitor_id");
       const res = await toggleLike(blogId, storedId ? storedId : null);
 
       toast.success(`${res.message}`);

@@ -41,7 +41,7 @@ export default function TalentDetail() {
       setTalent((data as any)?.talent);
     }
 
-    const stored = localStorage.getItem("visitor_id");
+    const stored = localStorage.getItem("tovakustatus_visitor_id");
     if (stored) {
       setUserId(stored);
     }
@@ -70,7 +70,7 @@ export default function TalentDetail() {
     // Process the API call in the background
     setLoading(true);
     try {
-      const storedId = localStorage.getItem("visitor_id");
+      const storedId = localStorage.getItem("tovakustatus_visitor_id");
       const res = await toggleLike(params?.id, storedId ? storedId : null);
 
       toast.success(`${res.message}`);
