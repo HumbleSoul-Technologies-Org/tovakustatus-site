@@ -14,8 +14,8 @@ Allow: /public/
 Crawl-delay: 1
 
 # Specify sitemap
-Sitemap: https://tovakustatus.com/sitemap.xml
+Sitemap: https://tovakustatusorgug.vercel.app/sitemap.xml
 
 # Additional sitemaps if needed
-# Sitemap: https://tovakustatus.com/sitemap-talents.xml
-# Sitemap: https://tovakustatus.com/sitemap-blog.xml
+# Sitemap: https://tovakustatusorgug.vercel.app/sitemap-talents.xml
+# Sitemap: https://tovakustatusorgug.vercel.app/sitemap-blog.xml
